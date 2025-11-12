@@ -183,14 +183,16 @@ body {
 }
 
 .hero-content {
-    position: relative;
+    position: absolute;
     z-index: 2;
     text-align: center;
     color: var(--branco);
     padding: 2rem;
     max-width: 800px;
-    margin: 0 auto;
-    width: 100%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
 }
 
 .hero-title {
@@ -199,24 +201,24 @@ body {
     font-weight: 700;
     margin-bottom: 1rem;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    animation: fadeInUp 1s ease;
+    animation: fadeInContent 1s ease;
 }
 
 .hero-subtitle {
     font-size: 1.5rem;
     margin-bottom: 1rem;
     font-weight: 400;
-    animation: fadeInUp 1s ease 0.2s both;
+    animation: fadeInContent 1s ease 0.2s both;
 }
 
 .hero-description {
     font-size: 1.1rem;
     margin-bottom: 2rem;
     opacity: 0.95;
-    animation: fadeInUp 1s ease 0.4s both;
+    animation: fadeInContent 1s ease 0.4s both;
 }
 
-@keyframes fadeInUp {
+@keyframes fadeInContent {
     from {
         opacity: 0;
         transform: translateY(30px);
@@ -224,6 +226,17 @@ body {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translate(-50%, calc(-50% + 30px));
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
     }
 }
 
