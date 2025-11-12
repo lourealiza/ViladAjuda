@@ -41,7 +41,7 @@ Este site está configurado para ser hospedado no GitHub Pages. Para ativar:
 
 1. Vá em Settings > Pages no repositório
 2. Selecione a branch `main` como source
-3. O site estará disponível em: `https://[seu-usuario].github.io/ViladAjuda/`
+3. O site estará disponível em: `https://lourealiza.github.io/ViladAjuda/`
 
 ## 📝 Personalização
 
@@ -65,4 +65,3 @@ Edite o JavaScript em `js/script.js` para integrar com seu sistema de reservas p
 ## 📄 Licença
 
 © 2024 Vila d'Ajuda. Todos os direitos reservados.
-
