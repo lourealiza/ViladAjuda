@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Chalés em Arraial d'Ajuda - Seu refúgio na natureza com varandas, redes e muito verde">
+    <title>Vila d'Ajuda - Chalés em Arraial d'Ajuda</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="nav-wrapper">
+                    <div class="logo">
+                        <h1>Vila d'Ajuda</h1>
+                    </div>
+                    <button class="menu-toggle" aria-label="Menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <ul class="nav-menu">
+                        <li><a href="#home">Início</a></li>
+                        <li><a href="#sobre">Sobre</a></li>
+                        <li><a href="#chales">Chalés</a></li>
+                        <li><a href="#galeria">Galeria</a></li>
+                        <li><a href="#localizacao">Localização</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="#reserva" class="btn-reserva">Reservar</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-slider">
+            <div class="hero-slide active">
+                <div class="hero-content">
+                    <h2 class="hero-title">Seu refúgio em Arraial d'Ajuda</h2>
+                    <p class="hero-subtitle">Natureza, aconchego e praticidade a 3 quadras do centro</p>
+                    <p class="hero-description">Varandas com rede, chalés completos e o canto dos pássaros como trilha sonora</p>
+                    <a href="#reserva" class="btn-primary">Reservar Agora</a>
+                </div>
+            </div>
+        </div>
+        <div class="hero-overlay"></div>
+    </section>
+
+    <!-- Reserva Rápida -->
+    <section class="reserva-rapida">
+        <div class="container">
+            <div class="reserva-box">
+                <h3>Verificar Disponibilidade</h3>
+                <form class="form-reserva" id="formReserva">
+                    <div class="form-group">
+                        <label>Data de Entrada</label>
+                        <input type="date" name="checkin" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Data de Saída</label>
+                        <input type="date" name="checkout" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Adultos</label>
+                        <select name="adultos" required>
+                            <option value="1">1</option>
+                            <option value="2" selected>2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Crianças</label>
+                        <select name="criancas">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-check">Verificar Disponibilidade</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sobre -->
+    <section id="sobre" class="sobre">
+        <div class="container">
+            <div class="section-header">
+                <h2>Sobre a Vila d'Ajuda</h2>
+                <p class="section-subtitle">Experiência íntima em meio à natureza</p>
+            </div>
+            <div class="sobre-content">
+                <div class="sobre-text">
+                    <p>Chalés individuais com quarto, sala, cozinha equipada, banheiro e varanda espaçosa. Wi-Fi, ar-condicionado e muito verde ao redor.</p>
+                    <p>Localizados a apenas 5 minutos do centro e 10 minutos da praia, com fácil acesso a balsa, vans e ônibus para Trancoso e Caraíva.</p>
+                    <p>Uma experiência íntima: apenas 4 chalés em uma vila charmosa. Silêncio e segurança de rua tranquila para estacionar. Hóspedes destacam tranquilidade e o canto dos passarinhos.</p>
+                    <a href="#chales" class="btn-secondary">Conheça Nossos Chalés</a>
+                </div>
+                <div class="sobre-features">
+                    <div class="feature-item">
+                        <div class="feature-icon">🌿</div>
+                        <h4>Natureza ao Redor</h4>
+                        <p>Muito verde e pássaros</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🏠</div>
+                        <h4>Chalés Completos</h4>
+                        <p>Quarto, sala, cozinha e varanda</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📍</div>
+                        <h4>Localização Privilegiada</h4>
+                        <p>3 quadras do centro</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🔒</div>
+                        <h4>Segurança</h4>
+                        <p>Rua tranquila e segura</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chalés -->
+    <section id="chales" class="chales">
+        <div class="container">
+            <div class="section-header">
+                <h2>Nossos Chalés</h2>
+                <p class="section-subtitle">Conforto e natureza em harmonia</p>
+            </div>
+            <div class="chales-grid">
+                <div class="chale-card">
+                    <div class="chale-image">
+                        <div class="chale-placeholder">🌳</div>
+                    </div>
+                    <div class="chale-info">
+                        <h3>Chalé 1</h3>
+                        <p>Chalé completo com varanda espaçosa, rede e vista para o jardim. Perfeito para casais.</p>
+                        <ul class="chale-amenities">
+                            <li>✓ Quarto com ar-condicionado</li>
+                            <li>✓ Sala de estar</li>
+                            <li>✓ Cozinha equipada</li>
+                            <li>✓ Varanda com rede</li>
+                            <li>✓ Wi-Fi gratuito</li>
+                        </ul>
+                        <a href="#reserva" class="btn-chale">Reservar</a>
+                    </div>
+                </div>
+                <div class="chale-card">
+                    <div class="chale-image">
+                        <div class="chale-placeholder">🌿</div>
+                    </div>
+                    <div class="chale-info">
+                        <h3>Chalé 2</h3>
+                        <p>Chalé completo com varanda espaçosa, rede e vista para o jardim. Perfeito para casais.</p>
+                        <ul class="chale-amenities">
+                            <li>✓ Quarto com ar-condicionado</li>
+                            <li>✓ Sala de estar</li>
+                            <li>✓ Cozinha equipada</li>
+                            <li>✓ Varanda com rede</li>
+                            <li>✓ Wi-Fi gratuito</li>
+                        </ul>
+                        <a href="#reserva" class="btn-chale">Reservar</a>
+                    </div>
+                </div>
+                <div class="chale-card">
+                    <div class="chale-image">
+                        <div class="chale-placeholder">🌴</div>
+                    </div>
+                    <div class="chale-info">
+                        <h3>Chalé 3</h3>
+                        <p>Chalé completo com varanda espaçosa, rede e vista para o jardim. Perfeito para casais.</p>
+                        <ul class="chale-amenities">
+                            <li>✓ Quarto com ar-condicionado</li>
+                            <li>✓ Sala de estar</li>
+                            <li>✓ Cozinha equipada</li>
+                            <li>✓ Varanda com rede</li>
+                            <li>✓ Wi-Fi gratuito</li>
+                        </ul>
+                        <a href="#reserva" class="btn-chale">Reservar</a>
+                    </div>
+                </div>
+                <div class="chale-card">
+                    <div class="chale-image">
+                        <div class="chale-placeholder">🌱</div>
+                    </div>
+                    <div class="chale-info">
+                        <h3>Chalé 4</h3>
+                        <p>Chalé completo com varanda espaçosa, rede e vista para o jardim. Perfeito para casais.</p>
+                        <ul class="chale-amenities">
+                            <li>✓ Quarto com ar-condicionado</li>
+                            <li>✓ Sala de estar</li>
+                            <li>✓ Cozinha equipada</li>
+                            <li>✓ Varanda com rede</li>
+                            <li>✓ Wi-Fi gratuito</li>
+                        </ul>
+                        <a href="#reserva" class="btn-chale">Reservar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Galeria -->
+    <section id="galeria" class="galeria">
+        <div class="container">
+            <div class="section-header">
+                <h2>Galeria "Antes do Pôr do Sol"</h2>
+                <p class="section-subtitle">Varandas, redes e jardim em meio à natureza</p>
+            </div>
+            <div class="galeria-grid">
+                <div class="galeria-item">
+                    <div class="galeria-placeholder">📸 Varanda com Rede</div>
+                </div>
+                <div class="galeria-item">
+                    <div class="galeria-placeholder">📸 Jardim Natural</div>
+                </div>
+                <div class="galeria-item">
+                    <div class="galeria-placeholder">📸 Chalé Externo</div>
+                </div>
+                <div class="galeria-item">
+                    <div class="galeria-placeholder">📸 Vista do Pôr do Sol</div>
+                </div>
+                <div class="galeria-item">
+                    <div class="galeria-placeholder">📸 Interior Aconchegante</div>
+                </div>
+                <div class="galeria-item">
+                    <div class="galeria-placeholder">📸 Natureza ao Redor</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- O que tem por perto -->
+    <section class="proximidades">
+        <div class="container">
+            <div class="section-header">
+                <h2>O que tem por perto</h2>
+                <p class="section-subtitle">Tudo que você precisa está próximo</p>
+            </div>
+            <div class="proximidades-grid">
+                <div class="proximidade-item">
+                    <h4>🏖️ Praias</h4>
+                    <p>10 minutos das principais praias de Arraial d'Ajuda</p>
+                </div>
+                <div class="proximidade-item">
+                    <h4>🛍️ Centro</h4>
+                    <p>3 quadras do centro comercial</p>
+                </div>
+                <div class="proximidade-item">
+                    <h4>🚢 Balsa</h4>
+                    <p>Fácil acesso para Porto Seguro</p>
+                </div>
+                <div class="proximidade-item">
+                    <h4>🍽️ Restaurantes</h4>
+                    <p>Pescadores e Mucugê por perto</p>
+                </div>
+                <div class="proximidade-item">
+                    <h4>🌳 Eco Parque</h4>
+                    <p>Parque ecológico próximo</p>
+                </div>
+                <div class="proximidade-item">
+                    <h4>🚌 Transporte</h4>
+                    <p>Vans e ônibus para Trancoso e Caraíva</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Localização -->
+    <section id="localizacao" class="localizacao">
+        <div class="container">
+            <div class="section-header">
+                <h2>Como Chegar</h2>
+                <p class="section-subtitle">Rua das Mangabeiras, 78 - Arraial d'Ajuda</p>
+            </div>
+            <div class="localizacao-content">
+                <div class="mapa-container">
+                    <div class="mapa-placeholder">
+                        <p>📍 Mapa interativo será adicionado aqui</p>
+                        <p><strong>Rua das Mangabeiras, 78</strong></p>
+                        <p>Arraial d'Ajuda - BA</p>
+                    </div>
+                </div>
+                <div class="instrucoes">
+                    <h3>Instruções de Chegada</h3>
+                    <ol>
+                        <li>Do aeroporto/rodoviária: pegue a balsa para Arraial d'Ajuda</li>
+                        <li>Após descer da balsa, siga até o ponto "Pousada Morada do Sol"</li>
+                        <li>Vire na Rua das Mangabeiras</li>
+                        <li>Número 78 - Vila d'Ajuda</li>
+                    </ol>
+                    <p class="aviso"><strong>Check-in coordenado pela Renata</strong></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="faq">
+        <div class="container">
+            <div class="section-header">
+                <h2>Perguntas Frequentes</h2>
+                <p class="section-subtitle">Tire suas dúvidas</p>
+            </div>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Qual o horário de check-in e check-out?</h4>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                        <div class="faq-answer">
+                        <p>O check-in é coordenado pela Renata. Entre em contato para combinar o horário ideal.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Onde posso descartar o lixo?</h4>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>O lixo deve ser deixado ao lado de fora, atrás do chalé.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Vocês aceitam pets?</h4>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Não, não aceitamos pets.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Os chalés são acessíveis para pessoas com mobilidade reduzida?</h4>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Entre em contato conosco para verificar a disponibilidade e adequação.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Há estacionamento disponível?</h4>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Sim, há estacionamento na rua tranquila e segura.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reserva -->
+    <section id="reserva" class="reserva">
+        <div class="container">
+            <div class="section-header">
+                <h2>Reserve seu Chalé</h2>
+                <p class="section-subtitle">Poucas unidades — datas de alta temporada esgotam rápido</p>
+            </div>
+            <div class="reserva-content">
+                <form class="form-reserva-completo" id="formReservaCompleto">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nome Completo *</label>
+                            <input type="text" name="nome" required>
+                        </div>
+                        <div class="form-group">
+                            <label>E-mail *</label>
+                            <input type="email" name="email" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Telefone *</label>
+                            <input type="tel" name="telefone" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Chalé Preferido</label>
+                            <select name="chale">
+                                <option value="">Qualquer chalé</option>
+                                <option value="1">Chalé 1</option>
+                                <option value="2">Chalé 2</option>
+                                <option value="3">Chalé 3</option>
+                                <option value="4">Chalé 4</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Data de Entrada *</label>
+                            <input type="date" name="checkin" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Data de Saída *</label>
+                            <input type="date" name="checkout" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Adultos *</label>
+                            <select name="adultos" required>
+                                <option value="1">1</option>
+                                <option value="2" selected>2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Crianças</label>
+                            <select name="criancas">
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Mensagem</label>
+                        <textarea name="mensagem" rows="4"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Enviar Reserva</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Vila d'Ajuda</h3>
+                    <p>Seu refúgio em Arraial d'Ajuda</p>
+                    <p>Natureza, aconchego e praticidade</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Contato</h4>
+                    <p>Rua das Mangabeiras, 78</p>
+                    <p>Arraial d'Ajuda - BA</p>
+                    <p>Check-in: Renata</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="#sobre">Sobre</a></li>
+                        <li><a href="#chales">Chalés</a></li>
+                        <li><a href="#galeria">Galeria</a></li>
+                        <li><a href="#localizacao">Localização</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Vila d'Ajuda. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
+
