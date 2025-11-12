@@ -81,47 +81,123 @@ if (formReserva) {
     });
 }
 
+// Configuração EmailJS
+// IMPORTANTE: Configure suas credenciais do EmailJS em https://www.emailjs.com/
+// Substitua os valores abaixo após criar sua conta e configurar o serviço
+const EMAILJS_CONFIG = {
+    serviceID: 'YOUR_SERVICE_ID',      // Substitua pelo seu Service ID
+    templateID: 'YOUR_TEMPLATE_ID',    // Substitua pelo seu Template ID
+    publicKey: 'YOUR_PUBLIC_KEY'        // Substitua pela sua Public Key
+};
+
+// Inicializar EmailJS (será inicializado quando a página carregar)
+if (typeof emailjs !== 'undefined') {
+    emailjs.init(EMAILJS_CONFIG.publicKey);
+}
+
+// Função para mostrar mensagem de sucesso/erro
+function showMessage(message, type = 'success') {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message-${type}`;
+    messageDiv.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background: ${type === 'success' ? '#4a7c2a' : '#d32f2f'};
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        z-index: 10000;
+        animation: slideIn 0.3s ease;
+    `;
+    messageDiv.textContent = message;
+    document.body.appendChild(messageDiv);
+    
+    setTimeout(() => {
+        messageDiv.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => messageDiv.remove(), 300);
+    }, 5000);
+}
+
 // Formulário de Reserva Completo
 const formReservaCompleto = document.getElementById('formReservaCompleto');
 if (formReservaCompleto) {
-    formReservaCompleto.addEventListener('submit', (e) => {
+    formReservaCompleto.addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        const submitButton = formReservaCompleto.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+        submitButton.disabled = true;
+        submitButton.textContent = 'Enviando...';
+        
         const formData = new FormData(formReservaCompleto);
         const data = {
             nome: formData.get('nome'),
             email: formData.get('email'),
             telefone: formData.get('telefone'),
-            chale: formData.get('chale'),
+            chale: formData.get('chale') || 'Qualquer',
             checkin: formData.get('checkin'),
             checkout: formData.get('checkout'),
             adultos: formData.get('adultos'),
-            criancas: formData.get('criancas'),
-            mensagem: formData.get('mensagem')
+            criancas: formData.get('criancas') || '0',
+            mensagem: formData.get('mensagem') || 'Nenhuma mensagem'
         };
         
-        // Aqui você pode adicionar lógica para enviar a reserva
-        // Por exemplo, enviar para um servidor ou abrir email
-        console.log('Dados da reserva:', data);
-        
-        // Exemplo: abrir cliente de email
-        const assunto = encodeURIComponent(`Reserva - Vila d'Ajuda`);
-        const corpo = encodeURIComponent(`
+        // Verificar se EmailJS está configurado
+        if (EMAILJS_CONFIG.serviceID === 'YOUR_SERVICE_ID' || 
+            EMAILJS_CONFIG.templateID === 'YOUR_TEMPLATE_ID' || 
+            EMAILJS_CONFIG.publicKey === 'YOUR_PUBLIC_KEY') {
+            // Fallback: usar mailto se EmailJS não estiver configurado
+            const assunto = encodeURIComponent(`Reserva - Vila d'Ajuda`);
+            const corpo = encodeURIComponent(`
 Nome: ${data.nome}
 Email: ${data.email}
 Telefone: ${data.telefone}
-Chalé Preferido: ${data.chale || 'Qualquer'}
+Chalé Preferido: ${data.chale}
 Check-in: ${data.checkin}
 Check-out: ${data.checkout}
 Adultos: ${data.adultos}
 Crianças: ${data.criancas}
-Mensagem: ${data.mensagem || 'Nenhuma'}
-        `);
-        
-        // Substitua pelo email real
-        window.location.href = `mailto:renata@viladajuda.com?subject=${assunto}&body=${corpo}`;
-        
-        // Ou mostre uma mensagem de sucesso
-        alert('Obrigado pela sua reserva! Entraremos em contato em breve.');
+Mensagem: ${data.mensagem}
+            `);
+            
+            window.location.href = `mailto:contato@viladajuda.com?subject=${assunto}&body=${corpo}`;
+            showMessage('Redirecionando para seu cliente de email...', 'success');
+            submitButton.disabled = false;
+            submitButton.textContent = originalText;
+        } else {
+            // Enviar via EmailJS
+            try {
+                const templateParams = {
+                    from_name: data.nome,
+                    from_email: data.email,
+                    phone: data.telefone,
+                    chale: data.chale,
+                    checkin: data.checkin,
+                    checkout: data.checkout,
+                    adultos: data.adultos,
+                    criancas: data.criancas,
+                    message: data.mensagem,
+                    to_name: 'Renata - Vila d\'Ajuda'
+                };
+                
+                await emailjs.send(
+                    EMAILJS_CONFIG.serviceID,
+                    EMAILJS_CONFIG.templateID,
+                    templateParams
+                );
+                
+                showMessage('Reserva enviada com sucesso! Entraremos em contato em breve.', 'success');
+                formReservaCompleto.reset();
+            } catch (error) {
+                console.error('Erro ao enviar email:', error);
+                showMessage('Erro ao enviar reserva. Por favor, tente novamente ou entre em contato diretamente.', 'error');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+            }
+        }
     });
 }
 
@@ -169,4 +245,19 @@ document.querySelectorAll('.chale-card, .feature-item, .galeria-item, .proximida
     el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
     observer.observe(el);
 });
+
+// Lazy loading para imagens
+if ('loading' in HTMLImageElement.prototype) {
+    const images = document.querySelectorAll('img[loading="lazy"]');
+    images.forEach(img => {
+        img.addEventListener('load', function() {
+            this.classList.add('loaded');
+        });
+    });
+} else {
+    // Fallback para navegadores que não suportam lazy loading nativo
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js';
+    document.body.appendChild(script);
+}
 

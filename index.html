@@ -3,12 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Chalés em Arraial d'Ajuda - Seu refúgio na natureza com varandas, redes e muito verde">
-    <title>Vila d'Ajuda - Chalés em Arraial d'Ajuda</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Chalés em Arraial d'Ajuda - Seu refúgio na natureza com varandas, redes e muito verde. Apenas 3 quadras do centro, chalés completos com quarto, sala, cozinha e varanda espaçosa.">
+    <meta name="keywords" content="chalés Arraial d'Ajuda, hospedagem Bahia, aluguel chalés, Vila d'Ajuda, hospedagem natureza, Arraial d'Ajuda">
+    <meta name="author" content="Vila d'Ajuda">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://lourealiza.github.io/ViladAjuda/">
+    <meta property="og:title" content="Vila d'Ajuda - Chalés em Arraial d'Ajuda">
+    <meta property="og:description" content="Seu refúgio em Arraial d'Ajuda: natureza, aconchego e praticidade a 3 quadras do centro">
+    <meta property="og:image" content="https://lourealiza.github.io/ViladAjuda/images/Jardim%20-%20Copia.JPG">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://lourealiza.github.io/ViladAjuda/">
+    <meta property="twitter:title" content="Vila d'Ajuda - Chalés em Arraial d'Ajuda">
+    <meta property="twitter:description" content="Seu refúgio em Arraial d'Ajuda: natureza, aconchego e praticidade a 3 quadras do centro">
+    <meta property="twitter:image" content="https://lourealiza.github.io/ViladAjuda/images/Jardim%20-%20Copia.JPG">
+    
+    <title>Vila d'Ajuda - Chalés em Arraial d'Ajuda | Seu Refúgio na Natureza</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/Logo.png">
+    <link rel="apple-touch-icon" href="images/Logo.png">
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- EmailJS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
     <!-- Header -->
@@ -17,7 +46,7 @@
             <div class="container">
                 <div class="nav-wrapper">
                     <div class="logo">
-                        <h1>Vila d'Ajuda</h1>
+                        <img src="images/Logo.png" alt="Vila d'Ajuda Logo" class="logo-img">
                     </div>
                     <button class="menu-toggle" aria-label="Menu">
                         <span></span>
@@ -41,7 +70,7 @@
     <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="hero-slider">
-            <div class="hero-slide active">
+            <div class="hero-slide active" style="background-image: url('images/Jardim%20-%20Copia.JPG');">
                 <div class="hero-content">
                     <h2 class="hero-title">Seu refúgio em Arraial d'Ajuda</h2>
                     <p class="hero-subtitle">Natureza, aconchego e praticidade a 3 quadras do centro</p>
@@ -76,7 +105,7 @@
                             <option value="4">4</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group form-group-with-button">
                         <label>Crianças</label>
                         <select name="criancas">
                             <option value="0">0</option>
@@ -85,7 +114,10 @@
                             <option value="3">3</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn-check">Verificar Disponibilidade</button>
+                    <div class="form-group form-group-button">
+                        <label>&nbsp;</label>
+                        <button type="submit" class="btn-check">Verificar Disponibilidade</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -141,7 +173,7 @@
             <div class="chales-grid">
                 <div class="chale-card">
                     <div class="chale-image">
-                        <div class="chale-placeholder">🌳</div>
+                        <img src="images/1693864112638.jpg" alt="Chalé 1 - Vila d'Ajuda" loading="lazy">
                     </div>
                     <div class="chale-info">
                         <h3>Chalé 1</h3>
@@ -158,44 +190,10 @@
                 </div>
                 <div class="chale-card">
                     <div class="chale-image">
-                        <div class="chale-placeholder">🌿</div>
+                        <img src="images/IMG_20230814_141853_677.webp" alt="Chalé 2 - Vila d'Ajuda" loading="lazy">
                     </div>
                     <div class="chale-info">
                         <h3>Chalé 2</h3>
-                        <p>Chalé completo com varanda espaçosa, rede e vista para o jardim. Perfeito para casais.</p>
-                        <ul class="chale-amenities">
-                            <li>✓ Quarto com ar-condicionado</li>
-                            <li>✓ Sala de estar</li>
-                            <li>✓ Cozinha equipada</li>
-                            <li>✓ Varanda com rede</li>
-                            <li>✓ Wi-Fi gratuito</li>
-                        </ul>
-                        <a href="#reserva" class="btn-chale">Reservar</a>
-                    </div>
-                </div>
-                <div class="chale-card">
-                    <div class="chale-image">
-                        <div class="chale-placeholder">🌴</div>
-                    </div>
-                    <div class="chale-info">
-                        <h3>Chalé 3</h3>
-                        <p>Chalé completo com varanda espaçosa, rede e vista para o jardim. Perfeito para casais.</p>
-                        <ul class="chale-amenities">
-                            <li>✓ Quarto com ar-condicionado</li>
-                            <li>✓ Sala de estar</li>
-                            <li>✓ Cozinha equipada</li>
-                            <li>✓ Varanda com rede</li>
-                            <li>✓ Wi-Fi gratuito</li>
-                        </ul>
-                        <a href="#reserva" class="btn-chale">Reservar</a>
-                    </div>
-                </div>
-                <div class="chale-card">
-                    <div class="chale-image">
-                        <div class="chale-placeholder">🌱</div>
-                    </div>
-                    <div class="chale-info">
-                        <h3>Chalé 4</h3>
                         <p>Chalé completo com varanda espaçosa, rede e vista para o jardim. Perfeito para casais.</p>
                         <ul class="chale-amenities">
                             <li>✓ Quarto com ar-condicionado</li>
@@ -220,22 +218,40 @@
             </div>
             <div class="galeria-grid">
                 <div class="galeria-item">
-                    <div class="galeria-placeholder">📸 Varanda com Rede</div>
+                    <img src="images/Jardim%20-%20Copia.JPG" alt="Jardim da Vila d'Ajuda" loading="lazy">
+                    <div class="galeria-overlay">
+                        <span>Jardim Natural</span>
+                    </div>
                 </div>
                 <div class="galeria-item">
-                    <div class="galeria-placeholder">📸 Jardim Natural</div>
+                    <img src="images/Quintal%20-%20Copia.png" alt="Quintal da Vila d'Ajuda" loading="lazy">
+                    <div class="galeria-overlay">
+                        <span>Quintal Espaçoso</span>
+                    </div>
                 </div>
                 <div class="galeria-item">
-                    <div class="galeria-placeholder">📸 Chalé Externo</div>
+                    <img src="images/Cozinha%20americana%20e%20sala.png" alt="Cozinha e Sala" loading="lazy">
+                    <div class="galeria-overlay">
+                        <span>Interior Aconchegante</span>
+                    </div>
                 </div>
                 <div class="galeria-item">
-                    <div class="galeria-placeholder">📸 Vista do Pôr do Sol</div>
+                    <img src="images/Banheiro%20-%20Copia.jpg" alt="Banheiro" loading="lazy">
+                    <div class="galeria-overlay">
+                        <span>Banheiro Completo</span>
+                    </div>
                 </div>
                 <div class="galeria-item">
-                    <div class="galeria-placeholder">📸 Interior Aconchegante</div>
+                    <img src="images/33175620-1024x1024.jpg" alt="Vista dos Chalés" loading="lazy">
+                    <div class="galeria-overlay">
+                        <span>Vista dos Chalés</span>
+                    </div>
                 </div>
                 <div class="galeria-item">
-                    <div class="galeria-placeholder">📸 Natureza ao Redor</div>
+                    <img src="images/48340042_267824703881146_1244187815890124800_n-1024x1024.jpg" alt="Natureza ao Redor" loading="lazy">
+                    <div class="galeria-overlay">
+                        <span>Natureza ao Redor</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -286,10 +302,19 @@
             </div>
             <div class="localizacao-content">
                 <div class="mapa-container">
-                    <div class="mapa-placeholder">
-                        <p>📍 Mapa interativo será adicionado aqui</p>
-                        <p><strong>Rua das Mangabeiras, 78</strong></p>
-                        <p>Arraial d'Ajuda - BA</p>
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3826.5!2d-39.1!3d-16.4!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x734c8b8b8b8b8b8b%3A0x8b8b8b8b8b8b8b8b!2sArraial%20d%27Ajuda%2C%20BA!5e0!3m2!1spt-BR!2sbr!4v1234567890123!5m2!1spt-BR!2sbr" 
+                        width="100%" 
+                        height="100%" 
+                        style="border:0; border-radius: 15px;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade"
+                        title="Localização Vila d'Ajuda - Arraial d'Ajuda">
+                    </iframe>
+                    <div class="mapa-fallback">
+                        <img src="images/Mapa.jpg" alt="Mapa de localização - Rua das Mangabeiras, 78" loading="lazy">
+                        <a href="https://www.google.com/maps/search/?api=1&query=Rua+das+Mangabeiras+78+Arraial+d'Ajuda+BA" target="_blank" class="btn-secondary" style="margin-top: 1rem; display: inline-block;">Abrir no Google Maps</a>
                     </div>
                 </div>
                 <div class="instrucoes">
@@ -301,6 +326,12 @@
                         <li>Número 78 - Vila d'Ajuda</li>
                     </ol>
                     <p class="aviso"><strong>Check-in coordenado pela Renata</strong></p>
+                    <p style="margin-top: 1rem;">
+                        <strong>Endereço completo:</strong><br>
+                        Rua das Mangabeiras, 78<br>
+                        Arraial d'Ajuda - BA<br>
+                        CEP: 45816-000
+                    </p>
                 </div>
             </div>
         </div>
