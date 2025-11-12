@@ -187,10 +187,10 @@ body {
     z-index: 2;
     text-align: center;
     color: var(--branco);
-    padding: 6rem 2rem 2rem 2rem;
+    padding: 2rem;
     max-width: 800px;
     left: 50%;
-    top: 60%;
+    top: 50%;
     transform: translate(-50%, -50%);
     width: 90%;
 }
