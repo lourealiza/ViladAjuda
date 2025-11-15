@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Integração - Backend + Frontend</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .status.online {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .status.offline {
+            background: #f44336;
+            color: white;
+        }
+        
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+        
+        h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .result.success {
+            border-left-color: #4caf50;
+        }
+        
+        .result.error {
+            border-left-color: #f44336;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        
+        .badge.success {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .badge.pending {
+            background: #ff9800;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste de Integração</h1>
+        <p style="color: #666; margin-bottom: 20px;">Backend Vila d'Ajuda + Frontend</p>
+        
+        <div style="margin-bottom: 20px;">
+            <strong>Status do Backend:</strong>
+            <span id="status" class="status offline">Verificando...</span>
+        </div>
+        
+        <!-- Teste 1: Listar Chalés -->
+        <div class="test-section">
+            <h2>📋 Teste 1: Listar Chalés</h2>
+            <button onclick="testarListarChales()">Executar Teste</button>
+            <div id="result1"></div>
+        </div>
+        
+        <!-- Teste 2: Verificar Disponibilidade -->
+        <div class="test-section">
+            <h2>🔍 Teste 2: Verificar Disponibilidade</h2>
+            <p style="margin-bottom: 10px; color: #666;">Buscar chalés disponíveis de 20/12/2024 a 25/12/2024</p>
+            <button onclick="testarDisponibilidade()">Executar Teste</button>
+            <div id="result2"></div>
+        </div>
+        
+        <!-- Teste 3: Criar Reserva -->
+        <div class="test-section">
+            <h2>✅ Teste 3: Criar Reserva</h2>
+            <p style="margin-bottom: 10px; color: #666;">Criar uma reserva de teste</p>
+            <button onclick="testarCriarReserva()">Executar Teste</button>
+            <div id="result3"></div>
+        </div>
+        
+        <!-- Teste 4: Criar Reserva Duplicada (deve falhar) -->
+        <div class="test-section">
+            <h2>❌ Teste 4: Validação de Conflito</h2>
+            <p style="margin-bottom: 10px; color: #666;">Tentar criar reserva duplicada (deve retornar erro)</p>
+            <button onclick="testarConflitoReserva()">Executar Teste</button>
+            <div id="result4"></div>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 15px; background: #e3f2fd; border-radius: 8px;">
+            <strong>💡 Dica:</strong> Execute os testes em ordem. Abra o Console (F12) para mais detalhes.
+        </div>
+    </div>
+    
+    <script src="js/api.js"></script>
+    <script>
+        // Verificar status do backend ao carregar
+        window.addEventListener('load', async () => {
+            try {
+                const response = await fetch('http://localhost:3000/api/health');
+                const data = await response.json();
+                
+                if (data.status === 'ok') {
+                    document.getElementById('status').textContent = 'Online ✓';
+                    document.getElementById('status').className = 'status online';
+                } else {
+                    throw new Error('Backend offline');
+                }
+            } catch (erro) {
+                document.getElementById('status').textContent = 'Offline ✗';
+                document.getElementById('status').className = 'status offline';
+                console.error('Backend não está respondendo:', erro);
+            }
+        });
+        
+        // Teste 1: Listar Chalés
+        async function testarListarChales() {
+            const btn = event.target;
+            const resultDiv = document.getElementById('result1');
+            
+            btn.disabled = true;
+            btn.textContent = 'Executando...';
+            resultDiv.innerHTML = '';
+            
+            try {
+                const resultado = await API.listarChales();
+                
+                let html = `<strong>✅ Sucesso!</strong>\n\n`;
+                html += `Total de chalés: ${resultado.total}\n\n`;
+                
+                resultado.chales.forEach(chale => {
+                    html += `📌 ${chale.nome}\n`;
+                    html += `   Capacidade: ${chale.capacidade_adultos} adultos, ${chale.capacidade_criancas} crianças\n`;
+                    html += `   Preço: R$ ${chale.preco_diaria}/noite\n\n`;
+                });
+                
+                resultDiv.innerHTML = html;
+                resultDiv.className = 'result success';
+                
+            } catch (erro) {
+                resultDiv.innerHTML = `<strong>❌ Erro:</strong>\n\n${erro.message}`;
+                resultDiv.className = 'result error';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Executar Teste';
+            }
+        }
+        
+        // Teste 2: Verificar Disponibilidade
+        async function testarDisponibilidade() {
+            const btn = event.target;
+            const resultDiv = document.getElementById('result2');
+            
+            btn.disabled = true;
+            btn.textContent = 'Executando...';
+            resultDiv.innerHTML = '';
+            
+            try {
+                const resultado = await API.buscarChalesDisponiveis('2024-12-20', '2024-12-25');
+                
+                let html = `<strong>✅ Sucesso!</strong>\n\n`;
+                html += `Período: 20/12/2024 a 25/12/2024\n`;
+                html += `Chalés disponíveis: ${resultado.total}\n\n`;
+                
+                resultado.chales.forEach(chale => {
+                    html += `🏠 ${chale.nome} - R$ ${chale.preco_diaria}/noite\n`;
+                });
+                
+                resultDiv.innerHTML = html;
+                resultDiv.className = 'result success';
+                
+            } catch (erro) {
+                resultDiv.innerHTML = `<strong>❌ Erro:</strong>\n\n${erro.message}`;
+                resultDiv.className = 'result error';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Executar Teste';
+            }
+        }
+        
+        // Teste 3: Criar Reserva
+        async function testarCriarReserva() {
+            const btn = event.target;
+            const resultDiv = document.getElementById('result3');
+            
+            btn.disabled = true;
+            btn.textContent = 'Executando...';
+            resultDiv.innerHTML = '';
+            
+            try {
+                const dados = {
+                    chale_id: 1,
+                    nome_hospede: 'Teste da Silva',
+                    email_hospede: 'teste@exemplo.com',
+                    telefone_hospede: '(73) 99999-9999',
+                    data_checkin: '2024-12-20',
+                    data_checkout: '2024-12-25',
+                    num_adultos: 2,
+                    num_criancas: 0,
+                    mensagem: 'Reserva de teste'
+                };
+                
+                const resultado = await API.criarReserva(dados);
+                
+                let html = `<strong>✅ Reserva Criada!</strong>\n\n`;
+                html += `ID da Reserva: #${resultado.reserva.id}\n`;
+                html += `Hóspede: ${resultado.reserva.nome_hospede}\n`;
+                html += `Check-in: ${API.formatarData(resultado.reserva.data_checkin)}\n`;
+                html += `Check-out: ${API.formatarData(resultado.reserva.data_checkout)}\n`;
+                html += `Valor Total: ${API.formatarValor(resultado.reserva.valor_total)}\n`;
+                html += `Status: ${resultado.reserva.status}\n`;
+                
+                resultDiv.innerHTML = html;
+                resultDiv.className = 'result success';
+                
+            } catch (erro) {
+                resultDiv.innerHTML = `<strong>❌ Erro:</strong>\n\n${erro.message}`;
+                resultDiv.className = 'result error';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Executar Teste';
+            }
+        }
+        
+        // Teste 4: Conflito de Reserva
+        async function testarConflitoReserva() {
+            const btn = event.target;
+            const resultDiv = document.getElementById('result4');
+            
+            btn.disabled = true;
+            btn.textContent = 'Executando...';
+            resultDiv.innerHTML = '';
+            
+            try {
+                // Tentar criar outra reserva no mesmo período e chalé
+                const dados = {
+                    chale_id: 1,
+                    nome_hospede: 'Outro Teste',
+                    email_hospede: 'outro@exemplo.com',
+                    telefone_hospede: '(73) 98888-8888',
+                    data_checkin: '2024-12-20',
+                    data_checkout: '2024-12-25',
+                    num_adultos: 2,
+                    num_criancas: 0
+                };
+                
+                const resultado = await API.criarReserva(dados);
+                
+                // Se chegou aqui, algo deu errado (deveria ter falhado)
+                resultDiv.innerHTML = `<strong>⚠️ Atenção:</strong>\n\nValidação não funcionou. A reserva foi criada mesmo com conflito.`;
+                resultDiv.className = 'result error';
+                
+            } catch (erro) {
+                // Erro esperado!
+                let html = `<strong>✅ Validação Funcionando!</strong>\n\n`;
+                html += `O sistema corretamente bloqueou a reserva duplicada.\n\n`;
+                html += `Mensagem de erro:\n"${erro.message}"`;
+                
+                resultDiv.innerHTML = html;
+                resultDiv.className = 'result success';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Executar Teste';
+            }
+        }
+    </script>
+</body>
+</html>
+

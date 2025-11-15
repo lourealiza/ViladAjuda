@@ -56,27 +56,67 @@ faqItems.forEach(item => {
 // Formulário de Reserva Rápida
 const formReserva = document.getElementById('formReserva');
 if (formReserva) {
-    formReserva.addEventListener('submit', (e) => {
+    formReserva.addEventListener('submit', async (e) => {
         e.preventDefault();
+        
         const formData = new FormData(formReserva);
-        const data = {
-            checkin: formData.get('checkin'),
-            checkout: formData.get('checkout'),
-            adultos: formData.get('adultos'),
-            criancas: formData.get('criancas')
-        };
+        const dataCheckin = formData.get('checkin');
+        const dataCheckout = formData.get('checkout');
+        const adultos = formData.get('adultos');
+        const criancas = formData.get('criancas');
         
-        // Aqui você pode adicionar lógica para verificar disponibilidade
-        // Por enquanto, apenas redireciona para a seção de reserva
-        window.location.href = '#reserva';
+        // Validação básica
+        if (!dataCheckin || !dataCheckout) {
+            showMessage('Por favor, selecione as datas de check-in e check-out', 'error');
+            return;
+        }
         
-        // Preencher o formulário completo com os dados
-        const formCompleto = document.getElementById('formReservaCompleto');
-        if (formCompleto) {
-            formCompleto.querySelector('[name="checkin"]').value = data.checkin;
-            formCompleto.querySelector('[name="checkout"]').value = data.checkout;
-            formCompleto.querySelector('[name="adultos"]').value = data.adultos;
-            formCompleto.querySelector('[name="criancas"]').value = data.criancas;
+        try {
+            // Buscar chalés disponíveis na API
+            showMessage('Verificando disponibilidade...', 'info');
+            
+            const resultado = await API.buscarChalesDisponiveis(dataCheckin, dataCheckout);
+            
+            if (resultado.chales.length === 0) {
+                showMessage('😔 Não há chalés disponíveis para o período selecionado. Tente outras datas.', 'error');
+                return;
+            }
+            
+            const noites = API.calcularNoites(dataCheckin, dataCheckout);
+            showMessage(`✅ ${resultado.chales.length} chalé(s) disponível(is) para ${noites} noite(s)!`, 'success');
+            
+            // Preencher formulário completo
+            const formCompleto = document.getElementById('formReservaCompleto');
+            if (formCompleto) {
+                formCompleto.querySelector('[name="checkin"]').value = dataCheckin;
+                formCompleto.querySelector('[name="checkout"]').value = dataCheckout;
+                formCompleto.querySelector('[name="adultos"]').value = adultos;
+                formCompleto.querySelector('[name="criancas"]').value = criancas;
+                
+                // Atualizar opções de chalés disponíveis
+                const selectChale = formCompleto.querySelector('[name="chale"]');
+                if (selectChale) {
+                    // Limpar opções existentes exceto "Qualquer chalé"
+                    selectChale.innerHTML = '<option value="">Qualquer chalé</option>';
+                    
+                    // Adicionar chalés disponíveis
+                    resultado.chales.forEach(chale => {
+                        const option = document.createElement('option');
+                        option.value = chale.id;
+                        option.textContent = `${chale.nome} - ${API.formatarValor(chale.preco_diaria)}/noite`;
+                        selectChale.appendChild(option);
+                    });
+                }
+            }
+            
+            // Rolar para o formulário de reserva
+            setTimeout(() => {
+                window.location.href = '#reserva';
+            }, 1000);
+            
+        } catch (erro) {
+            console.error('Erro ao verificar disponibilidade:', erro);
+            showMessage('❌ Erro ao verificar disponibilidade: ' + erro.message, 'error');
         }
     });
 }
@@ -95,29 +135,53 @@ if (typeof emailjs !== 'undefined') {
     emailjs.init(EMAILJS_CONFIG.publicKey);
 }
 
-// Função para mostrar mensagem de sucesso/erro
+// Função para mostrar mensagem de sucesso/erro/info
 function showMessage(message, type = 'success') {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message-${type}`;
+    
+    // Cores diferentes para cada tipo
+    let bgColor;
+    switch(type) {
+        case 'success':
+            bgColor = '#4a7c2a';
+            break;
+        case 'error':
+            bgColor = '#d32f2f';
+            break;
+        case 'info':
+            bgColor = '#1976d2';
+            break;
+        default:
+            bgColor = '#4a7c2a';
+    }
+    
     messageDiv.style.cssText = `
         position: fixed;
         top: 100px;
         right: 20px;
-        background: ${type === 'success' ? '#4a7c2a' : '#d32f2f'};
+        background: ${bgColor};
         color: white;
         padding: 1rem 1.5rem;
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         z-index: 10000;
         animation: slideIn 0.3s ease;
+        max-width: 400px;
+        line-height: 1.5;
     `;
-    messageDiv.textContent = message;
+    
+    // Permitir HTML na mensagem
+    messageDiv.innerHTML = message;
     document.body.appendChild(messageDiv);
+    
+    // Duração maior para mensagens de sucesso com mais informações
+    const duration = type === 'success' ? 8000 : 5000;
     
     setTimeout(() => {
         messageDiv.style.animation = 'slideOut 0.3s ease';
         setTimeout(() => messageDiv.remove(), 300);
-    }, 5000);
+    }, duration);
 }
 
 // Formulário de Reserva Completo
@@ -129,74 +193,70 @@ if (formReservaCompleto) {
         const submitButton = formReservaCompleto.querySelector('button[type="submit"]');
         const originalText = submitButton.textContent;
         submitButton.disabled = true;
-        submitButton.textContent = 'Enviando...';
+        submitButton.textContent = 'Enviando reserva...';
         
         const formData = new FormData(formReservaCompleto);
-        const data = {
-            nome: formData.get('nome'),
-            email: formData.get('email'),
-            telefone: formData.get('telefone'),
-            chale: formData.get('chale') || 'Qualquer',
-            checkin: formData.get('checkin'),
-            checkout: formData.get('checkout'),
-            adultos: formData.get('adultos'),
-            criancas: formData.get('criancas') || '0',
-            mensagem: formData.get('mensagem') || 'Nenhuma mensagem'
+        
+        // Preparar dados para enviar à API
+        const dados = {
+            chale_id: formData.get('chale') ? parseInt(formData.get('chale')) : null,
+            nome_hospede: formData.get('nome'),
+            email_hospede: formData.get('email'),
+            telefone_hospede: formData.get('telefone'),
+            data_checkin: formData.get('checkin'),
+            data_checkout: formData.get('checkout'),
+            num_adultos: parseInt(formData.get('adultos')),
+            num_criancas: parseInt(formData.get('criancas')) || 0,
+            mensagem: formData.get('mensagem') || ''
         };
         
-        // Verificar se EmailJS está configurado
-        if (EMAILJS_CONFIG.serviceID === 'YOUR_SERVICE_ID' || 
-            EMAILJS_CONFIG.templateID === 'YOUR_TEMPLATE_ID' || 
-            EMAILJS_CONFIG.publicKey === 'YOUR_PUBLIC_KEY') {
-            // Fallback: usar mailto se EmailJS não estiver configurado
-            const assunto = encodeURIComponent(`Reserva - Vila d'Ajuda`);
-            const corpo = encodeURIComponent(`
-Nome: ${data.nome}
-Email: ${data.email}
-Telefone: ${data.telefone}
-Chalé Preferido: ${data.chale}
-Check-in: ${data.checkin}
-Check-out: ${data.checkout}
-Adultos: ${data.adultos}
-Crianças: ${data.criancas}
-Mensagem: ${data.mensagem}
-            `);
+        try {
+            // Enviar reserva para a API
+            const resultado = await API.criarReserva(dados);
             
-            window.location.href = `mailto:contato@viladajuda.com?subject=${assunto}&body=${corpo}`;
-            showMessage('Redirecionando para seu cliente de email...', 'success');
+            // Calcular informações para mostrar ao usuário
+            const noites = API.calcularNoites(dados.data_checkin, dados.data_checkout);
+            const checkinFormatado = API.formatarData(dados.data_checkin);
+            const checkoutFormatado = API.formatarData(dados.data_checkout);
+            
+            let mensagemSucesso = `✅ Reserva enviada com sucesso!<br><br>`;
+            mensagemSucesso += `📅 ${checkinFormatado} até ${checkoutFormatado} (${noites} noite${noites > 1 ? 's' : ''})<br>`;
+            
+            if (resultado.reserva.valor_total) {
+                mensagemSucesso += `💰 Valor: ${API.formatarValor(resultado.reserva.valor_total)}<br>`;
+            }
+            
+            mensagemSucesso += `<br>📧 Entraremos em contato em breve no email: ${dados.email_hospede}`;
+            
+            showMessage(mensagemSucesso, 'success');
+            
+            // Limpar formulário
+            formReservaCompleto.reset();
+            
+            // Scroll para o topo
+            setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 2000);
+            
+        } catch (erro) {
+            console.error('Erro ao criar reserva:', erro);
+            
+            let mensagemErro = 'Erro ao enviar reserva: ' + erro.message;
+            
+            // Mensagens de erro mais amigáveis
+            if (erro.message.includes('indisponível')) {
+                mensagemErro = '😔 O chalé selecionado não está disponível para este período. Por favor, escolha outras datas.';
+            } else if (erro.message.includes('capacidade')) {
+                mensagemErro = '⚠️ ' + erro.message;
+            } else if (erro.message.includes('inválido')) {
+                mensagemErro = '⚠️ Por favor, verifique os dados informados.';
+            }
+            
+            showMessage(mensagemErro, 'error');
+            
+        } finally {
             submitButton.disabled = false;
             submitButton.textContent = originalText;
-        } else {
-            // Enviar via EmailJS
-            try {
-                const templateParams = {
-                    from_name: data.nome,
-                    from_email: data.email,
-                    phone: data.telefone,
-                    chale: data.chale,
-                    checkin: data.checkin,
-                    checkout: data.checkout,
-                    adultos: data.adultos,
-                    criancas: data.criancas,
-                    message: data.mensagem,
-                    to_name: 'Renata - Vila d\'Ajuda'
-                };
-                
-                await emailjs.send(
-                    EMAILJS_CONFIG.serviceID,
-                    EMAILJS_CONFIG.templateID,
-                    templateParams
-                );
-                
-                showMessage('Reserva enviada com sucesso! Entraremos em contato em breve.', 'success');
-                formReservaCompleto.reset();
-            } catch (error) {
-                console.error('Erro ao enviar email:', error);
-                showMessage('Erro ao enviar reserva. Por favor, tente novamente ou entre em contato diretamente.', 'error');
-            } finally {
-                submitButton.disabled = false;
-                submitButton.textContent = originalText;
-            }
         }
     });
 }
