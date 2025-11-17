@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -12,17 +12,17 @@
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="http://viladajuda.web213.uni5.net/">
+    <meta property="og:url" content="https://lourealiza.github.io/ViladAjuda/">
     <meta property="og:title" content="Vila d'Ajuda - Chalés em Arraial d'Ajuda">
     <meta property="og:description" content="Seu refúgio em Arraial d'Ajuda: natureza, aconchego e praticidade a 3 quadras do centro">
-    <meta property="og:image" content="http://viladajuda.web213.uni5.net/images/Jardim%20-%20Copia.JPG">
+    <meta property="og:image" content="https://lourealiza.github.io/ViladAjuda/images/Jardim%20-%20Copia.JPG">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="http://viladajuda.web213.uni5.net/">
+    <meta property="twitter:url" content="https://lourealiza.github.io/ViladAjuda/">
     <meta property="twitter:title" content="Vila d'Ajuda - Chalés em Arraial d'Ajuda">
     <meta property="twitter:description" content="Seu refúgio em Arraial d'Ajuda: natureza, aconchego e praticidade a 3 quadras do centro">
-    <meta property="twitter:image" content="http://viladajuda.web213.uni5.net/images/Jardim%20-%20Copia.JPG">
+    <meta property="twitter:image" content="https://lourealiza.github.io/ViladAjuda/images/Jardim%20-%20Copia.JPG">
     
     <title>Vila d'Ajuda - Chalés em Arraial d'Ajuda | Seu Refúgio na Natureza</title>
     
@@ -43,6 +43,20 @@
     <script src="js/api.js"></script>
 </head>
 <body>
+    <!-- Black Friday Banner -->
+    <div id="blackFridayBanner" class="black-friday-banner" style="display: none;">
+        <div class="container">
+            <div class="black-friday-content">
+                <div class="black-friday-text">
+                    <span class="black-friday-label">⚡ BLACK FRIDAY ⚡</span>
+                    <span class="black-friday-desconto">15% OFF</span>
+                    <span class="black-friday-message">Reserve agora e garanta seu desconto especial!</span>
+                </div>
+                <a href="#reserva" class="btn-black-friday">Reservar com Desconto</a>
+            </div>
+        </div>
+    </div>
+
     <!-- Header -->
     <header class="header">
         <nav class="navbar">
@@ -162,6 +176,31 @@
                         <p>Rua tranquila e segura</p>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Avaliações Google -->
+    <section id="avaliacoes" class="avaliacoes">
+        <div class="container">
+            <div class="section-header">
+                <h2>O que nossos hóspedes dizem</h2>
+                <p class="section-subtitle">Avaliações reais do Google Business</p>
+            </div>
+            <div class="avaliacoes-stats" id="avaliacoesStats">
+                <div class="stats-item">
+                    <div class="stats-rating" id="mediaRating">-</div>
+                    <div class="stats-total" id="totalAvaliacoes">- avaliações</div>
+                </div>
+            </div>
+            <div class="avaliacoes-grid" id="avaliacoesGrid">
+                <!-- Avaliações serão carregadas dinamicamente -->
+                <div class="avaliacao-loading">Carregando avaliações...</div>
+            </div>
+            <div class="avaliacoes-link">
+                <a href="https://www.google.com/search?q=Vila+d%27Ajuda+Chal%C3%A9s" target="_blank" class="btn-secondary">
+                    Ver todas as avaliações no Google
+                </a>
             </div>
         </div>
     </section>
@@ -503,7 +542,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 Vila d'Ajuda. Todos os direitos reservados.</p>
+                <p>&copy; 2025 Vila d'Ajuda. Todos os direitos reservados.</p>
             </div>
         </div>
     </footer>

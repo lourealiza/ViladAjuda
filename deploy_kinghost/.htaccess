@@ -1,3 +1,14 @@
+# Proxy reverso para API do backend
+RewriteEngine On
+
+# Proxy para API (com barra)
+RewriteCond %{REQUEST_URI} ^/api/(.*)$
+RewriteRule ^api/(.*)$ http://localhost:3000/api/$1 [P,L]
+
+# Proxy para API (sem barra final)
+RewriteCond %{REQUEST_URI} ^/api$
+RewriteRule ^api$ http://localhost:3000/api [P,L]
+
 # Pagina de erro 404
 ErrorDocument 404 /index.html
 
