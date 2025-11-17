@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Vila d'Ajuda</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/Logo.png">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- API Client -->
+    <script src="js/api.js"></script>
+</head>
+<body>
+    <!-- Tela de Login -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <img src="images/Logo.png" alt="Vila d'Ajuda" class="login-logo">
+                <h1>Área Administrativa</h1>
+                <p>Vila d'Ajuda</p>
+            </div>
+            <form id="loginForm" class="login-form" method="post" action="javascript:void(0);">
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" name="email" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" name="senha" required autocomplete="current-password">
+                </div>
+                <div id="loginError" class="error-message" style="display: none;"></div>
+                <button type="submit" class="btn-login">Entrar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard Admin -->
+    <div id="adminDashboard" class="admin-dashboard" style="display: none;">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="admin-header-content">
+                <div class="admin-logo">
+                    <img src="images/Logo.png" alt="Vila d'Ajuda">
+                    <span>Admin</span>
+                </div>
+                <div class="admin-user">
+                    <span id="userName">Administrador</span>
+                    <button id="logoutBtn" class="btn-logout">Sair</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="admin-nav">
+            <button class="nav-btn active" data-section="dashboard">
+                <span>📊</span> Dashboard
+            </button>
+            <button class="nav-btn" data-section="reservas">
+                <span>📅</span> Reservas
+            </button>
+            <button class="nav-btn" data-section="chales">
+                <span>🏠</span> Chalés
+            </button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Dashboard Section -->
+            <section id="dashboardSection" class="admin-section active">
+                <h2>Dashboard</h2>
+                
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-info">
+                            <h3 id="totalReservas">-</h3>
+                            <p>Total de Reservas</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⏳</div>
+                        <div class="stat-info">
+                            <h3 id="reservasPendentes">-</h3>
+                            <p>Reservas Pendentes</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-info">
+                            <h3 id="reservasConfirmadas">-</h3>
+                            <p>Reservas Confirmadas</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏠</div>
+                        <div class="stat-info">
+                            <h3 id="totalChales">-</h3>
+                            <p>Chalés Cadastrados</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Reservations -->
+                <div class="dashboard-section">
+                    <h3>Reservas Recentes</h3>
+                    <div id="recentReservas" class="reservas-list">
+                        <p class="loading">Carregando...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reservas Section -->
+            <section id="reservasSection" class="admin-section">
+                <div class="section-header">
+                    <h2>Gerenciar Reservas</h2>
+                    <div class="section-filters">
+                        <select id="filterStatus" class="filter-select">
+                            <option value="">Todos os Status</option>
+                            <option value="pendente">Pendente</option>
+                            <option value="confirmada">Confirmada</option>
+                            <option value="cancelada">Cancelada</option>
+                            <option value="concluida">Concluída</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="reservasList" class="reservas-list">
+                    <p class="loading">Carregando reservas...</p>
+                </div>
+            </section>
+
+            <!-- Chalés Section -->
+            <section id="chalesSection" class="admin-section">
+                <div class="section-header">
+                    <h2>Gerenciar Chalés</h2>
+                    <button id="btnNovoChale" class="btn-primary">+ Novo Chalé</button>
+                </div>
+                
+                <div id="chalesList" class="chales-list">
+                    <p class="loading">Carregando chalés...</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal para Editar Reserva -->
+    <div id="modalReserva" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Editar Reserva</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="formEditarReserva" class="modal-form">
+                <input type="hidden" id="reservaId">
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="reservaStatus" required>
+                        <option value="pendente">Pendente</option>
+                        <option value="confirmada">Confirmada</option>
+                        <option value="cancelada">Cancelada</option>
+                        <option value="concluida">Concluída</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Nome do Hóspede</label>
+                    <input type="text" id="reservaNome" required>
+                </div>
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <input type="email" id="reservaEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Telefone</label>
+                    <input type="tel" id="reservaTelefone" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Check-in</label>
+                        <input type="date" id="reservaCheckin" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Check-out</label>
+                        <input type="date" id="reservaCheckout" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Mensagem</label>
+                    <textarea id="reservaMensagem" rows="4"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary modal-close">Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Editar/Criar Chalé -->
+    <div id="modalChale" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalChaleTitle">Novo Chalé</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="formEditarChale" class="modal-form">
+                <input type="hidden" id="chaleId">
+                <div class="form-group">
+                    <label>Nome</label>
+                    <input type="text" id="chaleNome" required>
+                </div>
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <textarea id="chaleDescricao" rows="4" required></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Capacidade Adultos</label>
+                        <input type="number" id="chaleCapacidadeAdultos" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Capacidade Crianças</label>
+                        <input type="number" id="chaleCapacidadeCriancas" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Preço Diária (R$)</label>
+                    <input type="number" id="chalePreco" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="chaleAtivo"> Chalé Ativo
+                    </label>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary modal-close">Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>
+

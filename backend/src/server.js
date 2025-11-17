@@ -6,6 +6,7 @@ require('dotenv').config();
 
 const database = require('./config/database');
 const routes = require('./routes');
+const logAcesso = require('./middleware/logAcesso');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,7 +16,26 @@ app.use(helmet());
 
 // CORS
 const corsOptions = {
-    origin: process.env.FRONTEND_URL || '*',
+    origin: function (origin, callback) {
+        // Em desenvolvimento, aceitar localhost em qualquer porta
+        if (process.env.NODE_ENV === 'development') {
+            if (!origin || origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+                return callback(null, true);
+            }
+        }
+        
+        // Em produção, usar FRONTEND_URL
+        const allowedOrigins = process.env.FRONTEND_URL 
+            ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
+            : ['*'];
+        
+        if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
     optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
@@ -34,6 +54,11 @@ app.use('/api/', limiter);
 // Body parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Middleware de log de acesso (LGPD)
+if (process.env.ENABLE_ACCESS_LOG !== 'false') {
+    app.use('/api', logAcesso);
+}
 
 // Log de requisições (desenvolvimento)
 if (process.env.NODE_ENV === 'development') {

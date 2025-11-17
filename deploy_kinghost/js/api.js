@@ -119,6 +119,17 @@ async function buscarChalesDisponiveis(dataCheckin, dataCheckout) {
     return fetchAPI(`/reservas/disponiveis?data_checkin=${dataCheckin}&data_checkout=${dataCheckout}`);
 }
 
+/**
+ * Busca calendário de disponibilidade para um mês
+ */
+async function buscarCalendarioDisponibilidade(ano, mes, chaleId = null) {
+    let url = `/disponibilidade/calendario?ano=${ano}&mes=${mes}`;
+    if (chaleId) {
+        url += `&chale_id=${chaleId}`;
+    }
+    return fetchAPI(url);
+}
+
 // ==================== AUTENTICAÇÃO (para área admin futura) ====================
 
 /**
@@ -216,6 +227,7 @@ window.API = {
     // Reservas
     criarReserva,
     buscarChalesDisponiveis,
+    buscarCalendarioDisponibilidade,
     
     // Avaliações
     buscarAvaliacoesHomepage,

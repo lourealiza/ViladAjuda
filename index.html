@@ -43,6 +43,20 @@
     <script src="js/api.js"></script>
 </head>
 <body>
+    <!-- Black Friday Banner -->
+    <div id="blackFridayBanner" class="black-friday-banner" style="display: none;">
+        <div class="container">
+            <div class="black-friday-content">
+                <div class="black-friday-text">
+                    <span class="black-friday-label">⚡ BLACK FRIDAY ⚡</span>
+                    <span class="black-friday-desconto">15% OFF</span>
+                    <span class="black-friday-message">Reserve agora e garanta seu desconto especial!</span>
+                </div>
+                <a href="#reserva" class="btn-black-friday">Reservar com Desconto</a>
+            </div>
+        </div>
+    </div>
+
     <!-- Header -->
     <header class="header">
         <nav class="navbar">
@@ -122,6 +136,27 @@
                         <button type="submit" class="btn-check">Verificar Disponibilidade</button>
                     </div>
                 </form>
+                
+                <!-- Calendário de Disponibilidade -->
+                <div class="calendario-wrapper">
+                    <div id="calendarioContainer" class="calendario-container">
+                        <div class="calendario-loading">Carregando calendário...</div>
+                    </div>
+                    <div class="calendario-legend">
+                        <div class="legend-item">
+                            <span class="legend-dot disponivel"></span>
+                            <span>Disponível</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot reservado"></span>
+                            <span>Reservado</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot hoje"></span>
+                            <span>Hoje</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -162,6 +197,31 @@
                         <p>Rua tranquila e segura</p>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Avaliações Google -->
+    <section id="avaliacoes" class="avaliacoes">
+        <div class="container">
+            <div class="section-header">
+                <h2>O que nossos hóspedes dizem</h2>
+                <p class="section-subtitle">Avaliações reais do Google Business</p>
+            </div>
+            <div class="avaliacoes-stats" id="avaliacoesStats">
+                <div class="stats-item">
+                    <div class="stats-rating" id="mediaRating">-</div>
+                    <div class="stats-total" id="totalAvaliacoes">- avaliações</div>
+                </div>
+            </div>
+            <div class="avaliacoes-grid" id="avaliacoesGrid">
+                <!-- Avaliações serão carregadas dinamicamente -->
+                <div class="avaliacao-loading">Carregando avaliações...</div>
+            </div>
+            <div class="avaliacoes-link">
+                <a href="https://www.google.com/search?q=Vila+d%27Ajuda+Chal%C3%A9s" target="_blank" class="btn-secondary">
+                    Ver todas as avaliações no Google
+                </a>
             </div>
         </div>
     </section>
@@ -503,7 +563,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 Vila d'Ajuda. Todos os direitos reservados.</p>
+                <p>&copy; 2025 Vila d'Ajuda. Todos os direitos reservados.</p>
             </div>
         </div>
     </footer>

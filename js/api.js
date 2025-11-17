@@ -1,5 +1,8 @@
 // Configuração da API
-const API_BASE_URL = 'http://localhost:3000/api';
+// Usar URL de produção se estiver em produção, senão localhost
+const API_BASE_URL = window.location.hostname === 'www.viladajuda.com.br' 
+    ? 'https://www.viladajuda.com.br/api'
+    : 'http://localhost:3000/api';
 
 /**
  * Função auxiliar para fazer requisições à API
@@ -30,15 +33,46 @@ async function fetchAPI(endpoint, options = {}) {
     
     try {
         const response = await fetch(url, config);
-        const data = await response.json();
+        
+        // Verificar se a resposta é JSON válido
+        let data;
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+        } else {
+            const text = await response.text();
+            throw new Error(`Resposta inválida do servidor: ${text.substring(0, 100)}`);
+        }
         
         if (!response.ok) {
-            throw new Error(data.mensagem || data.erro || 'Erro na requisição');
+            // Incluir detalhes de validação se existirem
+            let mensagemErro = data.mensagem || data.erro || 'Erro na requisição';
+            
+            if (data.detalhes && Array.isArray(data.detalhes)) {
+                const detalhes = data.detalhes.map(d => `- ${d.campo}: ${d.mensagem}`).join('\n');
+                mensagemErro += '\n\nDetalhes:\n' + detalhes;
+            }
+            
+            // Adicionar código de status à mensagem
+            const erroCompleto = new Error(mensagemErro);
+            erroCompleto.status = response.status;
+            erroCompleto.detalhes = data.detalhes;
+            throw erroCompleto;
         }
         
         return data;
     } catch (erro) {
         console.error('Erro na API:', erro);
+        console.error('URL tentada:', url);
+        
+        // Melhorar mensagens de erro de rede
+        if (erro.name === 'TypeError' && erro.message.includes('fetch')) {
+            const mensagemErro = `Não foi possível conectar ao servidor. Verifique se o backend está rodando em ${API_BASE_URL}`;
+            const erroMelhorado = new Error(mensagemErro);
+            erroMelhorado.tipo = 'CONEXAO';
+            throw erroMelhorado;
+        }
+        
         throw erro;
     }
 }
@@ -83,6 +117,17 @@ async function criarReserva(dados) {
  */
 async function buscarChalesDisponiveis(dataCheckin, dataCheckout) {
     return fetchAPI(`/reservas/disponiveis?data_checkin=${dataCheckin}&data_checkout=${dataCheckout}`);
+}
+
+/**
+ * Busca calendário de disponibilidade para um mês
+ */
+async function buscarCalendarioDisponibilidade(ano, mes, chaleId = null) {
+    let url = `/disponibilidade/calendario?ano=${ano}&mes=${mes}`;
+    if (chaleId) {
+        url += `&chale_id=${chaleId}`;
+    }
+    return fetchAPI(url);
 }
 
 // ==================== AUTENTICAÇÃO (para área admin futura) ====================
@@ -153,8 +198,27 @@ function formatarValor(valor) {
     }).format(valor);
 }
 
+// ==================== AVALIAÇÕES ====================
+
+/**
+ * Busca avaliações para exibir na homepage
+ */
+async function buscarAvaliacoesHomepage(limite = 6) {
+    return fetchAPI(`/avaliacoes/homepage?limite=${limite}`);
+}
+
+/**
+ * Busca estatísticas de avaliações
+ */
+async function buscarEstatisticasAvaliacoes() {
+    return fetchAPI('/avaliacoes/estatisticas');
+}
+
 // Exportar todas as funções para uso global
 window.API = {
+    // Função base
+    fetchAPI,
+    
     // Chalés
     listarChales,
     buscarChale,
@@ -163,6 +227,11 @@ window.API = {
     // Reservas
     criarReserva,
     buscarChalesDisponiveis,
+    buscarCalendarioDisponibilidade,
+    
+    // Avaliações
+    buscarAvaliacoesHomepage,
+    buscarEstatisticasAvaliacoes,
     
     // Autenticação
     login,

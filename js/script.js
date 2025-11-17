@@ -1,3 +1,28 @@
+// Verificar Black Friday e mostrar banner
+function verificarBlackFriday() {
+    // Verificar se há parâmetro na URL para forçar exibição (para testes)
+    const urlParams = new URLSearchParams(window.location.search);
+    const forcarBlackFriday = urlParams.get('blackfriday') === 'true';
+    
+    const hoje = new Date();
+    const mes = hoje.getMonth() + 1; // 1-12
+    const dia = hoje.getDate();
+    
+    // Black Friday: última semana de novembro (20-30) OU se forçar via URL
+    const isBlackFridayPeriod = (mes === 11 && dia >= 20 && dia <= 30) || forcarBlackFriday;
+    
+    if (isBlackFridayPeriod) {
+        const banner = document.getElementById('blackFridayBanner');
+        if (banner) {
+            banner.style.display = 'block';
+            document.body.classList.add('has-black-friday-banner');
+        }
+    }
+}
+
+// Executar verificação ao carregar a página
+verificarBlackFriday();
+
 // Menu Mobile
 const menuToggle = document.querySelector('.menu-toggle');
 const navMenu = document.querySelector('.nav-menu');
@@ -277,6 +302,101 @@ window.addEventListener('scroll', () => {
     lastScroll = currentScroll;
 });
 
+// Carregar avaliações do Google Business
+async function carregarAvaliacoes() {
+    try {
+        const container = document.getElementById('avaliacoesGrid');
+        const mediaRating = document.getElementById('mediaRating');
+        const totalAvaliacoes = document.getElementById('totalAvaliacoes');
+
+        if (!container) return;
+
+        // Mostrar loading
+        container.innerHTML = '<div class="avaliacao-loading">Carregando avaliações...</div>';
+
+        // Buscar avaliações e estatísticas
+        const resultado = await API.buscarAvaliacoesHomepage(6);
+        
+        // A API retorna { avaliacoes: [...], estatisticas: {...} }
+        const avaliacoes = resultado.avaliacoes || resultado;
+        const estatisticas = resultado.estatisticas || await API.buscarEstatisticasAvaliacoes();
+
+        // Atualizar estatísticas
+        if (estatisticas && mediaRating && totalAvaliacoes) {
+            mediaRating.textContent = estatisticas.media ? estatisticas.media.toFixed(1) : '5.0';
+            totalAvaliacoes.textContent = `${estatisticas.total || avaliacoes.length} avaliações`;
+        }
+
+        // Renderizar avaliações
+        if (avaliacoes && Array.isArray(avaliacoes) && avaliacoes.length > 0) {
+            container.innerHTML = avaliacoes.map(avaliacao => `
+                <div class="avaliacao-card">
+                    <div class="avaliacao-header">
+                        <div class="avaliacao-autor">
+                            ${avaliacao.foto_autor 
+                                ? `<img src="${avaliacao.foto_autor}" alt="${avaliacao.nome_autor}" class="avaliacao-foto">`
+                                : `<div class="avaliacao-foto-placeholder">${avaliacao.nome_autor.charAt(0).toUpperCase()}</div>`
+                            }
+                            <div class="avaliacao-info">
+                                <h4>${avaliacao.nome_autor}</h4>
+                                ${avaliacao.data_avaliacao 
+                                    ? `<span class="avaliacao-data">${formatarDataAvaliacao(avaliacao.data_avaliacao)}</span>`
+                                    : ''
+                                }
+                            </div>
+                        </div>
+                        <div class="avaliacao-rating">
+                            ${gerarEstrelas(avaliacao.rating)}
+                        </div>
+                    </div>
+                    ${avaliacao.texto 
+                        ? `<p class="avaliacao-texto">${avaliacao.texto}</p>`
+                        : ''
+                    }
+                    ${avaliacao.origem === 'google_business' 
+                        ? `<span class="avaliacao-badge">Google</span>`
+                        : ''
+                    }
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = '<div class="avaliacao-empty">Nenhuma avaliação disponível no momento.</div>';
+        }
+    } catch (error) {
+        console.error('Erro ao carregar avaliações:', error);
+        const container = document.getElementById('avaliacoesGrid');
+        if (container) {
+            container.innerHTML = '<div class="avaliacao-error">Não foi possível carregar as avaliações. Tente novamente mais tarde.</div>';
+        }
+    }
+}
+
+// Gerar estrelas HTML
+function gerarEstrelas(rating) {
+    let html = '<div class="estrelas">';
+    for (let i = 1; i <= 5; i++) {
+        html += `<span class="estrela ${i <= rating ? 'preenchida' : 'vazia'}">★</span>`;
+    }
+    html += '</div>';
+    return html;
+}
+
+// Formatar data para avaliações
+function formatarDataAvaliacao(dataString) {
+    if (!dataString) return '';
+    const data = new Date(dataString);
+    const meses = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+    return `${data.getDate()} ${meses[data.getMonth()]} ${data.getFullYear()}`;
+}
+
+// Carregar avaliações quando a página carregar
+document.addEventListener('DOMContentLoaded', () => {
+    // Verificar se a seção de avaliações existe
+    if (document.getElementById('avaliacoes')) {
+        carregarAvaliacoes();
+    }
+});
+
 // Definir data mínima para inputs de data (hoje)
 const today = new Date().toISOString().split('T')[0];
 document.querySelectorAll('input[type="date"]').forEach(input => {
@@ -304,6 +424,167 @@ document.querySelectorAll('.chale-card, .feature-item, .galeria-item, .proximida
     el.style.transform = 'translateY(30px)';
     el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
     observer.observe(el);
+});
+
+// Calendário de Disponibilidade
+let calendarioMesAtual = new Date().getMonth() + 1;
+let calendarioAnoAtual = new Date().getFullYear();
+
+async function carregarCalendario() {
+    const container = document.getElementById('calendarioContainer');
+    if (!container) return;
+    
+    try {
+        container.innerHTML = '<div class="calendario-loading">Carregando calendário...</div>';
+        
+        // Carregar 2 meses: atual e próximo
+        const meses = [];
+        for (let i = 0; i < 2; i++) {
+            const mes = calendarioMesAtual + i;
+            const ano = calendarioAnoAtual;
+            let mesAjustado = mes;
+            let anoAjustado = ano;
+            
+            if (mesAjustado > 12) {
+                mesAjustado -= 12;
+                anoAjustado += 1;
+            }
+            
+            meses.push({ mes: mesAjustado, ano: anoAjustado });
+        }
+        
+        const promessas = meses.map(({ mes, ano }) => 
+            API.buscarCalendarioDisponibilidade(ano, mes)
+        );
+        
+        const resultados = await Promise.all(promessas);
+        
+        let html = '<div class="calendario-meses">';
+        
+        resultados.forEach((resultado, index) => {
+            if (!resultado || !resultado.calendario) {
+                console.error('Resultado inválido:', resultado);
+                return;
+            }
+            const { mes, ano, calendario } = resultado;
+            html += renderizarMes(mes, ano, calendario, index === 0);
+        });
+        
+        html += '</div>';
+        container.innerHTML = html;
+        
+    } catch (erro) {
+        console.error('Erro ao carregar calendário:', erro);
+        let mensagemErro = 'Erro ao carregar calendário.';
+        
+        if (erro.tipo === 'CONEXAO') {
+            mensagemErro = 'Não foi possível conectar ao servidor. Verifique se o backend está rodando.';
+        } else if (erro.message) {
+            mensagemErro = erro.message;
+        }
+        
+        container.innerHTML = `<div class="calendario-loading" style="color: #d32f2f;">${mensagemErro}</div>`;
+    }
+}
+
+function renderizarMes(mes, ano, diasCalendario, isPrimeiroMes) {
+    const nomesMeses = [
+        'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    ];
+    
+    const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    const hoje = new Date();
+    const hojeStr = hoje.toISOString().split('T')[0];
+    
+    // Primeiro dia do mês
+    const primeiroDia = new Date(ano, mes - 1, 1);
+    const diaSemanaInicio = primeiroDia.getDay();
+    
+    let html = `
+        <div class="calendario-mes">
+            <div class="calendario-mes-header">
+                <h3 class="calendario-mes-title">${nomesMeses[mes - 1]} ${ano}</h3>
+                ${isPrimeiroMes ? `
+                    <div class="calendario-nav">
+                        <button class="calendario-nav-btn" onclick="calendarioMesAnterior()" ${calendarioMesAtual === new Date().getMonth() + 1 && calendarioAnoAtual === new Date().getFullYear() ? 'disabled' : ''}>‹</button>
+                        <button class="calendario-nav-btn" onclick="calendarioMesProximo()">›</button>
+                    </div>
+                ` : ''}
+            </div>
+            <div class="calendario-dias-semana">
+                ${diasSemana.map(dia => `<div class="calendario-dia-semana">${dia}</div>`).join('')}
+            </div>
+            <div class="calendario-dias">
+    `;
+    
+    // Espaços vazios antes do primeiro dia
+    for (let i = 0; i < diaSemanaInicio; i++) {
+        html += '<div class="calendario-dia vazio"></div>';
+    }
+    
+    // Dias do mês
+    if (!diasCalendario || !Array.isArray(diasCalendario)) {
+        console.error('Calendário inválido:', diasCalendario);
+        return '<div class="calendario-loading">Erro ao processar calendário</div>';
+    }
+    
+    diasCalendario.forEach(diaInfo => {
+        if (!diaInfo) return;
+        
+        const { data, dia, disponivel, reservado, bloqueado } = diaInfo;
+        const isHoje = data === hojeStr;
+        
+        let classes = 'calendario-dia';
+        if (disponivel && !reservado && !bloqueado) {
+            classes += ' disponivel';
+        } else if (reservado) {
+            classes += ' reservado';
+        } else if (bloqueado) {
+            classes += ' bloqueado';
+        }
+        
+        if (isHoje) {
+            classes += ' hoje';
+        }
+        
+        html += `<div class="${classes}" data-data="${data}" title="${data}">${dia}</div>`;
+    });
+    
+    html += `
+            </div>
+        </div>
+    `;
+    
+    return html;
+}
+
+function calendarioMesAnterior() {
+    calendarioMesAtual--;
+    if (calendarioMesAtual < 1) {
+        calendarioMesAtual = 12;
+        calendarioAnoAtual--;
+    }
+    carregarCalendario();
+}
+
+function calendarioMesProximo() {
+    calendarioMesAtual++;
+    if (calendarioMesAtual > 12) {
+        calendarioMesAtual = 1;
+        calendarioAnoAtual++;
+    }
+    carregarCalendario();
+}
+
+// Carregar calendário quando a página carregar
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('calendarioContainer')) {
+        // Aguardar um pouco para garantir que a API está pronta
+        setTimeout(() => {
+            carregarCalendario();
+        }, 500);
+    }
 });
 
 // Lazy loading para imagens

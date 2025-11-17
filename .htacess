@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# Proxy para API
+RewriteCond %{REQUEST_URI} ^/api/(.*)$
+RewriteRule ^api/(.*)$ http://localhost:3000/api/$1 [P,L]
+
+# Proxy para API (sem barra final)
+RewriteCond %{REQUEST_URI} ^/api$
+RewriteRule ^api$ http://localhost:3000/api [P,L]
