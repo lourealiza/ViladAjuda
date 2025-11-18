@@ -184,7 +184,10 @@ async function carregarReservas() {
     container.innerHTML = '<p class="loading">Carregando reservas...</p>';
     
     try {
-        let reservas = await API.fetchAPI('/reservas');
+        const resposta = await API.fetchAPI('/reservas');
+        
+        // A API retorna { total, reservas } ou apenas array
+        let reservas = resposta.reservas || resposta || [];
         
         // Filtrar por status se selecionado
         const filterStatus = document.getElementById('filterStatus').value;
@@ -193,7 +196,11 @@ async function carregarReservas() {
         }
         
         // Ordenar por data de criação (mais recentes primeiro)
-        reservas.sort((a, b) => new Date(b.criado_em) - new Date(a.criado_em));
+        reservas.sort((a, b) => {
+            const dataA = new Date(a.criado_em || a.data_checkin);
+            const dataB = new Date(b.criado_em || b.data_checkin);
+            return dataB - dataA;
+        });
         
         mostrarReservas(reservas);
     } catch (erro) {
@@ -301,9 +308,11 @@ document.getElementById('formEditarReserva').addEventListener('submit', async (e
     e.preventDefault();
     
     const id = document.getElementById('reservaId').value;
-    const dados = {
-        chale_id: parseInt(document.getElementById('reservaChaleId').value),
-        status: document.getElementById('reservaStatus').value,
+    const chaleIdValue = document.getElementById('reservaChaleId').value;
+    
+    // Dados base para criação/edição
+    const dadosBase = {
+        chale_id: chaleIdValue ? parseInt(chaleIdValue) : null,
         nome_hospede: document.getElementById('reservaNome').value,
         email_hospede: document.getElementById('reservaEmail').value,
         telefone_hospede: document.getElementById('reservaTelefone').value,
@@ -316,15 +325,19 @@ document.getElementById('formEditarReserva').addEventListener('submit', async (e
     
     try {
         if (id) {
-            // Atualizar reserva existente
+            // Atualizar reserva existente - incluir status
+            const dadosAtualizacao = {
+                ...dadosBase,
+                status: document.getElementById('reservaStatus').value
+            };
             await API.fetchAPI(`/reservas/${id}`, {
                 method: 'PUT',
-                body: JSON.stringify(dados)
+                body: JSON.stringify(dadosAtualizacao)
             });
             alert('Reserva atualizada com sucesso!');
         } else {
-            // Criar nova reserva
-            await API.criarReserva(dados);
+            // Criar nova reserva - não enviar status (será definido automaticamente)
+            await API.criarReserva(dadosBase);
             alert('Reserva criada com sucesso!');
         }
         
@@ -335,12 +348,18 @@ document.getElementById('formEditarReserva').addEventListener('submit', async (e
         console.error('Erro ao salvar reserva:', erro);
         let mensagemErro = 'Erro ao salvar reserva: ';
         
-        if (erro.message.includes('disponibilidade') || erro.message.includes('indisponível')) {
+        // Verificar se há detalhes de validação
+        if (erro.detalhes && Array.isArray(erro.detalhes)) {
+            const detalhes = erro.detalhes.map(d => `${d.campo}: ${d.mensagem}`).join('\n');
+            mensagemErro = '❌ Erro de validação:\n' + detalhes;
+        } else if (erro.message.includes('disponibilidade') || erro.message.includes('indisponível')) {
             mensagemErro = '❌ O chalé não está disponível para as datas selecionadas.';
         } else if (erro.message.includes('diária mínima')) {
             mensagemErro = '❌ A estadia mínima é de 2 dias.';
         } else if (erro.message.includes('400') || erro.message.includes('inválido')) {
             mensagemErro = '❌ Dados inválidos. Verifique se todos os campos estão preenchidos corretamente.';
+        } else if (erro.message.includes('CONEXAO')) {
+            mensagemErro = '❌ Não foi possível conectar ao servidor. Verifique se o backend está rodando.';
         } else {
             mensagemErro += erro.message || 'Erro desconhecido';
         }
