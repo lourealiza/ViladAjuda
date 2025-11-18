@@ -64,6 +64,8 @@ body {
     justify-content: space-between;
     align-items: center;
     gap: 2rem;
+    min-height: 40px;
+    padding: 0;
 }
 
 .black-friday-text {
@@ -71,6 +73,7 @@ body {
     align-items: center;
     gap: 1.5rem;
     flex-wrap: wrap;
+    flex: 1;
 }
 
 .black-friday-label {
@@ -141,7 +144,7 @@ body {
 
 /* Ajustar header quando banner está visível */
 body.has-black-friday-banner .header {
-    top: 60px;
+    top: 64px !important;
 }
 
 @media (max-width: 768px) {

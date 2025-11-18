@@ -608,10 +608,21 @@ body {
 .modal-actions {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
     gap: 15px;
     margin-top: 25px;
     padding-top: 25px;
     border-top: 1px solid var(--border-color);
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+.modal-actions button {
+    flex: 0 0 auto;
+    min-width: 100px;
+    position: static !important;
+    margin: 0 !important;
+    z-index: auto !important;
 }
 
 /* ==================== LOADING & EMPTY STATES ==================== */
