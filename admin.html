@@ -121,14 +121,17 @@
             <section id="reservasSection" class="admin-section">
                 <div class="section-header">
                     <h2>Gerenciar Reservas</h2>
-                    <div class="section-filters">
-                        <select id="filterStatus" class="filter-select">
-                            <option value="">Todos os Status</option>
-                            <option value="pendente">Pendente</option>
-                            <option value="confirmada">Confirmada</option>
-                            <option value="cancelada">Cancelada</option>
-                            <option value="concluida">Concluída</option>
-                        </select>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <div class="section-filters">
+                            <select id="filterStatus" class="filter-select">
+                                <option value="">Todos os Status</option>
+                                <option value="pendente">Pendente</option>
+                                <option value="confirmada">Confirmada</option>
+                                <option value="cancelada">Cancelada</option>
+                                <option value="concluida">Concluída</option>
+                            </select>
+                        </div>
+                        <button id="btnNovaReserva" class="btn-primary">+ Nova Reserva</button>
                     </div>
                 </div>
                 
@@ -151,18 +154,25 @@
         </main>
     </div>
 
-    <!-- Modal para Editar Reserva -->
+    <!-- Modal para Editar/Criar Reserva -->
     <div id="modalReserva" class="modal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Editar Reserva</h3>
+                <h3 id="modalReservaTitle">Editar Reserva</h3>
                 <button class="modal-close">&times;</button>
             </div>
             <form id="formEditarReserva" class="modal-form">
                 <input type="hidden" id="reservaId">
                 <div class="form-group">
+                    <label>Chalé</label>
+                    <select id="reservaChaleId" required>
+                        <option value="">Selecione um chalé</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label>Status</label>
                     <select id="reservaStatus" required>
+                        <option value="solicitacao_recebida">Solicitação Recebida</option>
                         <option value="pendente">Pendente</option>
                         <option value="confirmada">Confirmada</option>
                         <option value="cancelada">Cancelada</option>
@@ -191,8 +201,18 @@
                         <input type="date" id="reservaCheckout" required>
                     </div>
                 </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nº Adultos</label>
+                        <input type="number" id="reservaNumAdultos" min="1" value="2" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nº Crianças</label>
+                        <input type="number" id="reservaNumCriancas" min="0" value="0">
+                    </div>
+                </div>
                 <div class="form-group">
-                    <label>Mensagem</label>
+                    <label>Mensagem/Observações</label>
                     <textarea id="reservaMensagem" rows="4"></textarea>
                 </div>
                 <div class="modal-actions">

@@ -3,13 +3,20 @@ function verificarBlackFriday() {
     // Verificar se há parâmetro na URL para forçar exibição (para testes)
     const urlParams = new URLSearchParams(window.location.search);
     const forcarBlackFriday = urlParams.get('blackfriday') === 'true';
+    const esconderBlackFriday = urlParams.get('blackfriday') === 'false';
     
     const hoje = new Date();
     const mes = hoje.getMonth() + 1; // 1-12
     const dia = hoje.getDate();
+    const ano = hoje.getFullYear();
     
-    // Black Friday: última semana de novembro (20-30) OU se forçar via URL
-    const isBlackFridayPeriod = (mes === 11 && dia >= 20 && dia <= 30) || forcarBlackFriday;
+    // Banner aparece sempre até 28 de novembro, depois para de aparecer
+    // Data limite: 29 de novembro (não mostra mais)
+    const dataLimite = new Date(ano, 10, 29); // 29 de novembro (mês 10 = novembro, pois começa em 0)
+    const isAntesDaDataLimite = hoje < dataLimite;
+    
+    // Black Friday: mostrar sempre até 28 de novembro, ou se forçar via URL
+    const isBlackFridayPeriod = (isAntesDaDataLimite || forcarBlackFriday) && !esconderBlackFriday;
     
     if (isBlackFridayPeriod) {
         const banner = document.getElementById('blackFridayBanner');

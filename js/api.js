@@ -83,14 +83,18 @@ async function fetchAPI(endpoint, options = {}) {
  * Lista todos os chalés ativos
  */
 async function listarChales() {
-    return fetchAPI('/chales?ativo=true');
+    const resposta = await fetchAPI('/chales?ativo=true');
+    // A API retorna { total, chales }, mas precisamos apenas do array
+    return resposta.chales || resposta || [];
 }
 
 /**
  * Busca um chalé específico por ID
  */
 async function buscarChale(id) {
-    return fetchAPI(`/chales/${id}`);
+    const resposta = await fetchAPI(`/chales/${id}`);
+    // A API retorna { chale }, então extraímos o objeto
+    return resposta.chale || resposta;
 }
 
 /**
