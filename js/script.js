@@ -28,7 +28,8 @@ function verificarBlackFriday() {
 }
 
 // Executar verificação ao carregar a página
-verificarBlackFriday();
+// TEMPORARIAMENTE DESABILITADO - Banner Black Friday
+// verificarBlackFriday();
 
 // Menu Mobile
 const menuToggle = document.querySelector('.menu-toggle');
@@ -321,8 +322,8 @@ async function carregarAvaliacoes() {
         // Mostrar loading
         container.innerHTML = '<div class="avaliacao-loading">Carregando avaliações...</div>';
 
-        // Buscar avaliações e estatísticas
-        const resultado = await API.buscarAvaliacoesHomepage(6);
+        // Buscar avaliações e estatísticas (apenas 3)
+        const resultado = await API.buscarAvaliacoesHomepage(3);
         
         // A API retorna { avaliacoes: [...], estatisticas: {...} }
         const avaliacoes = resultado.avaliacoes || resultado;
@@ -444,9 +445,9 @@ async function carregarCalendario() {
     try {
         container.innerHTML = '<div class="calendario-loading">Carregando calendário...</div>';
         
-        // Carregar 2 meses: atual e próximo
+        // Carregar apenas 1 mês (o atual)
         const meses = [];
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < 1; i++) {
             const mes = calendarioMesAtual + i;
             const ano = calendarioAnoAtual;
             let mesAjustado = mes;
@@ -512,12 +513,10 @@ function renderizarMes(mes, ano, diasCalendario, isPrimeiroMes) {
         <div class="calendario-mes">
             <div class="calendario-mes-header">
                 <h3 class="calendario-mes-title">${nomesMeses[mes - 1]} ${ano}</h3>
-                ${isPrimeiroMes ? `
-                    <div class="calendario-nav">
-                        <button class="calendario-nav-btn" onclick="calendarioMesAnterior()" ${calendarioMesAtual === new Date().getMonth() + 1 && calendarioAnoAtual === new Date().getFullYear() ? 'disabled' : ''}>‹</button>
-                        <button class="calendario-nav-btn" onclick="calendarioMesProximo()">›</button>
-                    </div>
-                ` : ''}
+                <div class="calendario-nav">
+                    <button class="calendario-nav-btn" onclick="calendarioMesAnterior()" ${calendarioMesAtual === new Date().getMonth() + 1 && calendarioAnoAtual === new Date().getFullYear() ? 'disabled' : ''}>‹</button>
+                    <button class="calendario-nav-btn" onclick="calendarioMesProximo()">›</button>
+                </div>
             </div>
             <div class="calendario-dias-semana">
                 ${diasSemana.map(dia => `<div class="calendario-dia-semana">${dia}</div>`).join('')}
@@ -539,8 +538,15 @@ function renderizarMes(mes, ano, diasCalendario, isPrimeiroMes) {
     diasCalendario.forEach(diaInfo => {
         if (!diaInfo) return;
         
-        const { data, dia, disponivel, reservado, bloqueado } = diaInfo;
+        const { data, disponivel, reservas, bloqueios } = diaInfo;
         const isHoje = data === hojeStr;
+        
+        // Extrair o dia da data (formato: YYYY-MM-DD)
+        const dia = parseInt(data.split('-')[2]);
+        
+        // Verificar se está disponível, reservado ou bloqueado
+        const reservado = reservas && reservas.length > 0;
+        const bloqueado = bloqueios && bloqueios.length > 0;
         
         let classes = 'calendario-dia';
         if (disponivel && !reservado && !bloqueado) {
