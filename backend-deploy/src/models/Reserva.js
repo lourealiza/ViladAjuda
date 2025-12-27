@@ -125,7 +125,7 @@ class Reserva {
             SELECT r.*, c.nome as chale_nome
             FROM reservas r
             LEFT JOIN chales c ON r.chale_id = c.id
-            WHERE r.status IN ('confirmada', 'aguardando_pagamento', 'solicitacao_recebida', 'checkin_realizado')
+            WHERE r.status IN ('confirmada', 'checkin_realizado')
             AND (
                 (r.data_checkin >= ? AND r.data_checkin < ?) OR
                 (r.data_checkout > ? AND r.data_checkout <= ?) OR
@@ -260,7 +260,7 @@ class Reserva {
             AND c.id NOT IN (
                 SELECT r.chale_id
                 FROM reservas r
-                WHERE r.status IN ('confirmada', 'aguardando_pagamento', 'solicitacao_recebida', 'checkin_realizado')
+                WHERE r.status IN ('confirmada', 'checkin_realizado')
                 AND (
                     (r.data_checkin <= ? AND r.data_checkout > ?) OR
                     (r.data_checkin < ? AND r.data_checkout >= ?) OR

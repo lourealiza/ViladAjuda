@@ -94,7 +94,7 @@ class Chale {
             SELECT COUNT(*) as count
             FROM reservas
             WHERE chale_id = ?
-            AND status IN ('confirmada', 'aguardando_pagamento', 'solicitacao_recebida', 'checkin_realizado')
+            AND status IN ('confirmada', 'checkin_realizado')
             AND (
                 (data_checkin <= ? AND data_checkout > ?) OR
                 (data_checkin < ? AND data_checkout >= ?) OR

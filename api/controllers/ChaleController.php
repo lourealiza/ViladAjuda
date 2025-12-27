@@ -137,7 +137,7 @@ class ChaleController {
         $sqlReservas = "
             SELECT * FROM reservas 
             WHERE chale_id = ? 
-            AND status NOT IN ('cancelada')
+            AND status = 'confirmada'
             AND (
                 (data_checkin <= ? AND data_checkout > ?) OR
                 (data_checkin < ? AND data_checkout >= ?) OR

@@ -59,7 +59,7 @@ class DisponibilidadeController {
             $sqlReservas = "
                 SELECT COUNT(*) as total FROM reservas 
                 WHERE chale_id = ? 
-                AND status NOT IN ('cancelada')
+                AND status = 'confirmada'
                 AND (
                     (data_checkin <= ? AND data_checkout > ?) OR
                     (data_checkin < ? AND data_checkout >= ?) OR
@@ -117,7 +117,7 @@ class DisponibilidadeController {
                 c.nome as chale_nome
             FROM reservas r
             JOIN chales c ON r.chale_id = c.id
-            WHERE r.status NOT IN ('cancelada')
+            WHERE r.status = 'confirmada'
             AND (
                 (r.data_checkin <= ? AND r.data_checkout >= ?) OR
                 (r.data_checkin >= ? AND r.data_checkin <= ?)

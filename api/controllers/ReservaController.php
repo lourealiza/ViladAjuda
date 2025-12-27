@@ -57,7 +57,7 @@ class ReservaController {
             $sqlReservas = "
                 SELECT COUNT(*) as total FROM reservas 
                 WHERE chale_id = ? 
-                AND status NOT IN ('cancelada')
+                AND status = 'confirmada'
                 AND (
                     (data_checkin <= ? AND data_checkout > ?) OR
                     (data_checkin < ? AND data_checkout >= ?) OR
@@ -140,7 +140,7 @@ class ReservaController {
         $sqlVerificar = "
             SELECT COUNT(*) as total FROM reservas 
             WHERE chale_id = ? 
-            AND status NOT IN ('cancelada')
+            AND status = 'confirmada'
             AND (
                 (data_checkin <= ? AND data_checkout > ?) OR
                 (data_checkin < ? AND data_checkout >= ?) OR
