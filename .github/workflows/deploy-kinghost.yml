@@ -158,10 +158,47 @@ jobs:
           dry-run: false
           log-level: verbose
       
+      - name: Deploy Backend Node.js to KingHost
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.KINGHOST_FTP_HOST }}
+          username: ${{ secrets.KINGHOST_FTP_USER }}
+          password: ${{ secrets.KINGHOST_FTP_PASSWORD }}
+          server-dir: ./viladajuda/backend/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.env*
+            **/.env.example
+            **/logs/**
+            **/*.log
+            **/coverage/**
+            **/.nyc_output/**
+            **/test/**
+            **/tests/**
+            **/__tests__/**
+            **/*.test.js
+            **/*.spec.js
+            **/README*.md
+            **/DEPLOY*.md
+            **/INSTALL*.md
+          local-dir: ./backend/
+          dangerous-clean-slate: false
+          dry-run: false
+          log-level: verbose
+      
       - name: Deployment Summary
         run: |
           echo "✅ Deploy concluído com sucesso!"
           echo "🌐 Site: https://www.viladajuda.com.br/"
           echo "📡 API: https://www.viladajuda.com.br/api/"
-          echo "📁 Diretório: ~/www/"
+          echo "📁 Frontend: ~/www/"
+          echo "📁 API PHP: ~/www/api/"
+          echo "📁 Backend Node.js: ~/viladajuda/backend/"
+          echo ""
+          echo "⚠️  IMPORTANTE: Após o deploy do backend, conecte via SSH e execute:"
+          echo "   cd ~/viladajuda/backend"
+          echo "   npm install --production"
+          echo "   pm2 restart viladajuda-api || pm2 start src/server.js --name viladajuda-api"
 
