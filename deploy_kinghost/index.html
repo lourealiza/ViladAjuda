@@ -120,13 +120,19 @@
             <div class="reserva-box">
                 <h3>Verificar Disponibilidade</h3>
                 <form class="form-reserva" id="formReserva">
-                    <div class="form-group">
+                    <div class="form-group form-group-date">
                         <label>Data de Entrada</label>
-                        <input type="date" name="checkin" required>
+                        <div class="date-input-wrapper">
+                            <input type="text" name="checkin" id="checkinInput" class="date-input" placeholder="Insira as datas" readonly required>
+                            <input type="hidden" name="checkin" id="checkinHidden">
+                        </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group form-group-date">
                         <label>Data de Saída</label>
-                        <input type="date" name="checkout" required>
+                        <div class="date-input-wrapper">
+                            <input type="text" name="checkout" id="checkoutInput" class="date-input" placeholder="Insira as datas" readonly required>
+                            <input type="hidden" name="checkout" id="checkoutHidden">
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Adultos</label>
@@ -152,23 +158,25 @@
                     </div>
                 </form>
                 
-                <!-- Calendário de Disponibilidade -->
-                <div class="calendario-wrapper">
-                    <div id="calendarioContainer" class="calendario-container">
-                        <div class="calendario-loading">Carregando calendário...</div>
-                    </div>
-                    <div class="calendario-legend">
-                        <div class="legend-item">
-                            <span class="legend-dot disponivel"></span>
-                            <span>Disponível</span>
+                <!-- Calendário Pop-up -->
+                <div id="datepickerPopup" class="datepicker-popup" style="display: none;">
+                    <div class="datepicker-popup-content">
+                        <div id="calendarioContainer" class="calendario-container">
+                            <div class="calendario-loading">Carregando calendário...</div>
                         </div>
-                        <div class="legend-item">
-                            <span class="legend-dot reservado"></span>
-                            <span>Reservado</span>
-                        </div>
-                        <div class="legend-item">
-                            <span class="legend-dot hoje"></span>
-                            <span>Hoje</span>
+                        <div class="calendario-legend">
+                            <div class="legend-item">
+                                <span class="legend-dot disponivel"></span>
+                                <span>Disponível</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot reservado"></span>
+                                <span>Reservado</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot hoje"></span>
+                                <span>Hoje</span>
+                            </div>
                         </div>
                     </div>
                 </div>
