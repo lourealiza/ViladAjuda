@@ -1,0 +1,33 @@
+================================================
+CONFIGURAÇÃO DO BANCO DE DADOS - URGENTE!
+================================================
+
+Você precisa editar o arquivo: database.php
+
+1. Acesse o painel da KingHost:
+   https://painel.kinghost.com.br
+
+2. Vá em "MySQL" e anote:
+   - Host do MySQL (geralmente: localhost ou mysql.kinghost.net)
+   - Usuário do MySQL
+   - Senha do MySQL
+   - Nome do banco de dados
+
+3. Abra o arquivo database.php no FileZilla:
+   - Botão direito no arquivo → Ver/Editar
+   
+4. Edite estas linhas:
+
+   define('DB_HOST', 'localhost');           ← Trocar
+   define('DB_USER', 'viladajuda');          ← Trocar
+   define('DB_PASS', 'arraial2026');         ← Trocar
+   define('DB_NAME', 'viladajuda');          ← Trocar
+
+5. Salve e feche (FileZilla vai fazer upload automático)
+
+================================================
+
+DICA: Se não tiver banco de dados criado ainda:
+- Crie um novo banco chamado "viladajuda" no painel
+- Importe as tabelas (veja README_INSTALACAO.md)
+

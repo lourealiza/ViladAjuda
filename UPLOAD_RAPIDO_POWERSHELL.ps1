@@ -40,17 +40,34 @@ try {
 } catch {
     Write-Host "[AVISO] Tentando carregar Posh-SSH novamente..." -ForegroundColor Yellow
     Start-Sleep -Seconds 2
-    Import-Module Posh-SSH -Force -ErrorAction Stop
+    try {
+        Import-Module Posh-SSH -Force -ErrorAction Stop
+        Write-Host "[OK] Posh-SSH carregado na segunda tentativa!" -ForegroundColor Green
+    } catch {
+        Write-Host "[ERRO] Nao foi possivel carregar Posh-SSH!" -ForegroundColor Red
+        Write-Host "       Tente executar manualmente:" -ForegroundColor Yellow
+        Write-Host "       Install-Module -Name Posh-SSH -Scope CurrentUser -Force" -ForegroundColor White
+        Write-Host "       Import-Module Posh-SSH" -ForegroundColor White
+        Write-Host ""
+        Write-Host "       OU use FileZilla para fazer upload manualmente." -ForegroundColor Yellow
+        exit 1
+    }
 }
 
-# Verificar se módulo foi carregado
-if (-not (Get-Command Set-SFTPFile -ErrorAction SilentlyContinue)) {
-    Write-Host "[ERRO] Posh-SSH nao foi carregado corretamente!" -ForegroundColor Red
-    Write-Host "       Tente executar manualmente:" -ForegroundColor Yellow
-    Write-Host "       Import-Module Posh-SSH" -ForegroundColor White
-    Write-Host ""
-    Write-Host "       OU use FileZilla para fazer upload manualmente." -ForegroundColor Yellow
-    exit 1
+# Verificar se módulo foi carregado - usar Set-SFTPItem (comando correto)
+$sftpCommand = Get-Command Set-SFTPItem -ErrorAction SilentlyContinue
+if (-not $sftpCommand) {
+    # Tentar verificar se o módulo está carregado de outra forma
+    $moduleLoaded = Get-Module -Name Posh-SSH
+    if (-not $moduleLoaded) {
+        Write-Host "[ERRO] Posh-SSH nao foi carregado corretamente!" -ForegroundColor Red
+        Write-Host "       Tente executar manualmente:" -ForegroundColor Yellow
+        Write-Host "       Import-Module Posh-SSH" -ForegroundColor White
+        Write-Host ""
+        Write-Host "       OU use FileZilla para fazer upload manualmente." -ForegroundColor Yellow
+        Write-Host "       Arquivos prontos na pasta: deploy_kinghost\" -ForegroundColor Cyan
+        exit 1
+    }
 }
 
 Write-Host ""
@@ -107,13 +124,29 @@ try {
             $remotePath = "$srcRemote/$relativePath".Replace('\', '/')
             $remoteDir = Split-Path $remotePath -Parent
             
-            # Criar diretório remoto se necessário
-            try {
-                New-SFTPItem -SessionId $session.SessionId -Path $remoteDir -ItemType Directory -Force | Out-Null
-            } catch { }
+            # Criar diretório remoto se necessário (criar recursivamente)
+            if ($remoteDir -and $remoteDir -ne $srcRemote) {
+                $dirParts = $remoteDir.Replace($srcRemote, '').TrimStart('/').Split('/')
+                $currentPath = $srcRemote
+                foreach ($part in $dirParts) {
+                    if ($part) {
+                        $currentPath = "$currentPath/$part"
+                        try {
+                            $dirExists = Test-SFTPPath -SFTPSession $session -Path $currentPath
+                            if (-not $dirExists) {
+                                New-SFTPItem -SessionId $session.SessionId -Path $currentPath -ItemType Directory -Force | Out-Null
+                            }
+                        } catch { }
+                    }
+                }
+            }
             
             # Enviar arquivo
-            Set-SFTPFile -SessionId $session.SessionId -LocalFile $arquivo.FullName -RemotePath $remotePath -Overwrite | Out-Null
+            try {
+                Set-SFTPItem -SessionId $session.SessionId -Path $arquivo.FullName -Destination $remotePath -Force | Out-Null
+            } catch {
+                Write-Host "   [ERRO] Falha ao enviar: $relativePath" -ForegroundColor Red
+            }
             
             if ($contador % 10 -eq 0) {
                 $progressStr = "[$contador/$total]"
@@ -130,7 +163,7 @@ try {
     # Enviar package.json
     $packageJson = "D:\007-Vila-DAjuda\backend\package.json"
     if (Test-Path $packageJson) {
-        Set-SFTPFile -SessionId $session.SessionId -LocalFile $packageJson -RemotePath "/home/viladajuda/viladajuda/backend/package.json" -Overwrite | Out-Null
+        Set-SFTPItem -SessionId $session.SessionId -Path $packageJson -Destination "/home/viladajuda/viladajuda/backend/package.json" -Force | Out-Null
         Write-Host "   [OK] package.json enviado!" -ForegroundColor Green
     }
     
@@ -142,12 +175,7 @@ try {
     
     Write-Host "[*] Enviando FRONTEND..." -ForegroundColor Cyan
     
-    # index.html
-    $indexHtml = "D:\007-Vila-DAjuda\index.html"
-    if (Test-Path $indexHtml) {
-        Set-SFTPFile -SessionId $session.SessionId -LocalFile $indexHtml -RemotePath "/www/index.html" -Overwrite | Out-Null
-        Write-Host "   [OK] index.html" -ForegroundColor Gray
-    }
+    # index.html - já enviado acima
     
     # js/api.js
     $apiJs = "D:\007-Vila-DAjuda\js\api.js"
@@ -155,25 +183,53 @@ try {
         try {
             New-SFTPItem -SessionId $session.SessionId -Path "/www/js" -ItemType Directory -Force | Out-Null
         } catch { }
-        Set-SFTPFile -SessionId $session.SessionId -LocalFile $apiJs -RemotePath "/www/js/api.js" -Overwrite | Out-Null
+        Set-SFTPItem -SessionId $session.SessionId -Path $apiJs -Destination "/www/js/api.js" -Force | Out-Null
         Write-Host "   [OK] js/api.js" -ForegroundColor Gray
     }
     
     # js/script.js
     $scriptJs = "D:\007-Vila-DAjuda\js\script.js"
     if (Test-Path $scriptJs) {
-        Set-SFTPFile -SessionId $session.SessionId -LocalFile $scriptJs -RemotePath "/www/js/script.js" -Overwrite | Out-Null
+        Set-SFTPItem -SessionId $session.SessionId -Path $scriptJs -Destination "/www/js/script.js" -Force | Out-Null
         Write-Host "   [OK] js/script.js" -ForegroundColor Gray
     }
     
-    # css/style.css
-    $styleCss = "D:\007-Vila-DAjuda\css\style.css"
+    # css/style.css - usar deploy_kinghost
+    $styleCss = "deploy_kinghost\css\style.css"
     if (Test-Path $styleCss) {
         try {
             New-SFTPItem -SessionId $session.SessionId -Path "/www/css" -ItemType Directory -Force | Out-Null
         } catch { }
-        Set-SFTPFile -SessionId $session.SessionId -LocalFile $styleCss -RemotePath "/www/css/style.css" -Overwrite | Out-Null
+        $cssPath = Resolve-Path $styleCss
+        Set-SFTPItem -SessionId $session.SessionId -Path $cssPath -Destination "/www/css/style.css" -Force | Out-Null
         Write-Host "   [OK] css/style.css" -ForegroundColor Gray
+    } else {
+        # Tentar caminho alternativo
+        $styleCssAlt = "css\style.css"
+        if (Test-Path $styleCssAlt) {
+            try {
+                New-SFTPItem -SessionId $session.SessionId -Path "/www/css" -ItemType Directory -Force | Out-Null
+            } catch { }
+            $cssPath = Resolve-Path $styleCssAlt
+            Set-SFTPItem -SessionId $session.SessionId -Path $cssPath -Destination "/www/css/style.css" -Force | Out-Null
+            Write-Host "   [OK] css/style.css (alternativo)" -ForegroundColor Gray
+        }
+    }
+    
+    # index.html - usar deploy_kinghost
+    $indexHtml = "deploy_kinghost\index.html"
+    if (Test-Path $indexHtml) {
+        $htmlPath = Resolve-Path $indexHtml
+        Set-SFTPItem -SessionId $session.SessionId -Path $htmlPath -Destination "/www/index.html" -Force | Out-Null
+        Write-Host "   [OK] index.html" -ForegroundColor Gray
+    } else {
+        # Tentar caminho alternativo
+        $indexHtmlAlt = "index.html"
+        if (Test-Path $indexHtmlAlt) {
+            $htmlPath = Resolve-Path $indexHtmlAlt
+            Set-SFTPItem -SessionId $session.SessionId -Path $htmlPath -Destination "/www/index.html" -Force | Out-Null
+            Write-Host "   [OK] index.html (alternativo)" -ForegroundColor Gray
+        }
     }
     
     Write-Host "   [OK] Frontend enviado!" -ForegroundColor Green
