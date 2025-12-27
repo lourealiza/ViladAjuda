@@ -19,17 +19,22 @@ jobs:
         run: |
           if [ -z "${{ secrets.KINGHOST_FTP_HOST }}" ]; then
             echo "❌ Erro: KINGHOST_FTP_HOST não configurado"
+            echo "Por favor, configure o secret KINGHOST_FTP_HOST em Settings → Secrets and variables → Actions"
             exit 1
           fi
           if [ -z "${{ secrets.KINGHOST_FTP_USER }}" ]; then
             echo "❌ Erro: KINGHOST_FTP_USER não configurado"
+            echo "Por favor, configure o secret KINGHOST_FTP_USER em Settings → Secrets and variables → Actions"
             exit 1
           fi
           if [ -z "${{ secrets.KINGHOST_FTP_PASSWORD }}" ]; then
             echo "❌ Erro: KINGHOST_FTP_PASSWORD não configurado"
+            echo "Por favor, configure o secret KINGHOST_FTP_PASSWORD em Settings → Secrets and variables → Actions"
             exit 1
           fi
           echo "✅ Todos os secrets estão configurados"
+          echo "📡 Host: ${{ secrets.KINGHOST_FTP_HOST }}"
+          echo "👤 Usuário: ${{ secrets.KINGHOST_FTP_USER }}"
       
       - name: Deploy to KingHost via SFTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
