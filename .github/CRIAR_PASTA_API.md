@@ -15,10 +15,11 @@ O usuário FTP não tem permissão para criar diretórios automaticamente. É ne
    - Porta: `21`
 
 2. **Navegue até o diretório:**
-   - Vá para: `/home/viladajuda/public_html/`
+   - Vá para: `/www/`
 
-3. **Crie a pasta `api/`:**
-   - Clique com botão direito no diretório `public_html/`
+3. **Verifique se a pasta `api/` já existe:**
+   - A pasta `api/` já deve existir em `/www/`
+   - Se não existir, clique com botão direito no diretório `/www/`
    - Selecione "Criar diretório"
    - Digite: `api`
    - Pressione Enter
@@ -33,14 +34,14 @@ O usuário FTP não tem permissão para criar diretórios automaticamente. É ne
 
 1. **Acesse:** http://webftp.realizahost.com.br/
 2. **Faça login** com as credenciais FTP
-3. **Navegue** até `/home/viladajuda/public_html/`
+3. **Navegue** até `/www/`
 4. **Crie** a pasta `api/` e as subpastas
 
 ### Opção 3: Via Painel KingHost
 
 1. **Acesse:** https://painel.kinghost.com.br
 2. **Vá em:** Gerenciador de Arquivos
-3. **Navegue** até `public_html/`
+3. **Navegue** até `/www/`
 4. **Crie** a pasta `api/` e as subpastas
 
 ## ✅ Após Criar as Pastas
@@ -54,7 +55,7 @@ Depois de criar as pastas manualmente:
 ## 📝 Estrutura de Pastas Necessária
 
 ```
-/home/viladajuda/public_html/
+/www/
 ├── api/
 │   ├── config/
 │   ├── controllers/

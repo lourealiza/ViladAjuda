@@ -72,6 +72,11 @@ Após configurar os 3 secrets:
 ## 🔍 Verificar se Funcionou
 
 Após o deploy, acesse:
-- **Site**: http://viladajuda.web213.uni5.net/
-- **API**: http://viladajuda.web213.uni5.net/api/
+- **Site**: https://www.viladajuda.com.br/
+- **API**: https://www.viladajuda.com.br/api/
+
+## 📁 Caminho do Servidor
+
+O diretório correto no servidor é `/www/` (não `/home/viladajuda/public_html/`).
+A pasta `api/` já existe neste diretório.
 
