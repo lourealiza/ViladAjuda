@@ -115,15 +115,17 @@ O Vercel deve ver:
 ```
 backend/
 ├── api/
-│   └── index.js          ← Handler do Vercel
+│   └── index.js          ← Handler do Vercel (detectado automaticamente)
 ├── src/
 │   ├── server.js         ← App Express
 │   └── ...
 ├── package.json
-└── vercel.json           ← Configuração
+└── vercel.json           ← Configuração simplificada (sem builds)
 ```
 
 **Root Directory**: `backend/`
+
+**Nota**: O Vercel detecta automaticamente funções serverless na pasta `api/`. Não precisa mais de `builds` no `vercel.json`.
 
 ---
 
