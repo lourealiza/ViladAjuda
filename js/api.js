@@ -128,8 +128,8 @@ async function buscarChalesDisponiveis(dataCheckin, dataCheckout) {
 /**
  * Calcula o preço de uma reserva baseado nas temporadas
  */
-async function calcularPrecoReserva(dataCheckin, dataCheckout) {
-    return fetchAPI(`/reservas/calcular-preco?data_checkin=${dataCheckin}&data_checkout=${dataCheckout}`);
+async function calcularPrecoReserva(dataCheckin, dataCheckout, numAdultos = 2) {
+    return fetchAPI(`/reservas/calcular-preco?data_checkin=${dataCheckin}&data_checkout=${dataCheckout}&num_adultos=${numAdultos}`);
 }
 
 /**

@@ -83,12 +83,17 @@ class ReservaController {
                 
                 // Calcular preço usando sistema de temporadas
                 require_once __DIR__ . '/../config/temporadas.php';
-                $calculoEstadia = calcularValorEstadia($dataCheckin, $dataCheckout);
+                $numAdultos = $_GET['num_adultos'] ?? 2;
+                $calculoEstadia = calcularValorEstadia($dataCheckin, $dataCheckout, $numAdultos);
                 
                 // Adicionar informações de preço ao chalé
                 $chale['preco_diaria_media'] = $calculoEstadia['valor_medio_diaria'];
                 $chale['preco_total'] = $calculoEstadia['valor_total'];
                 $chale['numero_noites'] = $calculoEstadia['numero_noites'];
+                $chale['num_adultos'] = $calculoEstadia['num_adultos'];
+                $chale['preco_base_casal'] = $calculoEstadia['preco_base_casal'];
+                $chale['pessoas_adicionais'] = $calculoEstadia['pessoas_adicionais'];
+                $chale['preco_por_pessoa_adicional'] = $calculoEstadia['preco_por_pessoa_adicional'];
                 $chale['detalhes_preco'] = $calculoEstadia['detalhes'];
                 
                 $disponiveis[] = $chale;
@@ -173,7 +178,8 @@ class ReservaController {
         
         // Calcular valor usando sistema de temporadas
         require_once __DIR__ . '/../config/temporadas.php';
-        $calculoEstadia = calcularValorEstadia($dataCheckin, $dataCheckout);
+        $numAdultos = $dados['num_adultos'] ?? 2;
+        $calculoEstadia = calcularValorEstadia($dataCheckin, $dataCheckout, $numAdultos);
         $valorTotal = $calculoEstadia['valor_total'];
         
         // Preparar dados - APENAS campos que existem na tabela
@@ -296,10 +302,14 @@ class ReservaController {
     public function calcularPreco() {
         $dataCheckin = $_GET['data_checkin'] ?? null;
         $dataCheckout = $_GET['data_checkout'] ?? null;
+        $numAdultos = isset($_GET['num_adultos']) ? (int)$_GET['num_adultos'] : 2;
         
         if (!$dataCheckin || !$dataCheckout) {
             responderErro('Parâmetros data_checkin e data_checkout são obrigatórios', 400);
         }
+        
+        // Validar número de adultos (mínimo 1, máximo 4)
+        $numAdultos = max(1, min(4, $numAdultos));
         
         // Validar datas
         $checkin = new DateTime($dataCheckin);
@@ -311,14 +321,18 @@ class ReservaController {
         
         // Calcular valor usando sistema de temporadas
         require_once __DIR__ . '/../config/temporadas.php';
-        $calculoEstadia = calcularValorEstadia($dataCheckin, $dataCheckout);
+        $calculoEstadia = calcularValorEstadia($dataCheckin, $dataCheckout, $numAdultos);
         
         responderJSON([
             'data_checkin' => $dataCheckin,
             'data_checkout' => $dataCheckout,
+            'num_adultos' => $numAdultos,
             'numero_noites' => $calculoEstadia['numero_noites'],
             'valor_total' => $calculoEstadia['valor_total'],
             'valor_medio_diaria' => $calculoEstadia['valor_medio_diaria'],
+            'preco_base_casal' => $calculoEstadia['preco_base_casal'],
+            'pessoas_adicionais' => $calculoEstadia['pessoas_adicionais'],
+            'preco_por_pessoa_adicional' => $calculoEstadia['preco_por_pessoa_adicional'],
             'detalhes' => $calculoEstadia['detalhes']
         ]);
     }

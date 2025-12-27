@@ -232,14 +232,24 @@ function calcularPrecoMedio($data) {
 }
 
 /**
- * Calcula o valor total de uma estadia considerando as temporadas
+ * Calcula o valor total de uma estadia considerando as temporadas e número de pessoas
  * @param string $dataCheckin Data de check-in (YYYY-MM-DD)
  * @param string $dataCheckout Data de checkout (YYYY-MM-DD)
+ * @param int $numAdultos Número de adultos (padrão: 2 para casal)
  * @return array Array com valor_total, numero_noites, valor_medio_diaria e detalhes
  */
-function calcularValorEstadia($dataCheckin, $dataCheckout) {
+function calcularValorEstadia($dataCheckin, $dataCheckout, $numAdultos = 2) {
     $checkin = new DateTime($dataCheckin);
     $checkout = new DateTime($dataCheckout);
+    
+    // Validar número de adultos (mínimo 1, máximo 4)
+    $numAdultos = max(1, min(4, (int)$numAdultos));
+    
+    // Preço por pessoa adicional (acima de 2 pessoas)
+    $precoPorPessoaAdicional = 150.00;
+    
+    // Calcular quantas pessoas adicionais (acima do casal)
+    $pessoasAdicionais = max(0, $numAdultos - 2);
     
     $valorTotal = 0;
     $detalhes = [];
@@ -249,13 +259,19 @@ function calcularValorEstadia($dataCheckin, $dataCheckout) {
     while ($dataAtual < $checkout) {
         $dataStr = $dataAtual->format('Y-m-d');
         $temporada = determinarTemporada($dataStr);
-        $precoDiaria = $temporada['preco_medio'];
+        $precoBaseCasal = $temporada['preco_medio'];
+        
+        // Calcular preço total: base (casal) + pessoas adicionais
+        $precoDiaria = $precoBaseCasal + ($pessoasAdicionais * $precoPorPessoaAdicional);
         
         $valorTotal += $precoDiaria;
         $detalhes[] = [
             'data' => $dataStr,
             'temporada' => $temporada['nome'],
             'tipo' => $temporada['tipo'],
+            'preco_base_casal' => $precoBaseCasal,
+            'pessoas_adicionais' => $pessoasAdicionais,
+            'preco_por_pessoa_adicional' => $precoPorPessoaAdicional,
             'preco_diaria' => $precoDiaria,
             'preco_min' => $temporada['preco_min'],
             'preco_max' => $temporada['preco_max']
@@ -270,6 +286,10 @@ function calcularValorEstadia($dataCheckin, $dataCheckout) {
         'valor_total' => round($valorTotal, 2),
         'numero_noites' => $numeroNoites,
         'valor_medio_diaria' => $numeroNoites > 0 ? round($valorTotal / $numeroNoites, 2) : 0,
+        'num_adultos' => $numAdultos,
+        'preco_base_casal' => $detalhes[0]['preco_base_casal'] ?? 0,
+        'pessoas_adicionais' => $pessoasAdicionais,
+        'preco_por_pessoa_adicional' => $precoPorPessoaAdicional,
         'detalhes' => $detalhes
     ];
 }

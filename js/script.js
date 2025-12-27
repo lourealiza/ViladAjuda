@@ -715,7 +715,11 @@ async function calcularEExibirPreco(dataCheckin, dataCheckout) {
         precoValor.textContent = 'Calculando...';
         precoDetalhes.textContent = '';
         
-        const resultado = await API.calcularPrecoReserva(dataCheckin, dataCheckout);
+        // Buscar número de adultos do formulário
+        const formReserva = document.getElementById('formReserva');
+        const numAdultos = formReserva ? parseInt(formReserva.querySelector('[name="adultos"]')?.value || '2') : 2;
+        
+        const resultado = await API.calcularPrecoReserva(dataCheckin, dataCheckout, numAdultos);
         
         if (resultado && resultado.valor_total) {
             precoValor.textContent = API.formatarValor(resultado.valor_total);
@@ -723,7 +727,16 @@ async function calcularEExibirPreco(dataCheckin, dataCheckout) {
             const noites = resultado.numero_noites || API.calcularNoites(dataCheckin, dataCheckout);
             const diariaMedia = resultado.valor_medio_diaria || (resultado.valor_total / noites);
             
-            precoDetalhes.textContent = `${noites} noite${noites > 1 ? 's' : ''} • Média de ${API.formatarValor(diariaMedia)}/noite`;
+            // Montar detalhes do preço
+            let detalhesTexto = `${noites} noite${noites > 1 ? 's' : ''} • ${resultado.num_adultos || numAdultos} pessoa${resultado.num_adultos > 1 ? 's' : ''}`;
+            
+            if (resultado.pessoas_adicionais > 0) {
+                detalhesTexto += ` • +${API.formatarValor(resultado.preco_por_pessoa_adicional)} por pessoa adicional`;
+            }
+            
+            detalhesTexto += ` • Média de ${API.formatarValor(diariaMedia)}/noite`;
+            
+            precoDetalhes.textContent = detalhesTexto;
             
             precoContainer.style.display = 'block';
         } else {
@@ -816,7 +829,16 @@ function sincronizarCamposComCalendario() {
     const formReservaCompleto = document.getElementById('formReservaCompleto');
     
     // Função auxiliar para adicionar listeners
-    function adicionarListeners(inputCheckin, inputCheckout) {
+    function adicionarListeners(inputCheckin, inputCheckout, formElement) {
+        // Função para recalcular preço quando necessário
+        function recalcularPreco() {
+            if (dataCheckinSelecionada && dataCheckoutSelecionada) {
+                calcularEExibirPreco(dataCheckinSelecionada, dataCheckoutSelecionada);
+            } else {
+                ocultarPreco();
+            }
+        }
+        
         if (inputCheckin) {
             inputCheckin.addEventListener('change', function() {
                 dataCheckinSelecionada = this.value;
@@ -825,13 +847,7 @@ function sincronizarCamposComCalendario() {
                     if (inputCheckout) inputCheckout.value = '';
                 }
                 atualizarVisualizacaoDatasSelecionadas();
-                
-                // Calcular preço se ambas as datas estiverem selecionadas
-                if (dataCheckinSelecionada && dataCheckoutSelecionada) {
-                    calcularEExibirPreco(dataCheckinSelecionada, dataCheckoutSelecionada);
-                } else {
-                    ocultarPreco();
-                }
+                recalcularPreco();
             });
         }
         
@@ -839,14 +855,18 @@ function sincronizarCamposComCalendario() {
             inputCheckout.addEventListener('change', function() {
                 dataCheckoutSelecionada = this.value;
                 atualizarVisualizacaoDatasSelecionadas();
-                
-                // Calcular preço se ambas as datas estiverem selecionadas
-                if (dataCheckinSelecionada && dataCheckoutSelecionada) {
-                    calcularEExibirPreco(dataCheckinSelecionada, dataCheckoutSelecionada);
-                } else {
-                    ocultarPreco();
-                }
+                recalcularPreco();
             });
+        }
+        
+        // Adicionar listener para mudança no número de adultos
+        if (formElement) {
+            const selectAdultos = formElement.querySelector('[name="adultos"]');
+            if (selectAdultos) {
+                selectAdultos.addEventListener('change', function() {
+                    recalcularPreco();
+                });
+            }
         }
     }
     
@@ -854,14 +874,14 @@ function sincronizarCamposComCalendario() {
     if (formReserva) {
         const inputCheckin = formReserva.querySelector('[name="checkin"]');
         const inputCheckout = formReserva.querySelector('[name="checkout"]');
-        adicionarListeners(inputCheckin, inputCheckout);
+        adicionarListeners(inputCheckin, inputCheckout, formReserva);
     }
     
     // Adicionar listeners aos campos de data do formulário completo
     if (formReservaCompleto) {
         const inputCheckin = formReservaCompleto.querySelector('[name="checkin"]');
         const inputCheckout = formReservaCompleto.querySelector('[name="checkout"]');
-        adicionarListeners(inputCheckin, inputCheckout);
+        adicionarListeners(inputCheckin, inputCheckout, formReservaCompleto);
     }
 }
 
