@@ -78,6 +78,7 @@ jobs:
           username: ${{ secrets.KINGHOST_FTP_USER }}
           password: ${{ secrets.KINGHOST_FTP_PASSWORD }}
           server-dir: /home/viladajuda/public_html/
+          dry-run: false
           exclude: |
             **/.git*
             **/.git*/**
