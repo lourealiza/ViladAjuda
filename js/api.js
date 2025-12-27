@@ -2,7 +2,9 @@
 // Usar URL de produção se estiver em produção, senão localhost
 const API_BASE_URL = window.location.hostname === 'www.viladajuda.com.br' 
     ? 'https://www.viladajuda.com.br/api'
-    : 'http://localhost:3000/api';
+    : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? `${window.location.protocol}//${window.location.host}/api`
+        : `${window.location.protocol}//${window.location.host}/api`);
 
 /**
  * Função auxiliar para fazer requisições à API
@@ -124,6 +126,13 @@ async function buscarChalesDisponiveis(dataCheckin, dataCheckout) {
 }
 
 /**
+ * Calcula o preço de uma reserva baseado nas temporadas
+ */
+async function calcularPrecoReserva(dataCheckin, dataCheckout) {
+    return fetchAPI(`/reservas/calcular-preco?data_checkin=${dataCheckin}&data_checkout=${dataCheckout}`);
+}
+
+/**
  * Busca calendário de disponibilidade para um mês
  */
 async function buscarCalendarioDisponibilidade(ano, mes, chaleId = null) {
@@ -232,6 +241,7 @@ window.API = {
     criarReserva,
     buscarChalesDisponiveis,
     buscarCalendarioDisponibilidade,
+    calcularPrecoReserva,
     
     // Avaliações
     buscarAvaliacoesHomepage,

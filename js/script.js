@@ -438,6 +438,10 @@ document.querySelectorAll('.chale-card, .feature-item, .galeria-item, .proximida
 let calendarioMesAtual = new Date().getMonth() + 1;
 let calendarioAnoAtual = new Date().getFullYear();
 
+// Variáveis para seleção de datas
+let dataCheckinSelecionada = null;
+let dataCheckoutSelecionada = null;
+
 async function carregarCalendario() {
     const container = document.getElementById('calendarioContainer');
     if (!container) return;
@@ -481,6 +485,12 @@ async function carregarCalendario() {
         html += '</div>';
         container.innerHTML = html;
         
+        // Adicionar event listeners aos dias clicáveis
+        adicionarEventListenersCalendario();
+        
+        // Atualizar visualização das datas selecionadas
+        atualizarVisualizacaoDatasSelecionadas();
+        
     } catch (erro) {
         console.error('Erro ao carregar calendário:', erro);
         let mensagemErro = 'Erro ao carregar calendário.';
@@ -504,6 +514,10 @@ function renderizarMes(mes, ano, diasCalendario, isPrimeiroMes) {
     const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
     const hoje = new Date();
     const hojeStr = hoje.toISOString().split('T')[0];
+    
+    // Verificar se há datas selecionadas para este mês
+    const checkinDate = dataCheckinSelecionada ? new Date(dataCheckinSelecionada) : null;
+    const checkoutDate = dataCheckoutSelecionada ? new Date(dataCheckoutSelecionada) : null;
     
     // Primeiro dia do mês
     const primeiroDia = new Date(ano, mes - 1, 1);
@@ -561,6 +575,27 @@ function renderizarMes(mes, ano, diasCalendario, isPrimeiroMes) {
             classes += ' hoje';
         }
         
+        // Adicionar classe clicável se estiver disponível
+        if (disponivel && !reservado && !bloqueado) {
+            classes += ' clicavel';
+        }
+        
+        // Verificar se esta data está selecionada
+        const diaDate = new Date(data);
+        diaDate.setHours(0, 0, 0, 0);
+        
+        if (checkinDate && data === dataCheckinSelecionada) {
+            classes += ' selecionado-checkin';
+        } else if (checkoutDate && data === dataCheckoutSelecionada) {
+            classes += ' selecionado-checkout';
+        } else if (checkinDate && checkoutDate) {
+            checkinDate.setHours(0, 0, 0, 0);
+            checkoutDate.setHours(0, 0, 0, 0);
+            if (diaDate > checkinDate && diaDate < checkoutDate) {
+                classes += ' entre-datas';
+            }
+        }
+        
         html += `<div class="${classes}" data-data="${data}" title="${data}">${dia}</div>`;
     });
     
@@ -570,6 +605,191 @@ function renderizarMes(mes, ano, diasCalendario, isPrimeiroMes) {
     `;
     
     return html;
+}
+
+// Adicionar event listeners aos dias do calendário
+function adicionarEventListenersCalendario() {
+    const diasClicaveis = document.querySelectorAll('.calendario-dia.clicavel');
+    
+    diasClicaveis.forEach(dia => {
+        dia.addEventListener('click', function() {
+            const data = this.getAttribute('data-data');
+            selecionarData(data);
+        });
+        
+        // Adicionar cursor pointer
+        dia.style.cursor = 'pointer';
+    });
+}
+
+// Selecionar data (check-in ou check-out)
+function selecionarData(data) {
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    const dataSelecionada = new Date(data);
+    dataSelecionada.setHours(0, 0, 0, 0);
+    
+    // Verificar se o dia está disponível
+    const diaElement = document.querySelector(`.calendario-dia[data-data="${data}"]`);
+    if (!diaElement) return;
+    
+    // Não permitir selecionar se não estiver disponível
+    if (!diaElement.classList.contains('disponivel') || 
+        diaElement.classList.contains('reservado') || 
+        diaElement.classList.contains('bloqueado')) {
+        showMessage('Esta data não está disponível para reserva', 'error');
+        return;
+    }
+    
+    // Não permitir selecionar datas no passado
+    if (dataSelecionada < hoje) {
+        showMessage('Não é possível selecionar datas no passado', 'error');
+        return;
+    }
+    
+    // Se não há check-in selecionado, ou se a data selecionada é anterior ao check-in, definir como check-in
+    if (!dataCheckinSelecionada || dataSelecionada < new Date(dataCheckinSelecionada)) {
+        dataCheckinSelecionada = data;
+        dataCheckoutSelecionada = null; // Resetar checkout
+        showMessage('Data de entrada selecionada: ' + formatarDataParaUsuario(data), 'info');
+    } 
+    // Se há check-in e a data selecionada é posterior ou igual ao check-in, definir como check-out
+    else if (dataSelecionada >= new Date(dataCheckinSelecionada)) {
+        dataCheckoutSelecionada = data;
+        showMessage('Data de saída selecionada: ' + formatarDataParaUsuario(data), 'info');
+    }
+    
+    // Atualizar campos do formulário
+    atualizarCamposData();
+    
+    // Atualizar visualização no calendário
+    atualizarVisualizacaoDatasSelecionadas();
+}
+
+// Atualizar campos de data do formulário
+function atualizarCamposData() {
+    const formReserva = document.getElementById('formReserva');
+    const formReservaCompleto = document.getElementById('formReservaCompleto');
+    
+    if (formReserva) {
+        const inputCheckin = formReserva.querySelector('[name="checkin"]');
+        const inputCheckout = formReserva.querySelector('[name="checkout"]');
+        
+        if (inputCheckin && dataCheckinSelecionada) {
+            inputCheckin.value = dataCheckinSelecionada;
+        }
+        if (inputCheckout && dataCheckoutSelecionada) {
+            inputCheckout.value = dataCheckoutSelecionada;
+        }
+    }
+    
+    if (formReservaCompleto) {
+        const inputCheckin = formReservaCompleto.querySelector('[name="checkin"]');
+        const inputCheckout = formReservaCompleto.querySelector('[name="checkout"]');
+        
+        if (inputCheckin && dataCheckinSelecionada) {
+            inputCheckin.value = dataCheckinSelecionada;
+        }
+        if (inputCheckout && dataCheckoutSelecionada) {
+            inputCheckout.value = dataCheckoutSelecionada;
+        }
+    }
+    
+    // Calcular e exibir preço se ambas as datas estiverem selecionadas
+    if (dataCheckinSelecionada && dataCheckoutSelecionada) {
+        calcularEExibirPreco(dataCheckinSelecionada, dataCheckoutSelecionada);
+    } else {
+        ocultarPreco();
+    }
+}
+
+// Calcular e exibir preço estimado
+async function calcularEExibirPreco(dataCheckin, dataCheckout) {
+    const precoContainer = document.getElementById('precoEstimado');
+    const precoValor = document.getElementById('precoValor');
+    const precoDetalhes = document.getElementById('precoDetalhes');
+    
+    if (!precoContainer || !precoValor || !precoDetalhes) return;
+    
+    try {
+        precoValor.textContent = 'Calculando...';
+        precoDetalhes.textContent = '';
+        
+        const resultado = await API.calcularPrecoReserva(dataCheckin, dataCheckout);
+        
+        if (resultado && resultado.valor_total) {
+            precoValor.textContent = API.formatarValor(resultado.valor_total);
+            
+            const noites = resultado.numero_noites || API.calcularNoites(dataCheckin, dataCheckout);
+            const diariaMedia = resultado.valor_medio_diaria || (resultado.valor_total / noites);
+            
+            precoDetalhes.textContent = `${noites} noite${noites > 1 ? 's' : ''} • Média de ${API.formatarValor(diariaMedia)}/noite`;
+            
+            precoContainer.style.display = 'block';
+        } else {
+            ocultarPreco();
+        }
+    } catch (erro) {
+        console.error('Erro ao calcular preço:', erro);
+        ocultarPreco();
+    }
+}
+
+// Ocultar preço estimado
+function ocultarPreco() {
+    const precoContainer = document.getElementById('precoEstimado');
+    if (precoContainer) {
+        precoContainer.style.display = 'none';
+    }
+}
+
+// Atualizar visualização das datas selecionadas no calendário
+function atualizarVisualizacaoDatasSelecionadas() {
+    // Remover classes de seleção anteriores
+    document.querySelectorAll('.calendario-dia').forEach(dia => {
+        dia.classList.remove('selecionado-checkin', 'selecionado-checkout', 'entre-datas');
+    });
+    
+    if (!dataCheckinSelecionada) return;
+    
+    const checkinDate = new Date(dataCheckinSelecionada);
+    const checkoutDate = dataCheckoutSelecionada ? new Date(dataCheckoutSelecionada) : null;
+    
+    document.querySelectorAll('.calendario-dia').forEach(dia => {
+        const dataDia = dia.getAttribute('data-data');
+        if (!dataDia) return;
+        
+        const diaDate = new Date(dataDia);
+        diaDate.setHours(0, 0, 0, 0);
+        checkinDate.setHours(0, 0, 0, 0);
+        
+        // Marcar check-in
+        if (dataDia === dataCheckinSelecionada) {
+            dia.classList.add('selecionado-checkin');
+        }
+        
+        // Marcar check-out
+        if (checkoutDate && dataDia === dataCheckoutSelecionada) {
+            checkoutDate.setHours(0, 0, 0, 0);
+            dia.classList.add('selecionado-checkout');
+        }
+        
+        // Marcar período entre check-in e check-out
+        if (checkoutDate) {
+            checkoutDate.setHours(0, 0, 0, 0);
+            if (diaDate > checkinDate && diaDate < checkoutDate) {
+                dia.classList.add('entre-datas');
+            }
+        }
+    });
+}
+
+// Formatar data para exibição ao usuário
+function formatarDataParaUsuario(dataString) {
+    const data = new Date(dataString);
+    const meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+                   'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+    return `${data.getDate()} de ${meses[data.getMonth()]}`;
 }
 
 function calendarioMesAnterior() {
@@ -590,6 +810,61 @@ function calendarioMesProximo() {
     carregarCalendario();
 }
 
+// Sincronizar campos de data com calendário
+function sincronizarCamposComCalendario() {
+    const formReserva = document.getElementById('formReserva');
+    const formReservaCompleto = document.getElementById('formReservaCompleto');
+    
+    // Função auxiliar para adicionar listeners
+    function adicionarListeners(inputCheckin, inputCheckout) {
+        if (inputCheckin) {
+            inputCheckin.addEventListener('change', function() {
+                dataCheckinSelecionada = this.value;
+                if (dataCheckoutSelecionada && new Date(dataCheckoutSelecionada) < new Date(dataCheckinSelecionada)) {
+                    dataCheckoutSelecionada = null;
+                    if (inputCheckout) inputCheckout.value = '';
+                }
+                atualizarVisualizacaoDatasSelecionadas();
+                
+                // Calcular preço se ambas as datas estiverem selecionadas
+                if (dataCheckinSelecionada && dataCheckoutSelecionada) {
+                    calcularEExibirPreco(dataCheckinSelecionada, dataCheckoutSelecionada);
+                } else {
+                    ocultarPreco();
+                }
+            });
+        }
+        
+        if (inputCheckout) {
+            inputCheckout.addEventListener('change', function() {
+                dataCheckoutSelecionada = this.value;
+                atualizarVisualizacaoDatasSelecionadas();
+                
+                // Calcular preço se ambas as datas estiverem selecionadas
+                if (dataCheckinSelecionada && dataCheckoutSelecionada) {
+                    calcularEExibirPreco(dataCheckinSelecionada, dataCheckoutSelecionada);
+                } else {
+                    ocultarPreco();
+                }
+            });
+        }
+    }
+    
+    // Adicionar listeners aos campos de data do formulário rápido
+    if (formReserva) {
+        const inputCheckin = formReserva.querySelector('[name="checkin"]');
+        const inputCheckout = formReserva.querySelector('[name="checkout"]');
+        adicionarListeners(inputCheckin, inputCheckout);
+    }
+    
+    // Adicionar listeners aos campos de data do formulário completo
+    if (formReservaCompleto) {
+        const inputCheckin = formReservaCompleto.querySelector('[name="checkin"]');
+        const inputCheckout = formReservaCompleto.querySelector('[name="checkout"]');
+        adicionarListeners(inputCheckin, inputCheckout);
+    }
+}
+
 // Carregar calendário quando a página carregar
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('calendarioContainer')) {
@@ -598,6 +873,9 @@ document.addEventListener('DOMContentLoaded', () => {
             carregarCalendario();
         }, 500);
     }
+    
+    // Sincronizar campos de data
+    sincronizarCamposComCalendario();
 });
 
 // Lazy loading para imagens
