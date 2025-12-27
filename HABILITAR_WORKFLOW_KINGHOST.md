@@ -18,7 +18,7 @@ O workflow "Deploy to KingHost" não está aparecendo ou não está rodando no G
 1. Acesse: https://github.com/lourealiza/ViladAjuda/actions
 2. Clique em **"Deploy to KingHost"** no menu lateral
 3. Clique no botão **"Run workflow"** (canto superior direito)
-4. Selecione a branch: **main** ou **master**
+4. Selecione a branch: **master** (branch padrão) ou **main**
 5. Clique em **"Run workflow"** novamente
 
 ### **3. Verificar se o Arquivo Está no Repositório**

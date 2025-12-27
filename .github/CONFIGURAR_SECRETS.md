@@ -53,7 +53,7 @@ Após configurar os 3 secrets:
 1. Vá em **Actions** no GitHub
 2. Clique em **"Deploy to KingHost"**
 3. Clique em **"Run workflow"**
-4. Selecione a branch `main`
+4. Selecione a branch `master` (branch padrão)
 5. Clique em **"Run workflow"**
 
 ## ✅ Checklist
