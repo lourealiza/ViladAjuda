@@ -244,6 +244,29 @@ if (formReservaCompleto) {
         };
         
         try {
+            // Verificar se as datas selecionadas estão reservadas antes de enviar
+            const checkinDate = new Date(dados.data_checkin);
+            const checkoutDate = new Date(dados.data_checkout);
+            
+            // Verificar no calendário se há datas reservadas no período
+            let temDataReservada = false;
+            document.querySelectorAll('.calendario-dia.reservado').forEach(dia => {
+                const dataDia = dia.getAttribute('data-data');
+                if (dataDia) {
+                    const diaDate = new Date(dataDia);
+                    if (diaDate >= checkinDate && diaDate < checkoutDate) {
+                        temDataReservada = true;
+                    }
+                }
+            });
+            
+            if (temDataReservada) {
+                showMessage('❌ Não é possível fazer reserva para este período. Algumas datas já estão reservadas. Por favor, escolha outras datas.', 'error');
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+                return;
+            }
+            
             // Enviar reserva para a API
             const resultado = await API.criarReserva(dados);
             
@@ -272,7 +295,15 @@ if (formReservaCompleto) {
             
             // Redirecionar para página de agradecimento após 2 segundos
             setTimeout(() => {
-                window.location.href = `obrigado.html?${params.toString()}`;
+                try {
+                    const urlObrigado = `obrigado.html?${params.toString()}`;
+                    console.log('Redirecionando para:', urlObrigado);
+                    window.location.href = urlObrigado;
+                } catch (erro) {
+                    console.error('Erro ao redirecionar:', erro);
+                    // Fallback: tentar redirecionar sem parâmetros
+                    window.location.href = 'obrigado.html';
+                }
             }, 2000);
             
         } catch (erro) {
@@ -579,8 +610,9 @@ function renderizarMes(mes, ano, diasCalendario, isPrimeiroMes) {
             classes += ' hoje';
         }
         
-        // Adicionar classe clicável se estiver disponível
-        if (disponivel && !reservado && !bloqueado) {
+        // Adicionar classe clicável se estiver disponível OU reservado (para permitir verificar preço)
+        // Datas bloqueadas não são clicáveis
+        if ((disponivel || reservado) && !bloqueado) {
             classes += ' clicavel';
         }
         
@@ -637,12 +669,16 @@ function selecionarData(data) {
     const diaElement = document.querySelector(`.calendario-dia[data-data="${data}"]`);
     if (!diaElement) return;
     
-    // Não permitir selecionar se não estiver disponível
-    if (!diaElement.classList.contains('disponivel') || 
-        diaElement.classList.contains('reservado') || 
-        diaElement.classList.contains('bloqueado')) {
-        showMessage('Esta data não está disponível para reserva', 'error');
+    // Não permitir selecionar se estiver bloqueado
+    if (diaElement.classList.contains('bloqueado')) {
+        showMessage('Esta data está bloqueada e não pode ser selecionada', 'error');
         return;
+    }
+    
+    // Permitir selecionar datas reservadas para verificar preço, mas avisar
+    const isReservado = diaElement.classList.contains('reservado');
+    if (isReservado) {
+        showMessage('⚠️ Esta data está reservada, mas você pode verificar o preço. Não será possível fazer reserva para este período.', 'info');
     }
     
     // Não permitir selecionar datas no passado
@@ -715,6 +751,24 @@ async function calcularEExibirPreco(dataCheckin, dataCheckout) {
     
     if (!precoContainer || !precoValor || !precoDetalhes) return;
     
+    // Verificar se há datas reservadas no período selecionado
+    const checkinDate = new Date(dataCheckin);
+    const checkoutDate = new Date(dataCheckout);
+    let temDataReservada = false;
+    
+    document.querySelectorAll('.calendario-dia.reservado').forEach(dia => {
+        const dataDia = dia.getAttribute('data-data');
+        if (dataDia) {
+            const diaDate = new Date(dataDia);
+            diaDate.setHours(0, 0, 0, 0);
+            checkinDate.setHours(0, 0, 0, 0);
+            checkoutDate.setHours(0, 0, 0, 0);
+            if (diaDate >= checkinDate && diaDate < checkoutDate) {
+                temDataReservada = true;
+            }
+        }
+    });
+    
     try {
         precoValor.textContent = 'Calculando...';
         precoDetalhes.textContent = '';
@@ -740,6 +794,11 @@ async function calcularEExibirPreco(dataCheckin, dataCheckout) {
             
             detalhesTexto += ` • Média de ${API.formatarValor(diariaMedia)}/noite`;
             
+            // Adicionar aviso se houver datas reservadas
+            if (temDataReservada) {
+                detalhesTexto += ' ⚠️ Período com datas reservadas';
+            }
+            
             precoDetalhes.textContent = detalhesTexto;
             
             precoContainer.style.display = 'block';
@@ -748,7 +807,14 @@ async function calcularEExibirPreco(dataCheckin, dataCheckout) {
         }
     } catch (erro) {
         console.error('Erro ao calcular preço:', erro);
-        ocultarPreco();
+        // Mesmo com erro, mostrar mensagem informativa
+        if (temDataReservada) {
+            precoValor.textContent = 'Indisponível';
+            precoDetalhes.textContent = '⚠️ Este período contém datas já reservadas';
+            precoContainer.style.display = 'block';
+        } else {
+            ocultarPreco();
+        }
     }
 }
 
