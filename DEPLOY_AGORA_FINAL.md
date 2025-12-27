@@ -21,7 +21,7 @@
 
 Certifique-se de que estes secrets estão configurados:
 
-- ✅ **`KINGHOST_FTP_HOST`** - Ex: `viladajuda.web213.uni5.net`
+- ✅ **`KINGHOST_FTP_HOST`** - **`ftp.viladajuda.com.br`**
 - ✅ **`KINGHOST_FTP_USER`** - **`viladajuda01`** (ATUALIZAR!)
 - ✅ **`KINGHOST_FTP_PASSWORD`** - Sua senha FTP
 
@@ -35,7 +35,7 @@ Certifique-se de que estes secrets estão configurados:
 1. Acesse: https://github.com/lourealiza/ViladAjuda/actions
 2. Clique em **"Deploy to KingHost"** no menu lateral
 3. Clique em **"Run workflow"** (canto superior direito)
-4. Selecione a branch: **main**
+4. Selecione a branch: **master** (branch padrão)
 5. Clique em **"Run workflow"**
 
 ### **4. Acompanhar o Deploy**
