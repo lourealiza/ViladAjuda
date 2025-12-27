@@ -1,0 +1,43 @@
+================================================
+✅ HOST DO SERVIDOR CONFIRMADO
+================================================
+
+Host FTP/SFTP:
+- viladajuda.web213.uni5.net
+- ftp.viladajuda.web213.uni5.net
+
+Ambos funcionam para conexão FTP/SFTP.
+
+================================================
+📋 CONFIGURAÇÃO PARA FILEZILLA
+================================================
+
+Host: viladajuda.web213.uni5.net
+OU
+Host: ftp.viladajuda.web213.uni5.net
+
+Usuário: (seu usuário FTP da KingHost)
+Senha: (sua senha FTP)
+Porta: 21 (FTP) ou 22 (SFTP)
+
+================================================
+🌐 URL DO SITE
+================================================
+
+URL temporária KingHost:
+- http://viladajuda.web213.uni5.net/
+
+URL com domínio (se configurado):
+- https://www.viladajuda.com.br/
+
+================================================
+📝 ARQUIVOS ATUALIZADOS
+================================================
+
+✅ instrucoes/DEPLOY_KINGHOST.md
+✅ api/README_INSTALACAO.md
+
+================================================
+📅 Data: 2025-01-XX
+================================================
+

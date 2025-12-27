@@ -27,10 +27,10 @@ api/
 ### Passo 1: Fazer Upload dos Arquivos
 
 1. **Conecte-se via FTP** (FileZilla):
-   - Host: `ftp.viladajuda.com.br`
+   - Host: `viladajuda.web213.uni5.net` ou `ftp.viladajuda.web213.uni5.net` ✅
    - Usuário: `viladajuda`
    - Senha: `arraial2026`
-   - Porta: `21`
+   - Porta: `21` (FTP) ou `22` (SFTP)
 
 2. **Criar diretório `/www/api/`** (se não existir)
 
