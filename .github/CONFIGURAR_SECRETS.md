@@ -6,7 +6,7 @@ Com base nas informações fornecidas:
 
 - **Usuário FTP**: `viladajuda02`
 - **Senha FTP**: `vila2026*`
-- **Host FTP**: `viladajuda.web213.uni5.net` (ou `ftp.viladajuda.web213.uni5.net` - verificar no painel)
+- **Host FTP**: `ftp.viladajuda.com.br`
 
 ## 🚀 Passo a Passo para Configurar
 
@@ -20,9 +20,7 @@ Clique em **"New repository secret"** para cada um:
 
 #### Secret 1: `KINGHOST_FTP_HOST`
 - **Name**: `KINGHOST_FTP_HOST`
-- **Secret**: `viladajuda.web213.uni5.net` 
-  - ⚠️ Se não funcionar, tente: `ftp.viladajuda.web213.uni5.net`
-  - Verifique no painel da KingHost qual é o host correto
+- **Secret**: `ftp.viladajuda.com.br`
 - Clique em **"Add secret"**
 
 #### Secret 2: `KINGHOST_FTP_USER`

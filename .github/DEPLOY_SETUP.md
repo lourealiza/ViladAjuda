@@ -25,7 +25,7 @@ Para que o deploy funcione, você precisa configurar os **Secrets** no repositó
 3. **Adicione os seguintes Secrets:**
 
    #### `KINGHOST_FTP_HOST`
-   - **Valor**: `viladajuda.web213.uni5.net` ou `ftp.viladajuda.web213.uni5.net`
+   - **Valor**: `ftp.viladajuda.com.br`
    - **Descrição**: Host FTP da KingHost
 
    #### `KINGHOST_FTP_USER`
