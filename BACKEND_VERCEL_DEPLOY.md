@@ -46,8 +46,8 @@ DB_USER=viladajuda
 DB_PASSWORD=vila2026
 DB_NAME=viladajuda
 
-# JWT Secret (crie um seguro)
-JWT_SECRET=sua-chave-secreta-super-segura-aqui
+# JWT Secret (use a chave gerada - veja CONFIGURAR_JWT_SECRET.md)
+JWT_SECRET=aec08abd2d7cb846201f47f26d8b019d0dc4241b56ec84bd09bf098341443161f78a4720112c8651e2c53d380955317ea6035187650d0c4fe4181233980d2c0b
 ```
 
 ### **4. Deploy**
