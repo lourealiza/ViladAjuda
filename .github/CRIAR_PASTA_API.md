@@ -11,7 +11,7 @@ O usuário FTP não tem permissão para criar diretórios automaticamente. É ne
 1. **Conecte-se ao servidor FTP:**
    - Host: `ftp.viladajuda.com.br`
    - Usuário: `viladajuda`
-   - Senha: `vila2026*`
+   - Senha: `vila2026`
    - Porta: `21`
 
 2. **Navegue até o diretório:**

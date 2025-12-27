@@ -5,7 +5,7 @@
 Com base nas informações fornecidas:
 
 - **Usuário FTP**: `viladajuda`
-- **Senha FTP**: `vila2026*`
+- **Senha FTP**: `vila2026`
 - **Host FTP**: `ftp.viladajuda.com.br`
 
 ## 🚀 Passo a Passo para Configurar
@@ -35,7 +35,7 @@ Clique em **"New repository secret"** para cada um:
 
 #### Secret 3: `KINGHOST_FTP_PASSWORD`
 - **Name**: `KINGHOST_FTP_PASSWORD`
-- **Secret**: `vila2026*`
+- **Secret**: `vila2026`
 - Clique em **"Add secret"**
 
 ### 3. Verificar Host FTP
@@ -60,7 +60,7 @@ Após configurar os 3 secrets:
 
 - [ ] Secret `KINGHOST_FTP_HOST` configurado
 - [ ] Secret `KINGHOST_FTP_USER` configurado com valor `viladajuda`
-- [ ] Secret `KINGHOST_FTP_PASSWORD` configurado com valor `vila2026*`
+- [ ] Secret `KINGHOST_FTP_PASSWORD` configurado com valor `vila2026`
 - [ ] Workflow executado com sucesso
 
 ## ⚠️ Importante
