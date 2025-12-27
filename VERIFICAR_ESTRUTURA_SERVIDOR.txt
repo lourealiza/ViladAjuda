@@ -1,0 +1,44 @@
+# 🔍 Verificar Estrutura Atual do Servidor
+
+Execute via SSH para verificar onde estão os arquivos:
+
+```bash
+ssh viladajuda@www.viladajuda.com.br
+
+# Verificar estrutura em www
+echo "=== Estrutura em ~/www/ ==="
+ls -la ~/www/
+
+# Verificar se há backend em viladajuda
+echo ""
+echo "=== Verificando ~/viladajuda/ ==="
+ls -la ~/viladajuda/ 2>/dev/null || echo "Pasta viladajuda não existe"
+
+# Verificar se há backend em www
+echo ""
+echo "=== Verificando ~/www/backend/ ==="
+ls -la ~/www/backend/ 2>/dev/null || echo "Pasta ~/www/backend não existe ainda"
+
+# Verificar onde o PM2 está rodando
+echo ""
+echo "=== Processos PM2 ==="
+pm2 list 2>/dev/null || echo "PM2 não está instalado ou não há processos"
+```
+
+## 📋 Próximos Passos
+
+1. Se o backend estiver em `~/viladajuda/backend/`:
+   - O deploy do GitHub Actions vai criar em `~/www/backend/`
+   - Ou você pode mover manualmente
+
+2. Se a pasta `~/www/backend/` não existir:
+   - O deploy do GitHub Actions vai criá-la automaticamente
+   - Ou execute: `mkdir -p ~/www/backend`
+
+3. Após o deploy, configure o backend:
+   ```bash
+   cd ~/www/backend
+   npm install --production
+   pm2 restart viladajuda-api || pm2 start src/server.js --name viladajuda-api
+   ```
+

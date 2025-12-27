@@ -1,0 +1,36 @@
+# 🔧 Criar Estrutura do Backend no Servidor
+
+Execute estes comandos via SSH para criar a estrutura:
+
+```bash
+ssh viladajuda@www.viladajuda.com.br
+
+# Criar pasta backend dentro de www
+mkdir -p ~/www/backend
+
+# Verificar estrutura atual
+ls -la ~/www/
+ls -la ~/viladajuda/ 2>/dev/null || echo "Pasta viladajuda não existe"
+
+# Se o backend estiver em viladajuda, mover para www
+if [ -d ~/viladajuda/backend ]; then
+    echo "Movendo backend de ~/viladajuda/backend para ~/www/backend"
+    cp -r ~/viladajuda/backend/* ~/www/backend/ 2>/dev/null || true
+    echo "✅ Backend copiado para ~/www/backend"
+else
+    echo "⚠️ Backend não encontrado em ~/viladajuda/backend"
+    echo "O deploy via GitHub Actions criará a estrutura"
+fi
+
+# Verificar estrutura final
+echo ""
+echo "📁 Estrutura em ~/www/:"
+ls -la ~/www/ | head -20
+```
+
+## 🚀 Comando Único
+
+```bash
+ssh viladajuda@www.viladajuda.com.br "mkdir -p ~/www/backend && echo '✅ Pasta ~/www/backend criada!' && ls -la ~/www/ | grep -E 'backend|api|css|js'"
+```
+
