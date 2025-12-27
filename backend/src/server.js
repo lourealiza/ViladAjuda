@@ -89,41 +89,54 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Inicializar servidor
-const iniciarServidor = async () => {
+// Conectar ao banco de dados (lazy, não bloqueia)
+(async () => {
     try {
-        // Conectar ao banco de dados
-        await database.connect();
-        console.log('✓ Banco de dados conectado');
-
-        // Iniciar servidor
-        app.listen(PORT, () => {
-            console.log(`✓ Servidor rodando na porta ${PORT}`);
-            console.log(`✓ Ambiente: ${process.env.NODE_ENV || 'development'}`);
-            console.log(`✓ API disponível em: http://localhost:${PORT}/api`);
-        });
-
+        if (database.connect && !database.isConnected) {
+            await database.connect();
+        }
     } catch (erro) {
-        console.error('Erro ao iniciar servidor:', erro);
-        process.exit(1);
+        console.error('Erro ao conectar ao banco (será tentado novamente na primeira requisição):', erro.message);
     }
-};
+})();
 
-// Tratamento de encerramento
-process.on('SIGINT', async () => {
-    console.log('\nEncerrando servidor...');
-    await database.close();
-    process.exit(0);
-});
+// Inicializar servidor (apenas se não estiver no Vercel)
+if (process.env.VERCEL !== '1' && require.main === module) {
+    const iniciarServidor = async () => {
+        try {
+            // Conectar ao banco de dados
+            await database.connect();
+            console.log('✓ Banco de dados conectado');
 
-process.on('SIGTERM', async () => {
-    console.log('\nEncerrando servidor...');
-    await database.close();
-    process.exit(0);
-});
+            // Iniciar servidor
+            app.listen(PORT, () => {
+                console.log(`✓ Servidor rodando na porta ${PORT}`);
+                console.log(`✓ Ambiente: ${process.env.NODE_ENV || 'development'}`);
+                console.log(`✓ API disponível em: http://localhost:${PORT}/api`);
+            });
 
-// Iniciar
-iniciarServidor();
+        } catch (erro) {
+            console.error('Erro ao iniciar servidor:', erro);
+            process.exit(1);
+        }
+    };
+
+    // Tratamento de encerramento
+    process.on('SIGINT', async () => {
+        console.log('\nEncerrando servidor...');
+        if (database.close) await database.close();
+        process.exit(0);
+    });
+
+    process.on('SIGTERM', async () => {
+        console.log('\nEncerrando servidor...');
+        if (database.close) await database.close();
+        process.exit(0);
+    });
+
+    // Iniciar
+    iniciarServidor();
+}
 
 module.exports = app;
 

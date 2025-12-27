@@ -4,9 +4,14 @@ require('dotenv').config();
 class Database {
     constructor() {
         this.pool = null;
+        this.isConnected = false;
     }
 
     async connect() {
+        if (this.isConnected && this.pool) {
+            return; // Já está conectado
+        }
+
         try {
             this.pool = mysql.createPool({
                 host: process.env.DB_HOST || 'localhost',
@@ -25,9 +30,11 @@ class Database {
             console.log('Conectado ao banco de dados MySQL');
             connection.release();
 
+            this.isConnected = true;
             await this.initTables();
         } catch (err) {
             console.error('Erro ao conectar ao banco de dados:', err.message);
+            this.isConnected = false;
             throw err;
         }
     }
@@ -752,6 +759,8 @@ class Database {
     async close() {
         if (this.pool) {
             await this.pool.end();
+            this.isConnected = false;
+            this.pool = null;
             console.log('Conexão com o banco de dados fechada');
         }
     }
