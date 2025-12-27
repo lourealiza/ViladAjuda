@@ -130,29 +130,16 @@ jobs:
             **/old_*.html
             **/public/**
             **/public_html/**
+            # Excluir arquivos de teste da API, mas manter a estrutura
+            **/api/teste*.php
+            **/api/phpinfo.php
+            **/api/hello.php
+            **/api/info.php
+            **/api/README*.md
+            **/api/CONFIGURAR*.txt
           local-dir: ./
           dangerous-clean-slate: false
-      
-      - name: Deploy API to KingHost
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: ${{ secrets.KINGHOST_FTP_HOST }}
-          username: ${{ secrets.KINGHOST_FTP_USER }}
-          password: ${{ secrets.KINGHOST_FTP_PASSWORD }}
-          server-dir: /www/api/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.env*
-            **/teste*.php
-            **/phpinfo.php
-            **/hello.php
-            **/info.php
-            **/README*.md
-            **/CONFIGURAR*.txt
-          local-dir: ./api/
-          dangerous-clean-slate: false
+          log-level: verbose
       
       - name: Deployment Summary
         run: |
