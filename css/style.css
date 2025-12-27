@@ -1659,14 +1659,16 @@ section {
 
 .avaliacao-badge {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
     background: var(--verde-primario);
     color: var(--branco);
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
     font-size: 0.75rem;
     font-weight: 600;
+    z-index: 10;
 }
 
 .avaliacao-loading,
