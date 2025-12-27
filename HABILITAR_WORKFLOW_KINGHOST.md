@@ -95,7 +95,7 @@ Se o workflow aparecer mas não rodar:
 Se o workflow continuar dando problema, use deploy manual:
 
 ```bash
-ssh viladajuda01@www.viladajuda.com.br "cd ~ && mkdir -p temp-vila && cd temp-vila && git clone https://github.com/lourealiza/ViladAjuda.git . && cp -f index.html ~/www/index.html && cp -f obrigado.html ~/www/obrigado.html && cp -f admin.html ~/www/admin.html && cp -rf css ~/www/ && cp -rf js ~/www/ && cp -rf images ~/www/ && cp -rf api ~/www/ && cd ~ && rm -rf temp-vila && echo '✅ Deploy concluído!'"
+ssh viladajuda@www.viladajuda.com.br "cd ~ && mkdir -p temp-vila && cd temp-vila && git clone https://github.com/lourealiza/ViladAjuda.git . && cp -f index.html ~/www/index.html && cp -f obrigado.html ~/www/obrigado.html && cp -f admin.html ~/www/admin.html && cp -rf css ~/www/ && cp -rf js ~/www/ && cp -rf images ~/www/ && cp -rf api ~/www/ && cd ~ && rm -rf temp-vila && echo '✅ Deploy concluído!'"
 ```
 
 ---

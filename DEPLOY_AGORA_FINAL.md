@@ -2,7 +2,7 @@
 
 ## ✅ O Que Já Foi Feito
 
-- ✅ Workflow atualizado para usar `viladajuda01`
+- ✅ Workflow atualizado para usar `viladajuda`
 - ✅ Pastas criadas no servidor (`css/`, `js/`, `images/`, `api/`)
 - ✅ Código commitado e push realizado
 - ✅ Documentação atualizada
@@ -14,7 +14,7 @@
 1. Acesse: https://github.com/lourealiza/ViladAjuda/settings/secrets/actions
 2. Encontre o secret **`KINGHOST_FTP_USER`**
 3. Clique em **"Update"** (ou delete e crie novo)
-4. Altere o valor de `viladajuda` para **`viladajuda01`**
+4. Verifique se o valor está como **`viladajuda`**
 5. Clique em **"Update secret"**
 
 ### **2. Verificar Outros Secrets**
@@ -22,7 +22,7 @@
 Certifique-se de que estes secrets estão configurados:
 
 - ✅ **`KINGHOST_FTP_HOST`** - **`ftp.viladajuda.com.br`**
-- ✅ **`KINGHOST_FTP_USER`** - **`viladajuda01`** (ATUALIZAR!)
+- ✅ **`KINGHOST_FTP_USER`** - **`viladajuda`**
 - ✅ **`KINGHOST_FTP_PASSWORD`** - Sua senha FTP
 
 ### **3. Disparar o Deploy**
@@ -62,7 +62,7 @@ Após o deploy terminar:
 
 ### **Erro: "550 Permission denied"**
 - ✅ Pastas já foram criadas (já fizemos isso)
-- Verifique se o usuário FTP está correto: `viladajuda01`
+- Verifique se o usuário FTP está correto: `viladajuda`
 
 ### **Erro: "Secret not found"**
 - Verifique se todos os 3 secrets estão configurados
@@ -76,7 +76,7 @@ Após o deploy terminar:
 
 ## 📋 Checklist Rápido
 
-- [ ] Secret `KINGHOST_FTP_USER` atualizado para `viladajuda01`
+- [ ] Secret `KINGHOST_FTP_USER` configurado com valor `viladajuda`
 - [ ] Secret `KINGHOST_FTP_HOST` configurado
 - [ ] Secret `KINGHOST_FTP_PASSWORD` configurado
 - [ ] Workflow "Deploy to KingHost" habilitado

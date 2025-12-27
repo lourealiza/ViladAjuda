@@ -15,7 +15,7 @@ Acesse: https://github.com/lourealiza/ViladAjuda/actions
 Conecte via SSH e verifique:
 
 ```bash
-ssh viladajuda01@www.viladajuda.com.br
+ssh viladajuda@www.viladajuda.com.br
 cd ~/www
 
 # Verificar se os arquivos foram atualizados

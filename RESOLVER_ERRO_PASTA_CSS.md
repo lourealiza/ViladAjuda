@@ -36,7 +36,7 @@ server-dir: ./
 
 **Opção C**: Se o FTP loga em outro lugar:
 ```yaml
-server-dir: /home/viladajuda01/www/
+server-dir: /home/viladajuda/www/
 ```
 
 ### **Solução 3: Criar Pastas no Diretório Correto**
@@ -44,7 +44,7 @@ server-dir: /home/viladajuda01/www/
 Se o FTP loga em um diretório diferente, crie as pastas lá:
 
 ```bash
-ssh viladajuda01@www.viladajuda.com.br
+ssh viladajuda@www.viladajuda.com.br
 
 # Verificar onde você está
 pwd
@@ -65,7 +65,7 @@ chmod 755 css js images api
 Se o FTP continuar dando problema, use deploy manual:
 
 ```bash
-ssh viladajuda01@www.viladajuda.com.br "cd ~ && mkdir -p temp-vila && cd temp-vila && git clone https://github.com/lourealiza/ViladAjuda.git . && cp -f index.html ~/www/index.html && cp -f obrigado.html ~/www/obrigado.html && cp -f admin.html ~/www/admin.html && cp -rf css ~/www/ && cp -rf js ~/www/ && cp -rf images ~/www/ && cp -rf api ~/www/ && cd ~ && rm -rf temp-vila && echo '✅ Deploy concluído!'"
+ssh viladajuda@www.viladajuda.com.br "cd ~ && mkdir -p temp-vila && cd temp-vila && git clone https://github.com/lourealiza/ViladAjuda.git . && cp -f index.html ~/www/index.html && cp -f obrigado.html ~/www/obrigado.html && cp -f admin.html ~/www/admin.html && cp -rf css ~/www/ && cp -rf js ~/www/ && cp -rf images ~/www/ && cp -rf api ~/www/ && cd ~ && rm -rf temp-vila && echo '✅ Deploy concluído!'"
 ```
 
 ---
@@ -74,7 +74,7 @@ ssh viladajuda01@www.viladajuda.com.br "cd ~ && mkdir -p temp-vila && cd temp-vi
 
 ### **1. Via SSH:**
 ```bash
-ssh viladajuda01@www.viladajuda.com.br
+ssh viladajuda@www.viladajuda.com.br
 pwd  # Ver onde você está
 ls -la  # Ver estrutura
 ```
