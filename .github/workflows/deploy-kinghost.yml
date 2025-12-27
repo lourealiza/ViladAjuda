@@ -1,0 +1,111 @@
+name: Deploy to KingHost
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js (if needed for build)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Deploy to KingHost via SFTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.KINGHOST_FTP_HOST }}
+          username: ${{ secrets.KINGHOST_FTP_USER }}
+          password: ${{ secrets.KINGHOST_FTP_PASSWORD }}
+          server-dir: /www/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.env*
+            **/backend/**
+            **/backend-deploy/**
+            **/deploy_kinghost/**
+            **/www/**
+            **/.github/**
+            **/instrucoes/**
+            **/*.txt
+            **/*.md
+            **/*.ps1
+            **/*.sh
+            **/.vscode/**
+            **/.cursor/**
+            **/.idea/**
+            **/logs/**
+            **/package.json
+            **/package-lock.json
+            **/.gitignore
+            **/README.md
+            **/DEPLOY*.md
+            **/TESTE*.txt
+            **/ENVIAR*.txt
+            **/CORRECOES*.txt
+            **/AJUSTES*.txt
+            **/FINAL*.txt
+            **/URGENTE*.txt
+            **/VERIFICAR*.txt
+            **/LISTA*.txt
+            **/RESOLVER*.txt
+            **/DESCOBRIR*.txt
+            **/DIAGNOSTICO*.txt
+            **/IMPLEMENTACAO*.txt
+            **/LAYOUT*.txt
+            **/CACHE*.txt
+            **/ICONES*.txt
+            **/CARDS*.txt
+            **/ECO*.txt
+            **/EMAIL*.txt
+            **/AVALIACOES*.txt
+            **/RESERVA*.txt
+            **/USUARIO*.txt
+            **/ARQUIVOS*.txt
+            **/3_*.txt
+            **/Copy
+            **/new_*.html
+            **/old_*.html
+            **/public/**
+            **/public_html/**
+          local-dir: ./
+          dangerous-clean-slate: false
+      
+      - name: Deploy API to KingHost
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.KINGHOST_FTP_HOST }}
+          username: ${{ secrets.KINGHOST_FTP_USER }}
+          password: ${{ secrets.KINGHOST_FTP_PASSWORD }}
+          server-dir: /www/api/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.env*
+            **/teste*.php
+            **/phpinfo.php
+            **/hello.php
+            **/info.php
+            **/README*.md
+            **/CONFIGURAR*.txt
+          local-dir: ./api/
+          dangerous-clean-slate: false
+      
+      - name: Deployment Summary
+        run: |
+          echo "✅ Deploy concluído com sucesso!"
+          echo "🌐 Site: http://viladajuda.web213.uni5.net/"
+          echo "📡 API: http://viladajuda.web213.uni5.net/api/"
+
