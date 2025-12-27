@@ -102,6 +102,11 @@ class ReservaWorkflowService {
                         processado_por: dadosAdicionais.usuario_id
                     });
                 }
+                
+                // TODO: Enviar email de confirmação para o cliente
+                // O email será enviado pela API PHP quando o status for atualizado via endpoint
+                // Se o backend Node.js tiver serviço de email, adicionar aqui
+                console.log(`✅ Reserva #${reservaId} confirmada - Email deve ser enviado via API PHP`);
                 break;
 
             case 'checkin_realizado':

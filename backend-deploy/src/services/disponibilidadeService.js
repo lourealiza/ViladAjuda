@@ -57,7 +57,8 @@ class DisponibilidadeService {
             erros.push(`Período bloqueado: ${bloqueios.map(b => b.motivo || b.tipo).join(', ')}`);
         }
 
-        // 5. Verificar disponibilidade (reservas existentes)
+        // 5. Verificar disponibilidade (reservas confirmadas existentes)
+        // Apenas avisar, não bloquear - o admin decide se aprova ou não
         const disponivel = await Chale.verificarDisponibilidade(
             chale_id,
             data_checkin,
@@ -65,7 +66,8 @@ class DisponibilidadeService {
         );
 
         if (!disponivel) {
-            erros.push('Chalé não está disponível para o período selecionado');
+            // Apenas avisar, não bloquear - permitir que o admin decida
+            avisos.push('⚠️ Este período já possui reservas confirmadas. A aprovação desta solicitação ficará a critério do administrador.');
         }
 
         // 6. Verificar diária mínima por temporada

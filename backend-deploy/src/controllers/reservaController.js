@@ -74,19 +74,16 @@ class ReservaController {
                     });
                 }
 
-                // Verificar disponibilidade
+                // Verificar disponibilidade (apenas para informação, não bloqueia)
+                // O admin decide se aprova ou não a reserva
                 const disponivel = await Chale.verificarDisponibilidade(
                     chale_id, 
                     data_checkin, 
                     data_checkout
                 );
 
-                if (!disponivel) {
-                    return res.status(400).json({ 
-                        erro: 'Chalé indisponível',
-                        mensagem: 'O chalé selecionado não está disponível para o período escolhido'
-                    });
-                }
+                // Não bloquear - apenas registrar como aviso se houver conflito
+                // A reserva será criada como 'solicitacao_recebida' e o admin decide
 
                 // Verificar capacidade
                 if (num_adultos > chale.capacidade_adultos) {

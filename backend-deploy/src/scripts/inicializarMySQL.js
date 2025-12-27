@@ -101,7 +101,7 @@ async function inicializarMySQL() {
             
             const chalésExemplo = [
                 {
-                    nome: 'Chalé 1',
+                    nome: 'Alvorada Tropical',
                     descricao: 'Chalé completo com varanda espaçosa, rede e vista para o jardim. Perfeito para casais.',
                     capacidade_adultos: 2,
                     capacidade_criancas: 2,
@@ -111,7 +111,7 @@ async function inicializarMySQL() {
                     imagens: JSON.stringify(['chale1.jpg'])
                 },
                 {
-                    nome: 'Chalé 2',
+                    nome: 'Vila do Canto',
                     descricao: 'Chalé completo com varanda espaçosa, rede e vista para o jardim. Perfeito para casais.',
                     capacidade_adultos: 2,
                     capacidade_criancas: 2,
@@ -119,27 +119,8 @@ async function inicializarMySQL() {
                     ativo: true,
                     amenidades: JSON.stringify(['Wi-Fi', 'Ar-condicionado', 'Cozinha equipada', 'Varanda com rede']),
                     imagens: JSON.stringify(['chale2.jpg'])
-                },
-                {
-                    nome: 'Chalé 3',
-                    descricao: 'Chalé completo com varanda espaçosa, rede e vista para o jardim. Perfeito para casais.',
-                    capacidade_adultos: 2,
-                    capacidade_criancas: 2,
-                    preco_diaria: 250.00,
-                    ativo: true,
-                    amenidades: JSON.stringify(['Wi-Fi', 'Ar-condicionado', 'Cozinha equipada', 'Varanda com rede']),
-                    imagens: JSON.stringify(['chale3.jpg'])
-                },
-                {
-                    nome: 'Chalé 4',
-                    descricao: 'Chalé completo com varanda espaçosa, rede e vista para o jardim. Perfeito para casais.',
-                    capacidade_adultos: 2,
-                    capacidade_criancas: 2,
-                    preco_diaria: 250.00,
-                    ativo: true,
-                    amenidades: JSON.stringify(['Wi-Fi', 'Ar-condicionado', 'Cozinha equipada', 'Varanda com rede']),
-                    imagens: JSON.stringify(['chale4.jpg'])
                 }
+                // Chalés 3 e 4 desativados - não criar mais
             ];
 
             for (const chale of chalésExemplo) {

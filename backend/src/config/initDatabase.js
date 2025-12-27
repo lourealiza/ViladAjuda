@@ -35,7 +35,7 @@ const inicializarBanco = async () => {
             console.log('Criando chalés de exemplo...');
             
             await Chale.criar({
-                nome: 'Chalé 1',
+                nome: 'Alvorada Tropical',
                 descricao: 'Chalé completo com varanda espaçosa, rede e vista para o jardim. Perfeito para casais.',
                 capacidade_adultos: 2,
                 capacidade_criancas: 2,
@@ -52,7 +52,7 @@ const inicializarBanco = async () => {
             });
 
             await Chale.criar({
-                nome: 'Chalé 2',
+                nome: 'Vila do Canto',
                 descricao: 'Chalé completo com varanda espaçosa, rede e vista para o jardim. Perfeito para casais.',
                 capacidade_adultos: 2,
                 capacidade_criancas: 2,
@@ -68,40 +68,7 @@ const inicializarBanco = async () => {
                 imagens: ['images/IMG_20230814_141853_677.webp']
             });
 
-            await Chale.criar({
-                nome: 'Chalé 3',
-                descricao: 'Chalé aconchegante para famílias pequenas.',
-                capacidade_adultos: 4,
-                capacidade_criancas: 2,
-                preco_diaria: 350.00,
-                ativo: 1,
-                amenidades: [
-                    'Quarto com ar-condicionado',
-                    'Sala de estar',
-                    'Cozinha equipada',
-                    'Varanda com rede',
-                    'Wi-Fi gratuito'
-                ],
-                imagens: []
-            });
-
-            await Chale.criar({
-                nome: 'Chalé 4',
-                descricao: 'Chalé espaçoso ideal para famílias.',
-                capacidade_adultos: 4,
-                capacidade_criancas: 3,
-                preco_diaria: 380.00,
-                ativo: 1,
-                amenidades: [
-                    'Quarto com ar-condicionado',
-                    'Sala de estar',
-                    'Cozinha equipada',
-                    'Varanda com rede',
-                    'Wi-Fi gratuito',
-                    'Área externa'
-                ],
-                imagens: []
-            });
+            // Chalés 3 e 4 desativados - não criar mais
 
             console.log('✓ Chalés de exemplo criados com sucesso!');
         } else {
