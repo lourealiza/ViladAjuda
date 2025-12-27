@@ -185,7 +185,7 @@
     <div class="obrigado-container">
         <div class="obrigado-content">
             <div class="obrigado-icon">✅</div>
-            <h1 class="obrigado-title">Obrigado pela sua Reserva!</h1>
+            <h1 class="obrigado-title">Obrigado pelo contato!</h1>
             <p class="obrigado-message">
                 Recebemos sua solicitação de reserva com sucesso. Nossa equipe entrará em contato em breve para confirmar os detalhes e finalizar sua reserva.
             </p>
@@ -218,25 +218,29 @@
     </div>
     
     <script>
-        // Verificar se há dados da reserva na URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const periodo = urlParams.get('periodo');
-        const valor = urlParams.get('valor');
-        const email = urlParams.get('email');
-        
-        if (periodo || valor || email) {
-            const detailsDiv = document.getElementById('reservaDetails');
-            detailsDiv.style.display = 'block';
-            
-            if (periodo) {
-                document.getElementById('periodoReserva').textContent = periodo;
+        // Verificar se há dados da reserva no sessionStorage
+        try {
+            const dadosReservaStr = sessionStorage.getItem('reservaDados');
+            if (dadosReservaStr) {
+                const dadosReserva = JSON.parse(dadosReservaStr);
+                const detailsDiv = document.getElementById('reservaDetails');
+                detailsDiv.style.display = 'block';
+                
+                if (dadosReserva.periodo) {
+                    document.getElementById('periodoReserva').textContent = dadosReserva.periodo;
+                }
+                if (dadosReserva.valor) {
+                    document.getElementById('valorReserva').textContent = dadosReserva.valor;
+                }
+                if (dadosReserva.email) {
+                    document.getElementById('emailReserva').textContent = dadosReserva.email;
+                }
+                
+                // Limpar dados após exibir (opcional - para não mostrar novamente se voltar)
+                // sessionStorage.removeItem('reservaDados');
             }
-            if (valor) {
-                document.getElementById('valorReserva').textContent = valor;
-            }
-            if (email) {
-                document.getElementById('emailReserva').textContent = email;
-            }
+        } catch (erro) {
+            console.error('Erro ao carregar dados da reserva:', erro);
         }
     </script>
 </body>

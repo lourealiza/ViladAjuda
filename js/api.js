@@ -6,16 +6,20 @@ const API_BASE_URL = window.location.hostname === 'www.viladajuda.com.br'
         ? `${window.location.protocol}//${window.location.host}/api`
         : `${window.location.protocol}//${window.location.host}/api`);
 
+// URL do Backend Node.js no Vercel (quando deployado)
+// ⚠️ Para usar: 1) Faça deploy no Vercel, 2) Substitua pela sua URL do Vercel
+const API_VERCEL_BASE_URL = null; // Exemplo: 'https://viladajuda-api.vercel.app/api'
+
 /**
  * Função auxiliar para fazer requisições à API
- * Usa API Vercel para rotas avançadas (auth, admin) e API PHP para rotas básicas
+ * Usa API Vercel para rotas avançadas (auth, admin) se configurado, senão usa API PHP
  */
 async function fetchAPI(endpoint, options = {}) {
-    // Rotas que devem usar API Vercel (Node.js)
+    // Rotas que devem usar API Vercel (Node.js) - apenas se API_VERCEL_BASE_URL estiver configurado
     const rotasVercel = ['/auth', '/admin', '/hospedes', '/conteudos', '/tracking', '/bloqueios', '/lgpd'];
     
     // Determinar qual API usar baseado no endpoint
-    const usarVercel = rotasVercel.some(rota => endpoint.startsWith(rota));
+    const usarVercel = API_VERCEL_BASE_URL && rotasVercel.some(rota => endpoint.startsWith(rota));
     const baseURL = usarVercel ? API_VERCEL_BASE_URL : API_BASE_URL;
     
     const url = `${baseURL}${endpoint}`;
