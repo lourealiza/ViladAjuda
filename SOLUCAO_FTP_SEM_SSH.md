@@ -2,7 +2,7 @@
 
 ## ❌ Problema Identificado
 
-O usuário `viladajuda01` não tem permissão SSH (`/sbin/nologin: Permission denied`). Isso significa:
+O usuário `viladajuda` não tem permissão SSH (`/sbin/nologin: Permission denied`). Isso significa:
 - ❌ Não podemos usar SSH para criar pastas
 - ❌ Não podemos usar SSH para fazer deploy manual
 - ✅ Podemos usar apenas FTP
@@ -19,7 +19,7 @@ Como não temos acesso SSH, precisamos criar as pastas manualmente via FTP Clien
 
 2. **Configure a conexão**:
    - **Host**: `ftp.viladajuda.com.br`
-   - **Usuário**: `viladajuda01`
+   - **Usuário**: `viladajuda`
    - **Senha**: (sua senha FTP)
    - **Porta**: `21` (padrão)
 
@@ -76,7 +76,7 @@ Se o FTP Client não funcionar, tente criar as pastas via painel da KingHost:
 
 **Última opção**: Entre em contato com o suporte da KingHost e peça para:
 1. Criar as pastas `css/`, `js/`, `images/`, `api/` no diretório correto
-2. Ou habilitar permissão SSH para o usuário `viladajuda01`
+2. Ou habilitar permissão SSH para o usuário `viladajuda`
 
 ---
 

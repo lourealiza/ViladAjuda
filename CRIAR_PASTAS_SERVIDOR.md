@@ -9,7 +9,7 @@ Execute estes comandos **uma única vez** via SSH para criar as pastas necessár
 
 ### **1. Conectar ao Servidor**
 ```bash
-ssh viladajuda01@www.viladajuda.com.br
+ssh viladajuda@www.viladajuda.com.br
 ```
 
 ### **2. Criar Estrutura de Pastas**
@@ -65,7 +65,7 @@ Após criar as pastas, verifique qual é o caminho correto:
 
 ### **Opção 1: Verificar Permissões**
 ```bash
-ssh viladajuda01@www.viladajuda.com.br
+ssh viladajuda@www.viladajuda.com.br
 cd ~/www  # ou caminho correto
 chmod -R 755 css js images api
 ```
@@ -83,7 +83,7 @@ server-dir: /home/viladajuda/public_html/
 Se o FTP continuar dando erro, use deploy manual via SSH:
 
 ```bash
-ssh viladajuda01@www.viladajuda.com.br "cd ~ && mkdir -p temp-vila && cd temp-vila && git clone https://github.com/lourealiza/ViladAjuda.git . && cp -f index.html ~/www/index.html && cp -f obrigado.html ~/www/obrigado.html && cp -f admin.html ~/www/admin.html && cp -rf css ~/www/ && cp -rf js ~/www/ && cp -rf images ~/www/ && cd ~ && rm -rf temp-vila"
+ssh viladajuda@www.viladajuda.com.br "cd ~ && mkdir -p temp-vila && cd temp-vila && git clone https://github.com/lourealiza/ViladAjuda.git . && cp -f index.html ~/www/index.html && cp -f obrigado.html ~/www/obrigado.html && cp -f admin.html ~/www/admin.html && cp -rf css ~/www/ && cp -rf js ~/www/ && cp -rf images ~/www/ && cd ~ && rm -rf temp-vila"
 ```
 
 ---
