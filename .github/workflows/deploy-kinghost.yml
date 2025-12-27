@@ -77,7 +77,7 @@ jobs:
           server: ${{ secrets.KINGHOST_FTP_HOST }}
           username: ${{ secrets.KINGHOST_FTP_USER }}
           password: ${{ secrets.KINGHOST_FTP_PASSWORD }}
-          server-dir: /www/
+          server-dir: /home/viladajuda/public_html/
           exclude: |
             **/.git*
             **/.git*/**
@@ -144,6 +144,6 @@ jobs:
       - name: Deployment Summary
         run: |
           echo "✅ Deploy concluído com sucesso!"
-          echo "🌐 Site: http://viladajuda.web213.uni5.net/"
-          echo "📡 API: http://viladajuda.web213.uni5.net/api/"
+          echo "🌐 Site: https://www.viladajuda.com.br/"
+          echo "📡 API: https://www.viladajuda.com.br/api/"
 
