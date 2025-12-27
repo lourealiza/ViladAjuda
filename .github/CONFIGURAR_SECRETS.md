@@ -77,5 +77,6 @@ Após o deploy, acesse:
 
 ## 📁 Caminho do Servidor
 
-O diretório correto no servidor é `public_html/` (caminho relativo ao diretório home do usuário FTP).
+O diretório correto no servidor é `www/` (caminho relativo ao diretório home do usuário FTP).
+A pasta `api/` já existe neste diretório.
 
