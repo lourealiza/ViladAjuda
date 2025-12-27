@@ -15,10 +15,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: Setup Node.js (if needed for build)
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
+      - name: Verify Secrets
+        run: |
+          if [ -z "${{ secrets.KINGHOST_FTP_HOST }}" ]; then
+            echo "❌ Erro: KINGHOST_FTP_HOST não configurado"
+            exit 1
+          fi
+          if [ -z "${{ secrets.KINGHOST_FTP_USER }}" ]; then
+            echo "❌ Erro: KINGHOST_FTP_USER não configurado"
+            exit 1
+          fi
+          if [ -z "${{ secrets.KINGHOST_FTP_PASSWORD }}" ]; then
+            echo "❌ Erro: KINGHOST_FTP_PASSWORD não configurado"
+            exit 1
+          fi
+          echo "✅ Todos os secrets estão configurados"
       
       - name: Deploy to KingHost via SFTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
