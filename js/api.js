@@ -8,9 +8,17 @@ const API_BASE_URL = window.location.hostname === 'www.viladajuda.com.br'
 
 /**
  * Função auxiliar para fazer requisições à API
+ * Usa API Vercel para rotas avançadas (auth, admin) e API PHP para rotas básicas
  */
 async function fetchAPI(endpoint, options = {}) {
-    const url = `${API_BASE_URL}${endpoint}`;
+    // Rotas que devem usar API Vercel (Node.js)
+    const rotasVercel = ['/auth', '/admin', '/hospedes', '/conteudos', '/tracking', '/bloqueios', '/lgpd'];
+    
+    // Determinar qual API usar baseado no endpoint
+    const usarVercel = rotasVercel.some(rota => endpoint.startsWith(rota));
+    const baseURL = usarVercel ? API_VERCEL_BASE_URL : API_BASE_URL;
+    
+    const url = `${baseURL}${endpoint}`;
     
     const defaultOptions = {
         headers: {
