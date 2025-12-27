@@ -21,7 +21,7 @@
 
 Certifique-se de que estes secrets estão configurados:
 
-- ✅ **`KINGHOST_FTP_HOST`** - Ex: `viladajuda.web213.uni5.net`
+- ✅ **`KINGHOST_FTP_HOST`** - **`ftp.viladajuda.com.br`**
 - ✅ **`KINGHOST_FTP_USER`** - **`viladajuda01`** (ATUALIZAR!)
 - ✅ **`KINGHOST_FTP_PASSWORD`** - Sua senha FTP
 

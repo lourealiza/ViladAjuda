@@ -34,7 +34,7 @@ jobs:
             echo "1. Acesse: https://github.com/${{ github.repository }}/settings/secrets/actions"
             echo "2. Clique em 'New repository secret'"
             echo "3. Nome: KINGHOST_FTP_HOST"
-            echo "4. Valor: viladajuda.web213.uni5.net ou ftp.viladajuda.web213.uni5.net"
+            echo "4. Valor: ftp.viladajuda.com.br"
             echo "5. Clique em 'Add secret'"
             echo ""
             exit 1
