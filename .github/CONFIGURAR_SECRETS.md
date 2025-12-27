@@ -4,7 +4,7 @@
 
 Com base nas informações fornecidas:
 
-- **Usuário FTP**: `viladajuda02`
+- **Usuário FTP**: `viladajuda`
 - **Senha FTP**: `vila2026*`
 - **Host FTP**: `ftp.viladajuda.com.br`
 
@@ -30,7 +30,7 @@ Clique em **"New repository secret"** para cada um:
 
 #### Secret 2: `KINGHOST_FTP_USER`
 - **Name**: `KINGHOST_FTP_USER`
-- **Secret**: `viladajuda02`
+- **Secret**: `viladajuda`
 - Clique em **"Add secret"**
 
 #### Secret 3: `KINGHOST_FTP_PASSWORD`
@@ -59,7 +59,7 @@ Após configurar os 3 secrets:
 ## ✅ Checklist
 
 - [ ] Secret `KINGHOST_FTP_HOST` configurado
-- [ ] Secret `KINGHOST_FTP_USER` configurado com valor `viladajuda02`
+- [ ] Secret `KINGHOST_FTP_USER` configurado com valor `viladajuda`
 - [ ] Secret `KINGHOST_FTP_PASSWORD` configurado com valor `vila2026*`
 - [ ] Workflow executado com sucesso
 

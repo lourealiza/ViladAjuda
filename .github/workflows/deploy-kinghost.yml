@@ -46,7 +46,7 @@ jobs:
             echo "1. Acesse: https://github.com/${{ github.repository }}/settings/secrets/actions"
             echo "2. Clique em 'New repository secret'"
             echo "3. Nome: KINGHOST_FTP_USER"
-            echo "4. Valor: viladajuda02"
+            echo "4. Valor: viladajuda"
             echo "5. Clique em 'Add secret'"
             echo ""
             exit 1
@@ -77,7 +77,7 @@ jobs:
           server: ${{ secrets.KINGHOST_FTP_HOST }}
           username: ${{ secrets.KINGHOST_FTP_USER }}
           password: ${{ secrets.KINGHOST_FTP_PASSWORD }}
-          server-dir: public_html/
+          server-dir: /home/viladajuda/public_html/
           exclude: |
             **/.git*
             **/.git*/**
