@@ -136,7 +136,6 @@ jobs:
             **/public/**
             **/api/**
           local-dir: ./
-          dangerous-clean-slate: false
           dry-run: false
           log-level: verbose
       
