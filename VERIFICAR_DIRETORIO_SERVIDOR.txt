@@ -1,0 +1,46 @@
+# 🔍 Verificar Diretório Correto no Servidor
+
+Baseado na saída do SSH, o servidor tem:
+- `/home/viladajuda/public_html` (existe)
+- `/home/viladajuda/www` (existe)
+
+## 📋 Comandos para Verificar
+
+Execute no servidor via SSH:
+
+```bash
+ssh viladajuda@www.viladajuda.com.br
+
+# Verificar qual diretório tem os arquivos do site
+ls -la ~/public_html/
+ls -la ~/www/
+
+# Verificar qual é o diretório padrão do FTP
+pwd  # Quando conecta via FTP, em qual diretório fica?
+
+# Verificar se há arquivos HTML em algum deles
+ls -la ~/public_html/*.html 2>/dev/null
+ls -la ~/www/*.html 2>/dev/null
+```
+
+## 🎯 Possíveis Configurações
+
+### OPÇÃO 1: public_html é o diretório correto
+Se os arquivos estão em `~/public_html/`:
+- No workflow: `server-dir: ./` (FTP já está em public_html)
+- OU: `server-dir: /public_html/` (caminho relativo)
+
+### OPÇÃO 2: www é o diretório correto
+Se os arquivos estão em `~/www/`:
+- No workflow: `server-dir: ./www/`
+- OU: `server-dir: /www/`
+
+### OPÇÃO 3: FTP conecta no home (~/)
+Se o FTP conecta em `/home/viladajuda/`:
+- Frontend: `server-dir: ./public_html/` ou `./www/`
+- API: `server-dir: ./public_html/api/` ou `./www/api/`
+
+## ✅ Próximo Passo
+
+Após verificar, atualize o workflow `.github/workflows/deploy-kinghost.yml` com o caminho correto.
+
