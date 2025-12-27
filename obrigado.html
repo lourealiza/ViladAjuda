@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Obrigado por sua reserva na Vila d'Ajuda - Chalés em Arraial d'Ajuda">
+    <meta name="robots" content="noindex, nofollow">
+    
+    <title>Obrigado pela sua Reserva - Vila d'Ajuda</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/Logo.png">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/style.css?v=11">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        .obrigado-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--creme) 0%, var(--branco) 100%);
+            padding: 2rem;
+        }
+        
+        .obrigado-content {
+            max-width: 600px;
+            text-align: center;
+            background: var(--branco);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px var(--sombra);
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .obrigado-icon {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            animation: bounce 1s ease-in-out;
+        }
+        
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+        
+        .obrigado-title {
+            font-family: var(--fonte-titulo);
+            font-size: 2.5rem;
+            color: var(--verde-primario);
+            margin-bottom: 1rem;
+        }
+        
+        .obrigado-message {
+            font-size: 1.1rem;
+            color: var(--texto-medio);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+        
+        .obrigado-details {
+            background: var(--creme);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+        
+        .obrigado-details h3 {
+            font-family: var(--fonte-titulo);
+            color: var(--verde-primario);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        
+        .obrigado-details-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+        }
+        
+        .obrigado-details-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .obrigado-details-item span {
+            margin-right: 0.8rem;
+            font-size: 1.2rem;
+        }
+        
+        .obrigado-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-obrigado {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background: var(--verde-primario);
+            color: var(--branco);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn-obrigado:hover {
+            background: var(--verde-secundario);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px var(--sombra);
+        }
+        
+        .btn-obrigado-secondary {
+            background: transparent;
+            color: var(--verde-primario);
+            border: 2px solid var(--verde-primario);
+        }
+        
+        .btn-obrigado-secondary:hover {
+            background: var(--verde-primario);
+            color: var(--branco);
+        }
+        
+        @media (max-width: 768px) {
+            .obrigado-content {
+                padding: 2rem 1.5rem;
+            }
+            
+            .obrigado-title {
+                font-size: 2rem;
+            }
+            
+            .obrigado-icon {
+                font-size: 4rem;
+            }
+            
+            .obrigado-actions {
+                flex-direction: column;
+            }
+            
+            .btn-obrigado {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="obrigado-container">
+        <div class="obrigado-content">
+            <div class="obrigado-icon">✅</div>
+            <h1 class="obrigado-title">Obrigado pela sua Reserva!</h1>
+            <p class="obrigado-message">
+                Recebemos sua solicitação de reserva com sucesso. Nossa equipe entrará em contato em breve para confirmar os detalhes e finalizar sua reserva.
+            </p>
+            
+            <div class="obrigado-details" id="reservaDetails" style="display: none;">
+                <h3>Detalhes da Reserva</h3>
+                <div class="obrigado-details-item">
+                    <span>📅</span>
+                    <span id="periodoReserva">-</span>
+                </div>
+                <div class="obrigado-details-item">
+                    <span>💰</span>
+                    <span id="valorReserva">-</span>
+                </div>
+                <div class="obrigado-details-item">
+                    <span>📧</span>
+                    <span id="emailReserva">-</span>
+                </div>
+            </div>
+            
+            <div class="obrigado-actions">
+                <a href="index.html" class="btn-obrigado">Voltar ao Início</a>
+                <a href="index.html#chales" class="btn-obrigado btn-obrigado-secondary">Ver Outros Chalés</a>
+            </div>
+            
+            <p style="margin-top: 2rem; font-size: 0.9rem; color: var(--texto-medio);">
+                Em caso de dúvidas, entre em contato conosco através do email informado em sua reserva.
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        // Verificar se há dados da reserva na URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const periodo = urlParams.get('periodo');
+        const valor = urlParams.get('valor');
+        const email = urlParams.get('email');
+        
+        if (periodo || valor || email) {
+            const detailsDiv = document.getElementById('reservaDetails');
+            detailsDiv.style.display = 'block';
+            
+            if (periodo) {
+                document.getElementById('periodoReserva').textContent = periodo;
+            }
+            if (valor) {
+                document.getElementById('valorReserva').textContent = valor;
+            }
+            if (email) {
+                document.getElementById('emailReserva').textContent = email;
+            }
+        }
+    </script>
+</body>
+</html>
+

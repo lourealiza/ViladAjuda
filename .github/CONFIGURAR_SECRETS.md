@@ -12,7 +12,12 @@ Com base nas informações fornecidas:
 
 ### 1. Acesse o Repositório no GitHub
 
-Vá para: `https://github.com/seu-usuario/ViladAjuda/settings/secrets/actions`
+**Link direto**: `https://github.com/lourealiza/ViladAjuda/settings/secrets/actions`
+
+Ou siga este caminho:
+1. Acesse: https://github.com/lourealiza/ViladAjuda
+2. Clique em **Settings** (Configurações)
+3. No menu lateral, clique em **Secrets and variables** → **Actions**
 
 ### 2. Adicione os 3 Secrets
 

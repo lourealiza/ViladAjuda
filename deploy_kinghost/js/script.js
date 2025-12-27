@@ -263,12 +263,16 @@ if (formReservaCompleto) {
             
             showMessage(mensagemSucesso, 'success');
             
-            // Limpar formulário
-            formReservaCompleto.reset();
+            // Preparar dados para a página de agradecimento
+            const params = new URLSearchParams({
+                periodo: `${checkinFormatado} até ${checkoutFormatado} (${noites} noite${noites > 1 ? 's' : ''})`,
+                valor: resultado.reserva.valor_total ? API.formatarValor(resultado.reserva.valor_total) : 'A confirmar',
+                email: dados.email_hospede
+            });
             
-            // Scroll para o topo
+            // Redirecionar para página de agradecimento após 2 segundos
             setTimeout(() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                window.location.href = `obrigado.html?${params.toString()}`;
             }, 2000);
             
         } catch (erro) {

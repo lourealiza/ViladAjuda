@@ -16,25 +16,60 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Verify Secrets
+        env:
+          FTP_HOST: ${{ secrets.KINGHOST_FTP_HOST }}
+          FTP_USER: ${{ secrets.KINGHOST_FTP_USER }}
+          FTP_PASSWORD: ${{ secrets.KINGHOST_FTP_PASSWORD }}
         run: |
-          if [ -z "${{ secrets.KINGHOST_FTP_HOST }}" ]; then
-            echo "❌ Erro: KINGHOST_FTP_HOST não configurado"
-            echo "Por favor, configure o secret KINGHOST_FTP_HOST em Settings → Secrets and variables → Actions"
+          echo "🔍 Verificando configuração dos secrets..."
+          echo ""
+          
+          # Verificar KINGHOST_FTP_HOST
+          if [ -z "$FTP_HOST" ]; then
+            echo "❌ ERRO: KINGHOST_FTP_HOST não está configurado!"
+            echo ""
+            echo "📝 Como configurar:"
+            echo "1. Acesse: https://github.com/${{ github.repository }}/settings/secrets/actions"
+            echo "2. Clique em 'New repository secret'"
+            echo "3. Nome: KINGHOST_FTP_HOST"
+            echo "4. Valor: ftp.viladajuda.com.br"
+            echo "5. Clique em 'Add secret'"
+            echo ""
             exit 1
           fi
-          if [ -z "${{ secrets.KINGHOST_FTP_USER }}" ]; then
-            echo "❌ Erro: KINGHOST_FTP_USER não configurado"
-            echo "Por favor, configure o secret KINGHOST_FTP_USER em Settings → Secrets and variables → Actions"
+          
+          # Verificar KINGHOST_FTP_USER
+          if [ -z "$FTP_USER" ]; then
+            echo "❌ ERRO: KINGHOST_FTP_USER não está configurado!"
+            echo ""
+            echo "📝 Como configurar:"
+            echo "1. Acesse: https://github.com/${{ github.repository }}/settings/secrets/actions"
+            echo "2. Clique em 'New repository secret'"
+            echo "3. Nome: KINGHOST_FTP_USER"
+            echo "4. Valor: viladajuda02"
+            echo "5. Clique em 'Add secret'"
+            echo ""
             exit 1
           fi
-          if [ -z "${{ secrets.KINGHOST_FTP_PASSWORD }}" ]; then
-            echo "❌ Erro: KINGHOST_FTP_PASSWORD não configurado"
-            echo "Por favor, configure o secret KINGHOST_FTP_PASSWORD em Settings → Secrets and variables → Actions"
+          
+          # Verificar KINGHOST_FTP_PASSWORD
+          if [ -z "$FTP_PASSWORD" ]; then
+            echo "❌ ERRO: KINGHOST_FTP_PASSWORD não está configurado!"
+            echo ""
+            echo "📝 Como configurar:"
+            echo "1. Acesse: https://github.com/${{ github.repository }}/settings/secrets/actions"
+            echo "2. Clique em 'New repository secret'"
+            echo "3. Nome: KINGHOST_FTP_PASSWORD"
+            echo "4. Valor: vila2026*"
+            echo "5. Clique em 'Add secret'"
+            echo ""
             exit 1
           fi
-          echo "✅ Todos os secrets estão configurados"
-          echo "📡 Host: ${{ secrets.KINGHOST_FTP_HOST }}"
-          echo "👤 Usuário: ${{ secrets.KINGHOST_FTP_USER }}"
+          
+          echo "✅ Todos os secrets estão configurados!"
+          echo "📡 Host: $FTP_HOST"
+          echo "👤 Usuário: $FTP_USER"
+          echo ""
       
       - name: Deploy to KingHost via SFTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
