@@ -83,10 +83,8 @@ jobs:
             **/.git*/**
             **/node_modules/**
             **/.env*
-            **/backend/**
             **/backend-deploy/**
             **/deploy_kinghost/**
-            **/www/**
             **/.github/**
             **/instrucoes/**
             **/*.txt
