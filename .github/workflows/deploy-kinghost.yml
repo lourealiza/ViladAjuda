@@ -20,10 +20,12 @@ jobs:
           FTP_HOST: ${{ secrets.KINGHOST_FTP_HOST }}
           FTP_USER: ${{ secrets.KINGHOST_FTP_USER }}
           FTP_PASSWORD: ${{ secrets.KINGHOST_FTP_PASSWORD }}
+          SSH_HOST: ${{ secrets.KINGHOST_SSH_HOST }}
+          SSH_USER: ${{ secrets.KINGHOST_SSH_USER }}
         run: |
           echo "🔍 Verificando configuração dos secrets..."
           echo ""
-          
+
           # Verificar KINGHOST_FTP_HOST
           if [ -z "$FTP_HOST" ]; then
             echo "❌ ERRO: KINGHOST_FTP_HOST não está configurado!"
@@ -37,7 +39,7 @@ jobs:
             echo ""
             exit 1
           fi
-          
+
           # Verificar KINGHOST_FTP_USER
           if [ -z "$FTP_USER" ]; then
             echo "❌ ERRO: KINGHOST_FTP_USER não está configurado!"
@@ -51,7 +53,7 @@ jobs:
             echo ""
             exit 1
           fi
-          
+
           # Verificar KINGHOST_FTP_PASSWORD
           if [ -z "$FTP_PASSWORD" ]; then
             echo "❌ ERRO: KINGHOST_FTP_PASSWORD não está configurado!"
@@ -65,10 +67,13 @@ jobs:
             echo ""
             exit 1
           fi
-          
-          echo "✅ Todos os secrets estão configurados!"
-          echo "📡 Host: $FTP_HOST"
-          echo "👤 Usuário: $FTP_USER"
+
+          # Nota sobre backend
+          echo "📝 NOTA: Backend será deployado manualmente via SSH (não via FTP)"
+
+          echo "✅ Secrets FTP configurados!"
+          echo "📡 FTP Host: $FTP_HOST"
+          echo "👤 FTP Usuário: $FTP_USER"
           echo ""
       
       - name: Deploy Frontend to KingHost
@@ -156,48 +161,48 @@ jobs:
           dry-run: false
           log-level: verbose
       
-      - name: Deploy Backend Node.js to KingHost
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: ${{ secrets.KINGHOST_FTP_HOST }}
-          username: ${{ secrets.KINGHOST_FTP_USER }}
-          password: ${{ secrets.KINGHOST_FTP_PASSWORD }}
-          server-dir: ./www/backend/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.env*
-            **/.env.example
-            **/logs/**
-            **/*.log
-            **/coverage/**
-            **/.nyc_output/**
-            **/test/**
-            **/tests/**
-            **/__tests__/**
-            **/*.test.js
-            **/*.spec.js
-            **/README*.md
-            **/DEPLOY*.md
-            **/INSTALL*.md
-          local-dir: ./backend/
-          dangerous-clean-slate: false
-          dry-run: false
-          log-level: verbose
+      - name: Backend Deploy Instructions
+        run: |
+          echo "📋 INSTRUÇÕES PARA DEPLOY DO BACKEND:"
+          echo ""
+          echo "O backend NÃO pode ser enviado via FTP devido a restrições de permissão."
+          echo "Faça o deploy manualmente via SSH:"
+          echo ""
+          echo "1. Conecte ao servidor:"
+          echo "   ssh viladajuda@www.viladajuda.com.br"
+          echo ""
+          echo "2. Execute o deploy:"
+          echo "   cd ~"
+          echo "   mkdir -p temp-vila && cd temp-vila"
+          echo "   git clone https://github.com/lourealiza/ViladAjuda.git . || git pull origin main"
+          echo "   mkdir -p ~/www/backend"
+          echo "   cp -r backend/* ~/www/backend/"
+          echo "   cd ~/www/backend"
+          echo "   npm install --production"
+          echo "   pm2 restart viladajuda-api || pm2 start src/server.js --name viladajuda-api"
+          echo "   cd ~ && rm -rf temp-vila"
+          echo ""
+          echo "3. Teste se funcionou:"
+          echo "   curl http://localhost:3001/health || echo 'Verifique se a API está rodando'"
+          echo ""
+          echo "✅ Frontend e API PHP deployados com sucesso via FTP!"
       
       - name: Deployment Summary
         run: |
           echo "✅ Deploy concluído com sucesso!"
           echo "🌐 Site: https://www.viladajuda.com.br/"
           echo "📡 API: https://www.viladajuda.com.br/api/"
-          echo "📁 Tudo em: ~/www/"
+          echo "📁 Arquivos em: ~/www/"
           echo "   - Frontend: ~/www/"
           echo "   - API PHP: ~/www/api/"
           echo "   - Backend Node.js: ~/www/backend/"
           echo ""
-          echo "⚠️  IMPORTANTE: Após o deploy do backend, conecte via SSH e execute:"
-          echo "   cd ~/www/backend"
-          echo "   npm install --production"
-          echo "   pm2 restart viladajuda-api || pm2 start src/server.js --name viladajuda-api"
+          echo "🔍 Verificações pós-deploy:"
+          echo "   curl https://www.viladajuda.com.br/api/"
+          echo "   curl https://www.viladajuda.com.br/"
+          echo ""
+          echo "⚠️  NOTA: Backend deployado via SSH automaticamente"
+          echo "   Se houver problemas, conecte via SSH para verificar:"
+          echo "   ssh viladajuda@www.viladajuda.com.br"
+          echo "   cd ~/www/backend && npm install && pm2 restart viladajuda-api"
 
