@@ -164,7 +164,7 @@ jobs:
           server: ${{ secrets.KINGHOST_FTP_HOST }}
           username: ${{ secrets.KINGHOST_FTP_USER }}
           password: ${{ secrets.KINGHOST_FTP_PASSWORD }}
-          server-dir: ./viladajuda/backend/
+          server-dir: ./www/backend/
           exclude: |
             **/.git*
             **/.git*/**
@@ -193,12 +193,13 @@ jobs:
           echo "✅ Deploy concluído com sucesso!"
           echo "🌐 Site: https://www.viladajuda.com.br/"
           echo "📡 API: https://www.viladajuda.com.br/api/"
-          echo "📁 Frontend: ~/www/"
-          echo "📁 API PHP: ~/www/api/"
-          echo "📁 Backend Node.js: ~/viladajuda/backend/"
+          echo "📁 Tudo em: ~/www/"
+          echo "   - Frontend: ~/www/"
+          echo "   - API PHP: ~/www/api/"
+          echo "   - Backend Node.js: ~/www/backend/"
           echo ""
           echo "⚠️  IMPORTANTE: Após o deploy do backend, conecte via SSH e execute:"
-          echo "   cd ~/viladajuda/backend"
+          echo "   cd ~/www/backend"
           echo "   npm install --production"
           echo "   pm2 restart viladajuda-api || pm2 start src/server.js --name viladajuda-api"
 
