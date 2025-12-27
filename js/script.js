@@ -188,7 +188,10 @@ if (formReserva) {
             }
             
             const noites = API.calcularNoites(dataCheckin, dataCheckout);
-            showMessage(`✅ ${resultado.chales.length} chalé(s) disponível(is) para ${noites} noite(s)!`, 'success');
+            // Mostrar quantidade real de chalés disponíveis retornados pela API
+            // Se estiver mostrando mais de 2, verificar se há chalés duplicados no banco ou na API
+            const totalChales = resultado.chales.length;
+            showMessage(`✅ ${totalChales} chalé(s) disponível(is) para ${noites} noite(s)!`, 'success');
             
             // Preencher formulário completo
             const formCompleto = document.getElementById('formReservaCompleto');
@@ -344,23 +347,25 @@ if (formReservaCompleto) {
             
             showMessage(mensagemSucesso, 'success');
             
-            // Preparar dados para a página de agradecimento
-            const params = new URLSearchParams({
+            // Salvar dados da reserva no localStorage para a página de agradecimento
+            const dadosReserva = {
                 periodo: `${checkinFormatado} até ${checkoutFormatado} (${noites} noite${noites > 1 ? 's' : ''})`,
                 valor: resultado.reserva.valor_total ? API.formatarValor(resultado.reserva.valor_total) : 'A confirmar',
                 email: dados.email_hospede
-            });
+            };
+            
+            // Salvar no sessionStorage (limpa ao fechar a aba)
+            sessionStorage.setItem('reservaDados', JSON.stringify(dadosReserva));
             
             // Redirecionar para página de agradecimento após 2 segundos
             setTimeout(() => {
                 try {
-                    const urlObrigado = `obrigado.html?${params.toString()}`;
-                    console.log('Redirecionando para:', urlObrigado);
-                    window.location.href = urlObrigado;
+                    // Usar URL limpa sem parâmetros
+                    window.location.href = '/obrigado';
                 } catch (erro) {
                     console.error('Erro ao redirecionar:', erro);
                     // Fallback: tentar redirecionar sem parâmetros
-                    window.location.href = 'obrigado.html';
+                    window.location.href = '/obrigado';
                 }
             }, 2000);
             

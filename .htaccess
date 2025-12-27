@@ -1,0 +1,13 @@
+# Habilitar rewrite
+RewriteEngine On
+
+# Redirecionar /obrigado para obrigado.html
+RewriteRule ^obrigado/?$ obrigado.html [L]
+
+# CORS Headers (se necessário)
+<IfModule mod_headers.c>
+    Header always set Access-Control-Allow-Origin "*"
+    Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
+</IfModule>
+
