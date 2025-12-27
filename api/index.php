@@ -109,6 +109,12 @@ if (preg_match('#^/reservas/?$#', $path) && $method === 'POST') {
     exit();
 }
 
+if (preg_match('#^/reservas/(\d+)/status/?$#', $path, $matches) && $method === 'PATCH') {
+    $controller = new ReservaController($db);
+    $controller->atualizarStatus($matches[1]);
+    exit();
+}
+
 // Rotas de Avaliações
 if (preg_match('#^/avaliacoes/homepage/?$#', $path) && $method === 'GET') {
     $controller = new AvaliacaoController($db);

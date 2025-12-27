@@ -235,19 +235,56 @@ class ReservaController {
         ";
         $reserva = executarQuery($this->db, $sqlBuscar, 'i', [$reservaId]);
         
+        // NÃO enviar email na criação - apenas notificar admin
+        // Email será enviado apenas quando admin aprovar (status = 'confirmada')
         if (!empty($reserva)) {
-            // Enviar e-mails
-            $this->enviarEmailsReserva($reserva[0], $numDiarias);
+            // Enviar apenas email de notificação para o admin
+            $this->enviarEmailNotificacaoAdmin($reserva[0], $numDiarias);
         }
         
         responderJSON([
-            'mensagem' => 'Reserva criada com sucesso! Verifique seu e-mail.',
+            'mensagem' => 'Solicitação de reserva enviada com sucesso! Aguardando aprovação. Entraremos em contato em breve.',
             'reserva' => $reserva[0]
         ], 201);
     }
     
     /**
-     * Enviar e-mails de confirmação
+     * Enviar apenas notificação para admin (sem email para hóspede)
+     */
+    private function enviarEmailNotificacaoAdmin($reserva, $numDiarias) {
+        require_once __DIR__ . '/../config/email.php';
+        require_once __DIR__ . '/../templates/email-nova-reserva-admin.php';
+        
+        $dadosEmail = [
+            'reserva_id' => $reserva['id'],
+            'nome_hospede' => $reserva['nome_hospede'],
+            'email_hospede' => $reserva['email_hospede'],
+            'telefone_hospede' => $reserva['telefone_hospede'],
+            'chale_nome' => $reserva['chale_nome'] ?? 'Chalé',
+            'data_checkin' => $reserva['data_checkin'],
+            'data_checkout' => $reserva['data_checkout'],
+            'num_diarias' => $numDiarias,
+            'valor_total' => $reserva['valor_total'],
+            'num_adultos' => $reserva['num_adultos'],
+            'num_criancas' => $reserva['num_criancas'],
+            'mensagem' => $reserva['mensagem'] ?? ''
+        ];
+        
+        // E-mail apenas para o admin (notificação de nova solicitação)
+        try {
+            $htmlAdmin = gerarEmailNovaReservaAdmin($dadosEmail);
+            enviarEmail(
+                EMAIL_ADMIN,
+                'Nova Solicitação de Reserva - Vila d\'Ajuda #' . $reserva['id'],
+                $htmlAdmin
+            );
+        } catch (Exception $e) {
+            error_log("Erro ao enviar e-mail para admin: " . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Enviar e-mails de confirmação (após aprovação do admin)
      */
     private function enviarEmailsReserva($reserva, $numDiarias) {
         require_once __DIR__ . '/../config/email.php';
@@ -294,6 +331,80 @@ class ReservaController {
             // Log do erro mas não falha a reserva
             error_log("Erro ao enviar e-mail para admin: " . $e->getMessage());
         }
+    }
+    
+    /**
+     * Atualizar status da reserva (aprovada pelo admin)
+     */
+    public function atualizarStatus($reservaId) {
+        // Obter dados do PATCH
+        $json = file_get_contents('php://input');
+        $dados = json_decode($json, true);
+        
+        if (!$dados || !isset($dados['status'])) {
+            responderErro('Status é obrigatório', 400);
+        }
+        
+        $novoStatus = $dados['status'];
+        
+        // Validar status
+        $statusValidos = ['solicitacao_recebida', 'aguardando_pagamento', 'confirmada', 'checkin_realizado', 'checkout_realizado', 'cancelada'];
+        if (!in_array($novoStatus, $statusValidos)) {
+            responderErro('Status inválido', 400);
+        }
+        
+        // Buscar reserva atual
+        $sqlBuscar = "
+            SELECT r.*, c.nome as chale_nome 
+            FROM reservas r
+            LEFT JOIN chales c ON r.chale_id = c.id
+            WHERE r.id = ?
+        ";
+        $reserva = executarQuery($this->db, $sqlBuscar, 'i', [$reservaId]);
+        
+        if (empty($reserva) || isset($reserva['erro'])) {
+            responderErro('Reserva não encontrada', 404);
+        }
+        
+        $reservaAtual = $reserva[0];
+        $statusAnterior = $reservaAtual['status'];
+        
+        // Atualizar status
+        $sqlAtualizar = "UPDATE reservas SET status = ? WHERE id = ?";
+        $stmt = $this->db->prepare($sqlAtualizar);
+        
+        if ($stmt === false) {
+            responderErro('Erro ao preparar SQL: ' . $this->db->error, 500);
+        }
+        
+        $stmt->bind_param('si', $novoStatus, $reservaId);
+        
+        if (!$stmt->execute()) {
+            responderErro('Erro ao atualizar status: ' . $stmt->error, 500);
+        }
+        
+        // Se status mudou para 'confirmada', enviar email de confirmação para o hóspede
+        if ($novoStatus === 'confirmada' && $statusAnterior !== 'confirmada') {
+            $checkin = new DateTime($reservaAtual['data_checkin']);
+            $checkout = new DateTime($reservaAtual['data_checkout']);
+            $numDiarias = $checkin->diff($checkout)->days;
+            
+            // Buscar reserva atualizada
+            $reservaAtualizada = executarQuery($this->db, $sqlBuscar, 'i', [$reservaId]);
+            
+            if (!empty($reservaAtualizada) && !isset($reservaAtualizada['erro'])) {
+                // Enviar email de confirmação para o hóspede
+                $this->enviarEmailsReserva($reservaAtualizada[0], $numDiarias);
+            }
+        }
+        
+        // Buscar reserva atualizada para retornar
+        $reservaAtualizada = executarQuery($this->db, $sqlBuscar, 'i', [$reservaId]);
+        
+        responderJSON([
+            'mensagem' => 'Status da reserva atualizado com sucesso',
+            'reserva' => $reservaAtualizada[0]
+        ]);
     }
     
     /**

@@ -248,24 +248,9 @@ if (formReservaCompleto) {
             const checkinDate = new Date(dados.data_checkin);
             const checkoutDate = new Date(dados.data_checkout);
             
-            // Verificar no calendário se há datas reservadas no período
-            let temDataReservada = false;
-            document.querySelectorAll('.calendario-dia.reservado').forEach(dia => {
-                const dataDia = dia.getAttribute('data-data');
-                if (dataDia) {
-                    const diaDate = new Date(dataDia);
-                    if (diaDate >= checkinDate && diaDate < checkoutDate) {
-                        temDataReservada = true;
-                    }
-                }
-            });
-            
-            if (temDataReservada) {
-                showMessage('❌ Não é possível fazer reserva para este período. Algumas datas já estão reservadas. Por favor, escolha outras datas.', 'error');
-                submitButton.disabled = false;
-                submitButton.textContent = originalText;
-                return;
-            }
+            // Não validar datas reservadas - permitir que o usuário faça a solicitação
+            // O admin é quem aprova ou não a reserva
+            // Apenas datas bloqueadas são impedidas (já validado na seleção)
             
             // Enviar reserva para a API
             const resultado = await API.criarReserva(dados);
@@ -275,14 +260,15 @@ if (formReservaCompleto) {
             const checkinFormatado = API.formatarData(dados.data_checkin);
             const checkoutFormatado = API.formatarData(dados.data_checkout);
             
-            let mensagemSucesso = `✅ Reserva enviada com sucesso!<br><br>`;
+            let mensagemSucesso = `✅ Solicitação de reserva enviada com sucesso!<br><br>`;
             mensagemSucesso += `📅 ${checkinFormatado} até ${checkoutFormatado} (${noites} noite${noites > 1 ? 's' : ''})<br>`;
             
             if (resultado.reserva.valor_total) {
-                mensagemSucesso += `💰 Valor: ${API.formatarValor(resultado.reserva.valor_total)}<br>`;
+                mensagemSucesso += `💰 Valor estimado: ${API.formatarValor(resultado.reserva.valor_total)}<br>`;
             }
             
-            mensagemSucesso += `<br>📧 Entraremos em contato em breve no email: ${dados.email_hospede}`;
+            mensagemSucesso += `<br>⏳ Sua solicitação está aguardando aprovação.<br>`;
+            mensagemSucesso += `📧 Entraremos em contato em breve no email: ${dados.email_hospede}`;
             
             showMessage(mensagemSucesso, 'success');
             
@@ -610,9 +596,10 @@ function renderizarMes(mes, ano, diasCalendario, isPrimeiroMes) {
             classes += ' hoje';
         }
         
-        // Adicionar classe clicável se estiver disponível OU reservado (para permitir verificar preço)
-        // Datas bloqueadas não são clicáveis
-        if ((disponivel || reservado) && !bloqueado) {
+        // Adicionar classe clicável para TODAS as datas (exceto bloqueadas)
+        // Permite selecionar qualquer data para fazer reserva, mesmo que já esteja reservada
+        // A aprovação do admin é que confirma a reserva
+        if (!bloqueado) {
             classes += ' clicavel';
         }
         
@@ -675,10 +662,11 @@ function selecionarData(data) {
         return;
     }
     
-    // Permitir selecionar datas reservadas para verificar preço, mas avisar
+    // Permitir selecionar qualquer data (exceto bloqueadas)
+    // Avisar se estiver reservada, mas permitir a solicitação
     const isReservado = diaElement.classList.contains('reservado');
     if (isReservado) {
-        showMessage('⚠️ Esta data está reservada, mas você pode verificar o preço. Não será possível fazer reserva para este período.', 'info');
+        showMessage('⚠️ Esta data já está reservada. Você pode fazer uma solicitação, mas será necessário aguardar aprovação do administrador.', 'info');
     }
     
     // Não permitir selecionar datas no passado
