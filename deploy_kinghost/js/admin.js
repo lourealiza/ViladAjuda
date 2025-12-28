@@ -411,14 +411,24 @@ function mostrarChales(chales) {
         return;
     }
     
-    container.innerHTML = chales.map(chale => `
+    container.innerHTML = chales.map(chale => {
+        // Usar preço dinâmico se disponível, senão usar preço base
+        const precoExibir = chale.preco_diaria_atual || chale.preco_diaria || 0;
+        const precoBase = chale.preco_base || chale.preco_diaria || 0;
+        const temporadaInfo = chale.temporada ? ` (${chale.temporada})` : '';
+        const feriadoInfo = chale.feriado ? ` - ${chale.feriado}` : '';
+        
+        return `
         <div class="chale-card-admin">
             <h4>${chale.nome}</h4>
             <p>${chale.descricao || 'Sem descrição'}</p>
             <div class="chale-card-info">
                 <span>👥 ${chale.capacidade_adultos} adultos</span>
-                <span>💰 ${API.formatarValor(chale.preco_diaria)}</span>
+                <span>💰 ${API.formatarValor(precoExibir)}${temporadaInfo}${feriadoInfo}</span>
             </div>
+            ${precoExibir !== precoBase ? `<div class="chale-card-info" style="font-size: 0.85em; color: #666;">
+                <span>Preço base: ${API.formatarValor(precoBase)}</span>
+            </div>` : ''}
             <div class="chale-card-info">
                 <span>${chale.ativo ? '✅ Ativo' : '❌ Inativo'}</span>
             </div>
@@ -427,7 +437,8 @@ function mostrarChales(chales) {
                 <button class="btn-delete" onclick="deletarChale(${chale.id})">Excluir</button>
             </div>
         </div>
-    `).join('');
+    `;
+    }).join('');
 }
 
 // Novo chalé

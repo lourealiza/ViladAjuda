@@ -1,5 +1,57 @@
 const { body, validationResult } = require('express-validator');
 
+// Validação para consultas (campos opcionais - compatível com API PHP)
+const validarConsulta = [
+    body('data_checkin')
+        .notEmpty().withMessage('Data de check-in é obrigatória')
+        .isISO8601().withMessage('Data de check-in inválida')
+        .custom((value) => {
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+            const checkin = new Date(value);
+            if (checkin < hoje) {
+                throw new Error('Data de check-in deve ser hoje ou no futuro');
+            }
+            return true;
+        }),
+    
+    body('data_checkout')
+        .notEmpty().withMessage('Data de check-out é obrigatória')
+        .isISO8601().withMessage('Data de check-out inválida')
+        .custom((value, { req }) => {
+            const checkin = new Date(req.body.data_checkin);
+            const checkout = new Date(value);
+            if (checkout <= checkin) {
+                throw new Error('Data de check-out deve ser posterior ao check-in');
+            }
+            return true;
+        }),
+    
+    body('nome_hospede')
+        .optional()
+        .trim()
+        .isLength({ min: 3 }).withMessage('Nome deve ter pelo menos 3 caracteres'),
+    
+    body('email_hospede')
+        .optional()
+        .trim()
+        .isEmail().withMessage('Email inválido'),
+    
+    body('telefone_hospede')
+        .optional()
+        .trim()
+        .matches(/^[\d\s\(\)\-\+]+$/).withMessage('Telefone inválido'),
+    
+    body('num_adultos')
+        .optional()
+        .isInt({ min: 1, max: 10 }).withMessage('Número de adultos deve estar entre 1 e 10'),
+    
+    body('num_criancas')
+        .optional()
+        .isInt({ min: 0, max: 10 }).withMessage('Número de crianças deve estar entre 0 e 10'),
+];
+
+// Validação para reservas completas (campos obrigatórios)
 const validarReserva = [
     body('nome_hospede')
         .trim()
@@ -120,6 +172,7 @@ const tratarErrosValidacao = (req, res, next) => {
 };
 
 module.exports = {
+    validarConsulta,
     validarReserva,
     validarChale,
     validarUsuario,

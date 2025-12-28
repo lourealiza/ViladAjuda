@@ -61,8 +61,36 @@ class ReservaController {
                 data_checkin, 
                 data_checkout,
                 num_adultos,
-                num_criancas 
+                num_criancas,
+                nome_hospede,
+                email_hospede,
+                telefone_hospede
             } = req.body;
+            
+            // Verificar se é uma solicitação de reserva completa (tem dados do hóspede)
+            const ehSolicitacaoReserva = nome_hospede && email_hospede && telefone_hospede;
+            
+            // Se for apenas consulta (sem dados do hóspede), retornar apenas disponibilidade
+            if (!ehSolicitacaoReserva) {
+                // Buscar chalés disponíveis
+                const chalesDisponiveis = await Reserva.buscarChalesDisponiveis(
+                    data_checkin,
+                    data_checkout,
+                    chale_id || null
+                );
+                
+                return res.status(200).json({
+                    mensagem: 'Consulta recebida com sucesso! Entraremos em contato em breve.',
+                    tipo: 'consulta',
+                    disponibilidade: {
+                        chales: chalesDisponiveis,
+                        periodo: {
+                            checkin: data_checkin,
+                            checkout: data_checkout
+                        }
+                    }
+                });
+            }
 
             // Verificar se o chalé existe
             let chale = null;
