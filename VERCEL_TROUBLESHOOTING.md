@@ -83,7 +83,7 @@ ENABLE_ACCESS_LOG=false
 
 3. **Teste a API**:
    ```bash
-   curl https://viladajuda-api.vercel.app/api/health
+   curl https://viladajuda.vercel.app/api/health
    ```
 
 ---
@@ -92,13 +92,13 @@ ENABLE_ACCESS_LOG=false
 
 ### **1. Health Check**
 ```bash
-curl https://viladajuda-api.vercel.app/api/health
+curl https://viladajuda.vercel.app/api/health
 ```
 **Deve retornar**: `{"status":"ok","timestamp":"..."}`
 
 ### **2. API Principal**
 ```bash
-curl https://viladajuda-api.vercel.app/api/
+curl https://viladajuda.vercel.app/api/
 ```
 **Deve retornar**: JSON com informações da API
 

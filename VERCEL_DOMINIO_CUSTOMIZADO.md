@@ -9,7 +9,7 @@
 ## 📊 Duas Opções
 
 ### **Opção 1: Usar URL do Vercel (Gratuito - Padrão)**
-- ✅ **URL automática**: `https://viladajuda-api.vercel.app`
+- ✅ **URL automática**: `https://viladajuda.vercel.app`
 - ✅ **Já funciona** sem configuração adicional
 - ✅ **SSL automático** incluído
 - ✅ **Gratuito**
@@ -78,7 +78,7 @@ Após o domínio estar funcionando, atualize `js/api.js`:
 
 ```javascript
 // ANTES
-const API_VERCEL_BASE_URL = 'https://viladajuda-api.vercel.app/api';
+const API_VERCEL_BASE_URL = 'https://viladajuda.vercel.app/api';
 
 // DEPOIS (com domínio customizado)
 const API_VERCEL_BASE_URL = 'https://api.viladajuda.com.br/api';
@@ -157,7 +157,7 @@ curl https://api.viladajuda.com.br/api/health
 ## ⚠️ Importante
 
 ### **Não é obrigatório!**
-- Você pode usar `https://viladajuda-api.vercel.app` sem problemas
+- Você pode usar `https://viladajuda.vercel.app` sem problemas
 - Funciona perfeitamente para desenvolvimento e produção
 - SSL automático incluso
 
@@ -196,14 +196,14 @@ curl https://api.viladajuda.com.br/api/health
 | **Configuração** | ✅ Automática | ⚠️ Precisa DNS |
 | **Custo** | ✅ Grátis | ✅ Grátis |
 | **SSL** | ✅ Automático | ✅ Automático |
-| **URL** | `viladajuda-api.vercel.app` | `api.viladajuda.com.br` |
+| **URL** | `viladajuda.vercel.app` | `api.viladajuda.com.br` |
 | **Profissional** | ⚠️ Menos | ✅ Mais |
 
 ---
 
 ## 🎯 Recomendação Final
 
-**Para começar:** Use a URL do Vercel (`viladajuda-api.vercel.app`)  
+**Para começar:** Use a URL do Vercel (`viladajuda.vercel.app`)  
 **Depois:** Configure domínio customizado (`api.viladajuda.com.br`) quando tiver tempo
 
 **Ambos funcionam perfeitamente!** 🚀
