@@ -158,6 +158,26 @@
             color: var(--branco);
         }
         
+        .btn-whatsapp {
+            background: #25D366 !important;
+            color: var(--branco) !important;
+            border: 2px solid #25D366 !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-whatsapp:hover {
+            background: #20BA5A !important;
+            border-color: #20BA5A !important;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+        }
+        
+        .btn-whatsapp span {
+            font-size: 1.2rem;
+        }
+        
         @media (max-width: 768px) {
             .obrigado-content {
                 padding: 2rem 1.5rem;
@@ -208,7 +228,9 @@
             
             <div class="obrigado-actions">
                 <a href="index.html" class="btn-obrigado">Voltar ao Início</a>
-                <a href="index.html#chales" class="btn-obrigado btn-obrigado-secondary">Ver Outros Chalés</a>
+                <a href="https://wa.me/5527988513096" target="_blank" class="btn-obrigado btn-obrigado-secondary btn-whatsapp">
+                    <span>💬</span> Falar no WhatsApp
+                </a>
             </div>
             
             <p style="margin-top: 2rem; font-size: 0.9rem; color: var(--texto-medio);">

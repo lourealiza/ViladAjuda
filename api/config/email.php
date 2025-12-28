@@ -13,7 +13,7 @@ define('EMAIL_FROM_NAME', 'Vila d\'Ajuda Chalés');
 define('EMAIL_REPLY_TO', 'contato@viladajuda.com.br');
 
 // E-mails de notificação
-define('EMAIL_ADMIN', 'contato@viladajuda.com.br'); // E-mail que recebe notificações de novas reservas
+define('EMAIL_ADMIN', 'lou.rached@outlook.com'); // E-mail que recebe notificações de novas reservas
 
 // Configurações de segurança
 define('EMAIL_ENCRYPTION', 'tls'); // 'tls' ou 'ssl'

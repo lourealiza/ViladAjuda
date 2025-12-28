@@ -72,6 +72,12 @@ if (preg_match('#^/chales/(\d+)/disponibilidade/?$#', $path, $matches) && $metho
     exit();
 }
 
+if (preg_match('#^/chales/(\d+)/?$#', $path, $matches) && $method === 'DELETE') {
+    $controller = new ChaleController($db);
+    $controller->deletar($matches[1]);
+    exit();
+}
+
 // Rotas de Disponibilidade
 if (preg_match('#^/disponibilidade/verificar-rapida/?$#', $path) && $method === 'GET') {
     $controller = new DisponibilidadeController($db);

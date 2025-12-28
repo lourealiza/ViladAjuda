@@ -162,6 +162,35 @@ class ChaleController {
         ]);
     }
     
+    /**
+     * Deleta um chalé por ID
+     */
+    public function deletar($id) {
+        // Verificar se o chalé existe
+        $sqlVerificar = "SELECT * FROM chales WHERE id = ?";
+        $chale = executarQuery($this->db, $sqlVerificar, 'i', [$id]);
+        
+        if (isset($chale['erro'])) {
+            responderErro('Erro ao buscar chalé', 500, $chale['erro']);
+        }
+        
+        if (empty($chale)) {
+            responderErro('Chalé não encontrado', 404);
+        }
+        
+        // Deletar o chalé
+        $sql = "DELETE FROM chales WHERE id = ?";
+        $result = executarQuery($this->db, $sql, 'i', [$id]);
+        
+        if (isset($result['erro'])) {
+            responderErro('Erro ao deletar chalé', 500, $result['erro']);
+        }
+        
+        responderJSON([
+            'mensagem' => 'Chalé deletado com sucesso'
+        ]);
+    }
+    
     private function validarData($data) {
         $d = DateTime::createFromFormat('Y-m-d', $data);
         return $d && $d->format('Y-m-d') === $data;
