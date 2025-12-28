@@ -17,26 +17,47 @@ app.use(helmet());
 // CORS
 const corsOptions = {
     origin: function (origin, callback) {
+        // Permitir requisições sem origin (mesmo domínio, Postman, etc)
+        if (!origin) {
+            return callback(null, true);
+        }
+        
         // Em desenvolvimento, aceitar localhost em qualquer porta
         if (process.env.NODE_ENV === 'development') {
-            if (!origin || origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+            if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
                 return callback(null, true);
             }
         }
         
         // Em produção, usar FRONTEND_URL
-        const allowedOrigins = process.env.FRONTEND_URL 
-            ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
-            : ['*'];
+        const frontendUrl = process.env.FRONTEND_URL || 'https://www.viladajuda.com.br';
+        const allowedOrigins = frontendUrl.split(',').map(url => url.trim());
         
-        if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+        // Normalizar URLs para comparação (remover trailing slash)
+        const normalizedOrigin = origin.replace(/\/$/, '');
+        const normalizedAllowed = allowedOrigins.map(url => url.replace(/\/$/, ''));
+        
+        // Verificar se a origem está permitida
+        const isAllowed = normalizedAllowed.some(allowed => {
+            // Comparação exata
+            if (normalizedOrigin === allowed) return true;
+            // Aceitar variações com/sem www
+            if (normalizedOrigin.replace('www.', '') === allowed.replace('www.', '')) return true;
+            if (normalizedOrigin.replace(/^https?:\/\//, '') === allowed.replace(/^https?:\/\//, '')) return true;
+            return false;
+        });
+        
+        if (isAllowed) {
             callback(null, true);
         } else {
+            console.warn(`CORS bloqueado: ${origin} não está em ${allowedOrigins.join(', ')}`);
             callback(new Error('Not allowed by CORS'));
         }
     },
     credentials: true,
-    optionsSuccessStatus: 200
+    optionsSuccessStatus: 200,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 };
 app.use(cors(corsOptions));
 
