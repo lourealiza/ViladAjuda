@@ -193,36 +193,64 @@ if (formReserva) {
         }
         
         try {
+            // Buscar chalés disponíveis na API
             showMessage('Verificando disponibilidade...', 'info');
             
-            // Buscar chalés disponíveis na API
             const resultado = await API.buscarChalesDisponiveis(dataCheckin, dataCheckout);
-            
-            // Calcular preço
-            const precoInfo = await API.calcularPrecoReserva(dataCheckin, dataCheckout, parseInt(adultos));
             
             const noites = API.calcularNoites(dataCheckin, dataCheckout);
             const totalChales = resultado.chales.length;
             
-            // Mostrar resultado no modal
-            mostrarResultadoConsulta(resultado, precoInfo, noites, totalChales, dataCheckin, dataCheckout, adultos, criancas);
-            
-            // Ocultar formulário e mostrar resultado
-            formReserva.style.display = 'none';
-            const resultadoDiv = document.getElementById('resultadoConsulta');
-            if (resultadoDiv) {
-                resultadoDiv.style.display = 'block';
+            // Ocultar botão solicitar inicialmente
+            const btnSolicitar = document.getElementById('btnSolicitarReserva');
+            if (btnSolicitar) {
+                btnSolicitar.style.display = 'none';
             }
             
-            // Salvar dados para usar no botão confirmar
-            window.dadosConsultaAtual = {
-                dataCheckin,
-                dataCheckout,
-                adultos,
-                criancas,
-                resultado,
-                precoInfo
-            };
+            if (totalChales === 0) {
+                showMessage('😔 Não há chalés disponíveis para o período selecionado. Tente outras datas.', 'error');
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+                return;
+            }
+            
+            showMessage(`✅ ${totalChales} chalé(s) disponível(is) para ${noites} noite(s)!`, 'success');
+            
+            // Mostrar botão "Solicitar Reserva"
+            if (btnSolicitar) {
+                btnSolicitar.style.display = 'block';
+                
+                // Salvar dados para usar no botão
+                btnSolicitar.onclick = () => {
+                    // Preencher formulário completo
+                    const formCompleto = document.getElementById('formReservaCompleto');
+                    if (formCompleto) {
+                        formCompleto.querySelector('[name="checkin"]').value = dataCheckin;
+                        formCompleto.querySelector('[name="checkout"]').value = dataCheckout;
+                        formCompleto.querySelector('[name="adultos"]').value = adultos;
+                        formCompleto.querySelector('[name="criancas"]').value = criancas;
+                        
+                        // Atualizar opções de chalés disponíveis
+                        const selectChale = formCompleto.querySelector('[name="chale"]');
+                        if (selectChale) {
+                            // Limpar opções existentes exceto "Qualquer chalé"
+                            selectChale.innerHTML = '<option value="">Qualquer chalé</option>';
+                            
+                            // Adicionar chalés disponíveis
+                            resultado.chales.forEach(chale => {
+                                const option = document.createElement('option');
+                                option.value = chale.id;
+                                option.textContent = `${chale.nome} - ${API.formatarValor(chale.preco_diaria)}/noite`;
+                                selectChale.appendChild(option);
+                            });
+                        }
+                    }
+                    
+                    // Fechar modal de consulta e abrir modal de reserva
+                    fecharModalConsulta();
+                    abrirModalReserva();
+                };
+            }
             
         } catch (erro) {
             console.error('Erro ao verificar disponibilidade:', erro);
@@ -304,15 +332,6 @@ function abrirModalConsulta() {
     const modal = document.getElementById('modalConsulta');
     if (!modal) return;
     
-    // Resetar formulário e resultado
-    const formReserva = document.getElementById('formReserva');
-    const resultadoDiv = document.getElementById('resultadoConsulta');
-    if (formReserva) formReserva.style.display = 'block';
-    if (resultadoDiv) resultadoDiv.style.display = 'none';
-    
-    // Limpar dados anteriores
-    window.dadosConsultaAtual = null;
-    
     // Mostrar modal
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden'; // Prevenir scroll do body
@@ -335,108 +354,16 @@ function fecharModalConsulta() {
     document.body.style.overflow = ''; // Restaurar scroll do body
 }
 
-// Função para mostrar resultado da consulta
-function mostrarResultadoConsulta(resultado, precoInfo, noites, totalChales, dataCheckin, dataCheckout, adultos, criancas) {
-    const resultadoDiv = document.getElementById('resultadoDisponibilidade');
-    const precoDiv = document.getElementById('precoEstimadoConsulta');
-    const precoValor = document.getElementById('precoValorConsulta');
-    const precoDetalhes = document.getElementById('precoDetalhesConsulta');
-    const btnConfirmar = document.getElementById('btnConfirmarReserva');
-    
-    if (!resultadoDiv) return;
-    
-    let html = '';
-    
-    if (totalChales === 0) {
-        html = `
-            <div class="resultado-indisponivel">
-                <div class="resultado-icon">😔</div>
-                <h4>Não há chalés disponíveis</h4>
-                <p>Infelizmente não temos chalés disponíveis para o período selecionado.</p>
-                <p><strong>Período:</strong> ${API.formatarData(dataCheckin)} até ${API.formatarData(dataCheckout)} (${noites} noite${noites > 1 ? 's' : ''})</p>
-                <p>Tente selecionar outras datas ou entre em contato conosco.</p>
-            </div>
-        `;
-        if (btnConfirmar) btnConfirmar.style.display = 'none';
-    } else {
-        html = `
-            <div class="resultado-disponivel">
-                <div class="resultado-icon">✅</div>
-                <h4>${totalChales} chalé(s) disponível(is)!</h4>
-                <p><strong>Período:</strong> ${API.formatarData(dataCheckin)} até ${API.formatarData(dataCheckout)} (${noites} noite${noites > 1 ? 's' : ''})</p>
-                <p><strong>Hóspedes:</strong> ${adultos} adulto${adultos > 1 ? 's' : ''}${criancas > 0 ? `, ${criancas} criança${criancas > 1 ? 's' : ''}` : ''}</p>
-        `;
-        
-        if (resultado.chales && resultado.chales.length > 0) {
-            html += '<div class="chales-disponiveis-lista"><strong>Chalés disponíveis:</strong><ul>';
-            resultado.chales.forEach(chale => {
-                html += `<li>${chale.nome}</li>`;
-            });
-            html += '</ul></div>';
-        }
-        
-        html += '</div>';
-        
-        // Mostrar preço
-        if (precoInfo && precoInfo.valor_total && precoDiv && precoValor && precoDetalhes) {
-            precoValor.textContent = API.formatarValor(precoInfo.valor_total);
-            const valorMedio = precoInfo.valor_medio_diaria || (precoInfo.valor_total / noites);
-            precoDetalhes.textContent = `${noites} noite${noites > 1 ? 's' : ''} • Média de ${API.formatarValor(valorMedio)}/noite`;
-            precoDiv.style.display = 'block';
-        }
-        
-        // Mostrar botão confirmar
-        if (btnConfirmar) btnConfirmar.style.display = 'block';
-    }
-    
-    resultadoDiv.innerHTML = html;
-}
-
 // Event listeners para modal de consulta
 document.addEventListener('DOMContentLoaded', () => {
     const btnConsultar = document.getElementById('btnConsultarDisponibilidade');
     const modalConsulta = document.getElementById('modalConsulta');
     const closeBtnConsulta = document.querySelector('.modal-consulta-close');
     const overlayConsulta = document.querySelector('.modal-consulta-overlay');
-    const btnConfirmar = document.getElementById('btnConfirmarReserva');
     
     // Abrir modal ao clicar no botão
     if (btnConsultar) {
         btnConsultar.addEventListener('click', abrirModalConsulta);
-    }
-    
-    // Botão confirmar reserva
-    if (btnConfirmar) {
-        btnConfirmar.addEventListener('click', () => {
-            if (window.dadosConsultaAtual) {
-                const dados = window.dadosConsultaAtual;
-                
-                // Preencher formulário completo
-                const formCompleto = document.getElementById('formReservaCompleto');
-                if (formCompleto) {
-                    formCompleto.querySelector('[name="checkin"]').value = dados.dataCheckin;
-                    formCompleto.querySelector('[name="checkout"]').value = dados.dataCheckout;
-                    formCompleto.querySelector('[name="adultos"]').value = dados.adultos;
-                    formCompleto.querySelector('[name="criancas"]').value = dados.criancas;
-                    
-                    // Atualizar opções de chalés disponíveis
-                    const selectChale = formCompleto.querySelector('[name="chale"]');
-                    if (selectChale && dados.resultado && dados.resultado.chales) {
-                        selectChale.innerHTML = '<option value="">Qualquer chalé</option>';
-                        dados.resultado.chales.forEach(chale => {
-                            const option = document.createElement('option');
-                            option.value = chale.id;
-                            option.textContent = `${chale.nome} - ${API.formatarValor(chale.preco_diaria)}/noite`;
-                            selectChale.appendChild(option);
-                        });
-                    }
-                }
-                
-                // Fechar modal de consulta e abrir modal de reserva
-                fecharModalConsulta();
-                abrirModalReserva();
-            }
-        });
     }
     
     // Fechar ao clicar no botão X

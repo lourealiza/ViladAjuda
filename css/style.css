@@ -2230,115 +2230,8 @@ img[loading="lazy"].loaded {
     }
 }
 
-/* Resultado da Consulta */
-.resultado-consulta {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    background: var(--creme);
-    border-radius: 15px;
-    border: 2px solid var(--verde-secundario);
-}
-
-.resultado-consulta-content {
-    text-align: center;
-}
-
-.resultado-titulo {
-    font-family: var(--fonte-titulo);
-    color: var(--verde-primario);
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-
-.resultado-disponibilidade {
-    margin-bottom: 1.5rem;
-}
-
-.resultado-disponivel,
-.resultado-indisponivel {
-    padding: 1.5rem;
-    border-radius: 10px;
-}
-
-.resultado-disponivel {
-    background: #d4edda;
-    border-left: 4px solid #28a745;
-    color: #155724;
-}
-
-.resultado-indisponivel {
-    background: #fff3cd;
-    border-left: 4px solid #ff9800;
-    color: #856404;
-}
-
-.resultado-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
-
-.resultado-disponivel h4,
-.resultado-indisponivel h4 {
-    font-size: 1.3rem;
-    margin-bottom: 1rem;
-    color: inherit;
-}
-
-.resultado-disponivel p,
-.resultado-indisponivel p {
-    margin: 0.5rem 0;
-    color: inherit;
-}
-
-.chales-disponiveis-lista {
-    margin-top: 1rem;
-    text-align: left;
-}
-
-.chales-disponiveis-lista ul {
-    list-style: none;
-    padding: 0;
-    margin: 0.5rem 0 0 0;
-}
-
-.chales-disponiveis-lista li {
-    padding: 0.5rem;
-    background: rgba(255, 255, 255, 0.5);
-    margin: 0.25rem 0;
-    border-radius: 5px;
-}
-
-.preco-estimado-consulta {
-    margin: 1.5rem 0;
-    padding: 1rem;
-    background: #e7f3ff;
-    border-left: 4px solid #1976d2;
-    border-radius: 8px;
-}
-
-.preco-estimado-consulta .preco-estimado-content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: center;
-}
-
-.preco-estimado-consulta .preco-valor {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #0d47a1;
-}
-
-.preco-estimado-consulta .preco-detalhes {
-    font-size: 0.9rem;
-    color: #555;
-}
-
-.resultado-acoes {
-    margin-top: 1.5rem;
-}
-
-.btn-confirmar-reserva {
+/* Botão Solicitar Reserva */
+.btn-solicitar-reserva {
     background: linear-gradient(135deg, var(--verde-primario) 0%, var(--verde-secundario) 100%);
     color: var(--branco);
     border: none;
@@ -2351,33 +2244,20 @@ img[loading="lazy"].loaded {
     box-shadow: 0 4px 15px rgba(45, 80, 22, 0.3);
     font-family: var(--fonte-texto);
     width: 100%;
-    max-width: 400px;
 }
 
-.btn-confirmar-reserva:hover {
+.btn-solicitar-reserva:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(45, 80, 22, 0.4);
     background: linear-gradient(135deg, var(--verde-secundario) 0%, var(--verde-claro) 100%);
 }
 
-.btn-confirmar-reserva:active {
+.btn-solicitar-reserva:active {
     transform: translateY(0);
 }
 
 @media (max-width: 768px) {
-    .resultado-consulta {
-        padding: 1rem;
-    }
-    
-    .resultado-titulo {
-        font-size: 1.2rem;
-    }
-    
-    .resultado-icon {
-        font-size: 2.5rem;
-    }
-    
-    .btn-confirmar-reserva {
+    .btn-solicitar-reserva {
         padding: 0.9rem 2rem;
         font-size: 1rem;
     }
