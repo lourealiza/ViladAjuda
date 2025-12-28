@@ -454,11 +454,36 @@ async function carregarChales() {
     container.innerHTML = '<p class="loading">Carregando chalés...</p>';
     
     try {
-        const chales = await API.listarChales();
+        const resposta = await API.fetchAPI('/chales?ativo=true');
+        console.log('Resposta completa da API:', resposta);
+        
+        // Tratar resposta que pode ser { total, chales } ou array direto
+        let chales = [];
+        if (Array.isArray(resposta)) {
+            chales = resposta;
+        } else if (resposta && resposta.chales && Array.isArray(resposta.chales)) {
+            chales = resposta.chales;
+        } else if (resposta && Array.isArray(resposta)) {
+            chales = resposta;
+        }
+        
+        console.log('Chalés extraídos:', chales);
+        console.log('Primeiro chalé (exemplo):', chales[0]);
+        
+        if (chales.length > 0) {
+            console.log('Preço dinâmico do primeiro chalé:', {
+                preco_diaria_atual: chales[0].preco_diaria_atual,
+                preco_base: chales[0].preco_base,
+                preco_diaria: chales[0].preco_diaria,
+                temporada: chales[0].temporada,
+                feriado: chales[0].feriado
+            });
+        }
+        
         mostrarChales(chales);
     } catch (erro) {
         console.error('Erro ao carregar chalés:', erro);
-        container.innerHTML = '<p class="error-message">Erro ao carregar chalés</p>';
+        container.innerHTML = '<p class="error-message">Erro ao carregar chalés: ' + erro.message + '</p>';
     }
 }
 

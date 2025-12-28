@@ -67,14 +67,27 @@ class ChaleController {
             const apenasAtivos = req.query.ativo === 'true';
             const chales = await Chale.buscarTodos(apenasAtivos);
             
-            // Adicionar preço dinâmico para cada chalé
+            // Adicionar preço dinâmico para cada chalé (baseado na data de hoje)
             const chalesComPreco = await Promise.all(
                 chales.map(async (chale) => {
-                    const precoDinamico = await ChaleController.calcularPrecoDinamico(chale);
-                    return {
-                        ...chale,
-                        ...precoDinamico
-                    };
+                    try {
+                        const precoDinamico = await ChaleController.calcularPrecoDinamico(chale);
+                        return {
+                            ...chale,
+                            ...precoDinamico
+                        };
+                    } catch (erro) {
+                        console.error(`Erro ao calcular preço dinâmico para chalé ${chale.id}:`, erro);
+                        // Em caso de erro, retornar chalé com preço base
+                        return {
+                            ...chale,
+                            preco_diaria_atual: parseFloat(chale.preco_diaria || 350.00),
+                            preco_base: parseFloat(chale.preco_diaria || 350.00),
+                            temporada: null,
+                            feriado: null,
+                            multiplicador: 1.0
+                        };
+                    }
                 })
             );
             
