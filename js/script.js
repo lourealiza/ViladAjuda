@@ -664,8 +664,26 @@ async function carregarChalesNoDropdown() {
     if (!selectChale) return;
     
     // Obter datas do formulário
-    const dataCheckin = formCompleto.querySelector('[name="checkin"]')?.value;
-    const dataCheckout = formCompleto.querySelector('[name="checkout"]')?.value;
+    let dataCheckin = formCompleto.querySelector('[name="checkin"]')?.value;
+    let dataCheckout = formCompleto.querySelector('[name="checkout"]')?.value;
+    
+    // Converter data de DD/MM/YYYY para YYYY-MM-DD se necessário
+    function converterDataParaISO(data) {
+        if (!data) return null;
+        // Se já está no formato YYYY-MM-DD, retornar como está
+        if (/^\d{4}-\d{2}-\d{2}$/.test(data)) {
+            return data;
+        }
+        // Se está no formato DD/MM/YYYY, converter
+        if (/^\d{2}\/\d{2}\/\d{4}$/.test(data)) {
+            const [dia, mes, ano] = data.split('/');
+            return `${ano}-${mes}-${dia}`;
+        }
+        return data;
+    }
+    
+    dataCheckin = converterDataParaISO(dataCheckin);
+    dataCheckout = converterDataParaISO(dataCheckout);
     
     // Se não houver datas, usar datas padrão (hoje e amanhã)
     const hoje = new Date();
@@ -675,9 +693,27 @@ async function carregarChalesNoDropdown() {
     const checkin = dataCheckin || hoje.toISOString().split('T')[0];
     const checkout = dataCheckout || amanha.toISOString().split('T')[0];
     
+    console.log('🔍 Carregando chalés com preço dinâmico:', {
+        dataCheckinOriginal: formCompleto.querySelector('[name="checkin"]')?.value,
+        dataCheckoutOriginal: formCompleto.querySelector('[name="checkout"]')?.value,
+        checkinFormatado: checkin,
+        checkoutFormatado: checkout
+    });
+    
     try {
         // Buscar chalés disponíveis com preço dinâmico
         const resultado = await API.buscarChalesDisponiveis(checkin, checkout);
+        
+        console.log('📊 Resultado da API buscarChalesDisponiveis:', resultado);
+        if (resultado.chales && resultado.chales.length > 0) {
+            console.log('💰 Preços dos chalés:', resultado.chales.map(c => ({
+                nome: c.nome,
+                preco_diaria_atual: c.preco_diaria_atual,
+                preco_diaria: c.preco_diaria,
+                temporada: c.temporada,
+                feriado: c.feriado
+            })));
+        }
         
         // Limpar opções existentes
         selectChale.innerHTML = '<option value="">Qualquer chalé</option>';
