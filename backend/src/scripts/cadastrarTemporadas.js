@@ -1,5 +1,5 @@
-const Database = require('../config/database-mysql');
 require('dotenv').config();
+const mysql = require('mysql2/promise');
 
 /**
  * Calcula a data da Páscoa para um determinado ano (algoritmo de Gauss)
@@ -44,39 +44,44 @@ function formatarData(data) {
 }
 
 async function cadastrarTemporadas() {
-    const database = new Database();
+    const config = {
+        host: process.env.DB_HOST || 'localhost',
+        user: process.env.DB_USER || 'root',
+        password: process.env.DB_PASSWORD || '',
+        database: process.env.DB_NAME || 'viladajuda',
+        port: process.env.DB_PORT || 3306
+    };
+    
+    let connection;
     
     try {
         console.log('🚀 Conectando ao banco de dados...\n');
-        await database.connect();
+        connection = await mysql.createConnection(config);
+        console.log('✅ Conectado ao MySQL\n');
         
-        const connection = await database.pool.getConnection();
+        // Obter ano atual e próximo ano
+        const hoje = new Date();
+        const anoAtual = hoje.getFullYear();
+        const proximoAno = anoAtual + 1;
         
-        try {
-            // Obter ano atual e próximo ano
-            const hoje = new Date();
-            const anoAtual = hoje.getFullYear();
-            const proximoAno = anoAtual + 1;
-            
-            // Calcular datas dinâmicas
-            const amanha = new Date(hoje);
-            amanha.setDate(amanha.getDate() + 1);
-            
-            const quartaCinzasAtual = calcularQuartaDeCinzas(anoAtual);
-            const quartaCinzasProximo = calcularQuartaDeCinzas(proximoAno);
-            
-            const posCarnavalAtual = new Date(quartaCinzasAtual);
-            posCarnavalAtual.setDate(posCarnavalAtual.getDate() + 1);
-            
-            // Preço base dos chalés: R$ 350
-            const PRECO_BASE = 350.00;
-            
-            // Definir temporadas
-            const temporadas = [
+        // Calcular datas dinâmicas
+        const hojeFormatado = formatarData(hoje);
+        
+        const quartaCinzasAtual = calcularQuartaDeCinzas(anoAtual);
+        const quartaCinzasProximo = calcularQuartaDeCinzas(proximoAno);
+        
+        const posCarnavalAtual = new Date(quartaCinzasAtual);
+        posCarnavalAtual.setDate(posCarnavalAtual.getDate() + 1);
+        
+        // Preço base dos chalés: R$ 350
+        const PRECO_BASE = 350.00;
+        
+        // Definir temporadas
+        const temporadas = [
                 {
                     nome: 'Réveillon + Férias Janeiro',
                     tipo: 'alta', // Altíssima -> usa 'alta' com multiplicador maior
-                    data_inicio: formatarData(amanha),
+                    data_inicio: hojeFormatado, // Começa hoje, não amanhã
                     data_fim: `${anoAtual}-01-31`,
                     preco_min: 700,
                     preco_max: 800,
@@ -172,120 +177,118 @@ async function cadastrarTemporadas() {
                     multiplicador: (825 / PRECO_BASE).toFixed(2), // ~2.36
                     diaria_minima: 3
                 }
-            ];
-            
-            console.log('📅 Cadastrando temporadas...\n');
-            console.log(`Ano atual: ${anoAtual}`);
-            console.log(`Quarta de Cinzas ${anoAtual}: ${formatarData(quartaCinzasAtual)}\n`);
-            
-            let cadastradas = 0;
-            let atualizadas = 0;
-            let ignoradas = 0;
-            
-            for (const temporada of temporadas) {
-                // Verificar se já existe temporada com mesmo nome e período
-                const [existentes] = await connection.execute(
-                    `SELECT id, nome, data_inicio, data_fim FROM temporadas 
-                     WHERE nome = ? AND data_inicio = ? AND data_fim = ?`,
-                    [temporada.nome, temporada.data_inicio, temporada.data_fim]
-                );
-                
-                if (existentes.length > 0) {
-                    // Atualizar temporada existente
-                    await connection.execute(
-                        `UPDATE temporadas 
-                         SET tipo = ?, multiplicador = ?, diaria_minima = ?, ativo = 1
-                         WHERE id = ?`,
-                        [
-                            temporada.tipo,
-                            temporada.multiplicador,
-                            temporada.diaria_minima,
-                            existentes[0].id
-                        ]
-                    );
-                    console.log(`🔄 Atualizada: ${temporada.nome} (${temporada.data_inicio} a ${temporada.data_fim})`);
-                    atualizadas++;
-                } else {
-                    // Verificar se há sobreposição com outras temporadas
-                    const [sobrepostas] = await connection.execute(
-                        `SELECT id, nome FROM temporadas 
-                         WHERE ativo = 1 
-                         AND (
-                             (data_inicio <= ? AND data_fim >= ?) OR
-                             (data_inicio >= ? AND data_fim <= ?) OR
-                             (data_inicio <= ? AND data_fim >= ?)
-                         )`,
-                        [
-                            temporada.data_inicio, temporada.data_fim,
-                            temporada.data_inicio, temporada.data_fim,
-                            temporada.data_inicio, temporada.data_fim
-                        ]
-                    );
-                    
-                    if (sobrepostas.length > 0) {
-                        console.log(`⚠️  Ignorada (sobreposição): ${temporada.nome} - conflito com: ${sobrepostas.map(s => s.nome).join(', ')}`);
-                        ignoradas++;
-                        continue;
-                    }
-                    
-                    // Inserir nova temporada
-                    await connection.execute(
-                        `INSERT INTO temporadas 
-                         (nome, tipo, data_inicio, data_fim, multiplicador, diaria_minima, ativo)
-                         VALUES (?, ?, ?, ?, ?, ?, 1)`,
-                        [
-                            temporada.nome,
-                            temporada.tipo,
-                            temporada.data_inicio,
-                            temporada.data_fim,
-                            temporada.multiplicador,
-                            temporada.diaria_minima
-                        ]
-                    );
-                    
-                    console.log(`✅ Cadastrada: ${temporada.nome}`);
-                    console.log(`   Período: ${temporada.data_inicio} a ${temporada.data_fim}`);
-                    console.log(`   Tipo: ${temporada.tipo} | Multiplicador: ${temporada.multiplicador}x | Preço: R$ ${temporada.preco_min}-${temporada.preco_max} (médio: R$ ${temporada.preco_medio})`);
-                    console.log(`   Diária mínima: ${temporada.diaria_minima} dias\n`);
-                    cadastradas++;
-                }
-            }
-            
-            console.log('\n📊 Resumo:');
-            console.log(`   ✅ Cadastradas: ${cadastradas}`);
-            console.log(`   🔄 Atualizadas: ${atualizadas}`);
-            console.log(`   ⚠️  Ignoradas: ${ignoradas}`);
-            
-            // Listar todas as temporadas ativas
-            console.log('\n📋 Temporadas ativas cadastradas:');
-            const [todas] = await connection.execute(
-                `SELECT id, nome, tipo, data_inicio, data_fim, multiplicador, diaria_minima 
-                 FROM temporadas 
-                 WHERE ativo = 1 
-                 ORDER BY data_inicio`
+        ];
+        
+        console.log('📅 Cadastrando temporadas...\n');
+        console.log(`Ano atual: ${anoAtual}`);
+        console.log(`Data de hoje: ${hojeFormatado}`);
+        console.log(`Réveillon + Janeiro: ${hojeFormatado} até ${anoAtual}-01-31 (R$ 700-800)`);
+        console.log(`Quarta de Cinzas ${anoAtual}: ${formatarData(quartaCinzasAtual)}\n`);
+        
+        let cadastradas = 0;
+        let atualizadas = 0;
+        let ignoradas = 0;
+        
+        for (const temporada of temporadas) {
+            // Verificar se já existe temporada com mesmo nome e período
+            const [existentes] = await connection.execute(
+                `SELECT id, nome, data_inicio, data_fim FROM temporadas 
+                 WHERE nome = ? AND data_inicio = ? AND data_fim = ?`,
+                [temporada.nome, temporada.data_inicio, temporada.data_fim]
             );
             
-            const PRECO_BASE_DISPLAY = 350.00; // Preço base para exibição
-            todas.forEach(temp => {
-                const precoMin = (PRECO_BASE_DISPLAY * parseFloat(temp.multiplicador) * 0.93).toFixed(0);
-                const precoMax = (PRECO_BASE_DISPLAY * parseFloat(temp.multiplicador) * 1.07).toFixed(0);
-                console.log(`   ${temp.id}. ${temp.nome}`);
-                console.log(`      ${temp.data_inicio} a ${temp.data_fim} | ${temp.tipo} | ${temp.multiplicador}x | R$ ${precoMin}-${precoMax}`);
-            });
-            
-            console.log('\n✅ Cadastro de temporadas concluído!');
-            
-        } finally {
-            connection.release();
+            if (existentes.length > 0) {
+                // Atualizar temporada existente
+                await connection.execute(
+                    `UPDATE temporadas 
+                     SET tipo = ?, multiplicador = ?, diaria_minima = ?, ativo = 1
+                     WHERE id = ?`,
+                    [
+                        temporada.tipo,
+                        temporada.multiplicador,
+                        temporada.diaria_minima,
+                        existentes[0].id
+                    ]
+                );
+                console.log(`🔄 Atualizada: ${temporada.nome} (${temporada.data_inicio} a ${temporada.data_fim})`);
+                atualizadas++;
+            } else {
+                // Verificar se há sobreposição com outras temporadas
+                const [sobrepostas] = await connection.execute(
+                    `SELECT id, nome FROM temporadas 
+                     WHERE ativo = 1 
+                     AND (
+                         (data_inicio <= ? AND data_fim >= ?) OR
+                         (data_inicio >= ? AND data_fim <= ?) OR
+                         (data_inicio <= ? AND data_fim >= ?)
+                     )`,
+                    [
+                        temporada.data_inicio, temporada.data_fim,
+                        temporada.data_inicio, temporada.data_fim,
+                        temporada.data_inicio, temporada.data_fim
+                    ]
+                );
+                
+                if (sobrepostas.length > 0) {
+                    console.log(`⚠️  Ignorada (sobreposição): ${temporada.nome} - conflito com: ${sobrepostas.map(s => s.nome).join(', ')}`);
+                    ignoradas++;
+                    continue;
+                }
+                
+                // Inserir nova temporada
+                await connection.execute(
+                    `INSERT INTO temporadas 
+                     (nome, tipo, data_inicio, data_fim, multiplicador, diaria_minima, ativo)
+                     VALUES (?, ?, ?, ?, ?, ?, 1)`,
+                    [
+                        temporada.nome,
+                        temporada.tipo,
+                        temporada.data_inicio,
+                        temporada.data_fim,
+                        temporada.multiplicador,
+                        temporada.diaria_minima
+                    ]
+                );
+                
+                console.log(`✅ Cadastrada: ${temporada.nome}`);
+                console.log(`   Período: ${temporada.data_inicio} a ${temporada.data_fim}`);
+                console.log(`   Tipo: ${temporada.tipo} | Multiplicador: ${temporada.multiplicador}x | Preço: R$ ${temporada.preco_min}-${temporada.preco_max} (médio: R$ ${temporada.preco_medio})`);
+                console.log(`   Diária mínima: ${temporada.diaria_minima} dias\n`);
+                cadastradas++;
+            }
         }
+        
+        console.log('\n📊 Resumo:');
+        console.log(`   ✅ Cadastradas: ${cadastradas}`);
+        console.log(`   🔄 Atualizadas: ${atualizadas}`);
+        console.log(`   ⚠️  Ignoradas: ${ignoradas}`);
+        
+        // Listar todas as temporadas ativas
+        console.log('\n📋 Temporadas ativas cadastradas:');
+        const [todas] = await connection.execute(
+            `SELECT id, nome, tipo, data_inicio, data_fim, multiplicador, diaria_minima 
+             FROM temporadas 
+             WHERE ativo = 1 
+             ORDER BY data_inicio`
+        );
+        
+        const PRECO_BASE_DISPLAY = 350.00; // Preço base para exibição
+        todas.forEach(temp => {
+            const precoMin = (PRECO_BASE_DISPLAY * parseFloat(temp.multiplicador) * 0.93).toFixed(0);
+            const precoMax = (PRECO_BASE_DISPLAY * parseFloat(temp.multiplicador) * 1.07).toFixed(0);
+            console.log(`   ${temp.id}. ${temp.nome}`);
+            console.log(`      ${temp.data_inicio} a ${temp.data_fim} | ${temp.tipo} | ${temp.multiplicador}x | R$ ${precoMin}-${precoMax}`);
+        });
+        
+        console.log('\n✅ Cadastro de temporadas concluído!');
         
     } catch (erro) {
         console.error('❌ Erro ao cadastrar temporadas:', erro.message);
         console.error(erro);
         process.exit(1);
     } finally {
-        if (database.pool) {
-            await database.pool.end();
+        if (connection) {
+            await connection.end();
         }
         process.exit(0);
     }
