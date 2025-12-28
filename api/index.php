@@ -128,6 +128,12 @@ if (preg_match('#^/reservas/(\d+)/status/?$#', $path, $matches) && $method === '
     exit();
 }
 
+if (preg_match('#^/reservas/(\d+)/?$#', $path, $matches) && $method === 'DELETE') {
+    $controller = new ReservaController($db);
+    $controller->deletar($matches[1]);
+    exit();
+}
+
 // Rotas de Avaliações
 if (preg_match('#^/avaliacoes/homepage/?$#', $path) && $method === 'GET') {
     $controller = new AvaliacaoController($db);

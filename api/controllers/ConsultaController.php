@@ -15,7 +15,8 @@ class ConsultaController {
     }
     
     /**
-     * Recebe uma consulta de disponibilidade e envia email
+     * Recebe uma consulta de disponibilidade ou reserva completa e envia email
+     * Aceita tanto consultas simples quanto reservas completas
      */
     public function criar() {
         // Obter dados do POST
@@ -38,8 +39,26 @@ class ConsultaController {
         // Preparar dados
         $dataCheckin = $dados['data_checkin'];
         $dataCheckout = $dados['data_checkout'];
-        $numAdultos = $dados['num_adultos'] ?? 2;
-        $numCriancas = $dados['num_criancas'] ?? 0;
+        $numAdultos = $dados['num_adultos'] ?? $dados['adultos'] ?? 2;
+        $numCriancas = $dados['num_criancas'] ?? $dados['criancas'] ?? 0;
+        
+        // Verificar se é uma solicitação de reserva completa (tem nome, email, telefone)
+        $ehSolicitacaoReserva = !empty($dados['nome_hospede']) && !empty($dados['email_hospede']) && !empty($dados['telefone_hospede']);
+        
+        // Calcular valor estimado (se for solicitação de reserva)
+        $valorTotal = null;
+        if ($ehSolicitacaoReserva) {
+            try {
+                require_once __DIR__ . '/../config/temporadas.php';
+                $calculoEstadia = calcularValorEstadia($dataCheckin, $dataCheckout, $numAdultos);
+                $valorTotal = $calculoEstadia['valor_total'];
+            } catch (Exception $e) {
+                // Se não conseguir calcular preço, continua sem ele
+            }
+        }
+        
+        // NÃO criar reserva no banco - apenas enviar email de notificação
+        // A reserva será criada manualmente pelo admin após aprovação
         
         // Verificar disponibilidade
         try {
@@ -91,9 +110,13 @@ class ConsultaController {
             $this->enviarEmailNotificacao($dados, $resultado, $precoInfo);
             
             responderJSON([
-                'mensagem' => 'Consulta recebida com sucesso! Entraremos em contato em breve.',
+                'mensagem' => $ehSolicitacaoReserva 
+                    ? 'Solicitação de reserva recebida! Entraremos em contato em breve para confirmar.' 
+                    : 'Consulta recebida com sucesso! Entraremos em contato em breve.',
                 'disponibilidade' => $resultado,
-                'preco' => $precoInfo
+                'preco' => $precoInfo ?: ($valorTotal ? ['valor_total' => $valorTotal] : null),
+                'tipo' => $ehSolicitacaoReserva ? 'solicitacao_reserva' : 'consulta',
+                'status' => 'pendente'
             ], 201);
             
         } catch (Exception $e) {
@@ -101,8 +124,13 @@ class ConsultaController {
             $this->enviarEmailNotificacao($dados, null, null);
             
             responderJSON([
-                'mensagem' => 'Consulta recebida! Entraremos em contato em breve.',
-                'aviso' => 'Não foi possível verificar disponibilidade automaticamente'
+                'mensagem' => $ehSolicitacaoReserva 
+                    ? 'Solicitação de reserva recebida! Entraremos em contato em breve para confirmar.' 
+                    : 'Consulta recebida! Entraremos em contato em breve.',
+                'aviso' => 'Não foi possível verificar disponibilidade automaticamente',
+                'preco' => $valorTotal ? ['valor_total' => $valorTotal] : null,
+                'tipo' => $ehSolicitacaoReserva ? 'solicitacao_reserva' : 'consulta',
+                'status' => 'pendente'
             ], 201);
         }
     }
@@ -118,21 +146,30 @@ class ConsultaController {
         $dadosEmail = [
             'data_checkin' => $dados['data_checkin'],
             'data_checkout' => $dados['data_checkout'],
-            'num_adultos' => $dados['num_adultos'] ?? 2,
-            'num_criancas' => $dados['num_criancas'] ?? 0,
+            'num_adultos' => $dados['num_adultos'] ?? $dados['adultos'] ?? 2,
+            'num_criancas' => $dados['num_criancas'] ?? $dados['criancas'] ?? 0,
             'disponibilidade' => $disponibilidade,
             'preco_info' => $precoInfo,
             'url_origem' => $dados['url_origem'] ?? '',
             'utm_source' => $dados['utm_source'] ?? '',
             'utm_medium' => $dados['utm_medium'] ?? '',
-            'utm_campaign' => $dados['utm_campaign'] ?? ''
+            'utm_campaign' => $dados['utm_campaign'] ?? '',
+            // Dados de reserva completa (se houver)
+            'nome_hospede' => $dados['nome_hospede'] ?? '',
+            'email_hospede' => $dados['email_hospede'] ?? '',
+            'telefone_hospede' => $dados['telefone_hospede'] ?? '',
+            'mensagem' => $dados['mensagem'] ?? '',
+            'chale_id' => $dados['chale_id'] ?? null
         ];
         
         // Gerar HTML do email
         $htmlEmail = gerarEmailConsultaDisponibilidade($dadosEmail);
         
-        // Assunto
-        $assunto = "📅 Nova Consulta de Disponibilidade - Vila d'Ajuda";
+        // Assunto (ajustar conforme tipo)
+        $ehSolicitacaoReserva = !empty($dados['nome_hospede']) && !empty($dados['email_hospede']) && !empty($dados['telefone_hospede']);
+        $assunto = $ehSolicitacaoReserva 
+            ? "📅 Nova Solicitação de Reserva Pendente - Vila d'Ajuda" 
+            : "📅 Nova Consulta de Disponibilidade - Vila d'Ajuda";
         
         // Enviar email
         $sucesso = enviarEmail(EMAIL_ADMIN, $assunto, $htmlEmail);

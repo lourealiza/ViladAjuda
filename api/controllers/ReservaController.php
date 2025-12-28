@@ -472,5 +472,47 @@ class ReservaController {
             'detalhes' => $calculoEstadia['detalhes']
         ]);
     }
+    
+    /**
+     * Deleta uma reserva por ID
+     */
+    public function deletar($id) {
+        // Verificar se a reserva existe
+        $sqlVerificar = "
+            SELECT r.*, c.nome as chale_nome 
+            FROM reservas r
+            LEFT JOIN chales c ON r.chale_id = c.id
+            WHERE r.id = ?
+        ";
+        $reserva = executarQuery($this->db, $sqlVerificar, 'i', [$id]);
+        
+        if (isset($reserva['erro'])) {
+            responderErro('Erro ao buscar reserva', 500, $reserva['erro']);
+        }
+        
+        if (empty($reserva)) {
+            responderErro('Reserva não encontrada', 404);
+        }
+        
+        // Deletar a reserva
+        $sql = "DELETE FROM reservas WHERE id = ?";
+        $stmt = $this->db->prepare($sql);
+        
+        if ($stmt === false) {
+            responderErro('Erro ao preparar SQL: ' . $this->db->error, 500);
+        }
+        
+        $stmt->bind_param('i', $id);
+        
+        if (!$stmt->execute()) {
+            responderErro('Erro ao deletar reserva: ' . $stmt->error, 500);
+        }
+        
+        $stmt->close();
+        
+        responderJSON([
+            'mensagem' => 'Reserva deletada com sucesso'
+        ]);
+    }
 }
 ?>

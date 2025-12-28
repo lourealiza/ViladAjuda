@@ -782,7 +782,7 @@ if (formReservaCompleto) {
             // O admin é quem aprova ou não a reserva
             // Apenas datas bloqueadas são impedidas (já validado na seleção)
             
-            // Enviar reserva para a API
+            // Enviar reserva para a API (via /consulta)
             const resultado = await API.criarReserva(dados);
             
             // Calcular informações para mostrar ao usuário
@@ -793,8 +793,11 @@ if (formReservaCompleto) {
             let mensagemSucesso = `✅ Solicitação de reserva enviada com sucesso!<br><br>`;
             mensagemSucesso += `📅 ${checkinFormatado} até ${checkoutFormatado} (${noites} noite${noites > 1 ? 's' : ''})<br>`;
             
-            if (resultado.reserva.valor_total) {
+            // Verificar se há valor no resultado (pode estar em resultado.reserva ou resultado.preco)
+            if (resultado.reserva && resultado.reserva.valor_total) {
                 mensagemSucesso += `💰 Valor estimado: ${API.formatarValor(resultado.reserva.valor_total)}<br>`;
+            } else if (resultado.preco && resultado.preco.valor_total) {
+                mensagemSucesso += `💰 Valor estimado: ${API.formatarValor(resultado.preco.valor_total)}<br>`;
             }
             
             mensagemSucesso += `<br>⏳ Sua solicitação está aguardando aprovação.<br>`;
@@ -802,13 +805,22 @@ if (formReservaCompleto) {
             
             showMessage(mensagemSucesso, 'success');
             
+            // Obter valor total (pode estar em resultado.reserva, resultado.preco ou resultado.preco.valor_total)
+            const valorTotal = (resultado.reserva && resultado.reserva.valor_total) 
+                ? resultado.reserva.valor_total 
+                : (resultado.preco && typeof resultado.preco === 'object' && resultado.preco.valor_total) 
+                    ? resultado.preco.valor_total 
+                    : (typeof resultado.preco === 'number')
+                        ? resultado.preco
+                        : 0;
+            
             // Enviar evento de conversão para Google Analytics
             if (typeof gtag !== 'undefined') {
                 gtag('event', 'conversion', {
                     'send_to': 'AW-17836356824',
                     'event_category': 'Reserva',
                     'event_label': 'Formulário de Reserva Enviado',
-                    'value': resultado.reserva.valor_total || 0,
+                    'value': valorTotal,
                     'currency': 'BRL',
                     'utm_source': dados.utm_source,
                     'utm_medium': dados.utm_medium,
@@ -819,7 +831,7 @@ if (formReservaCompleto) {
             // Salvar dados da reserva no localStorage para a página de agradecimento
             const dadosReserva = {
                 periodo: `${checkinFormatado} até ${checkoutFormatado} (${noites} noite${noites > 1 ? 's' : ''})`,
-                valor: resultado.reserva.valor_total ? API.formatarValor(resultado.reserva.valor_total) : 'A confirmar',
+                valor: valorTotal ? API.formatarValor(valorTotal) : 'A confirmar',
                 email: dados.email_hospede
             };
             

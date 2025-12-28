@@ -120,10 +120,10 @@ async function verificarDisponibilidade(chaleId, dataCheckin, dataCheckout) {
 // ==================== RESERVAS ====================
 
 /**
- * Cria uma nova reserva
+ * Cria uma nova reserva (via /consulta)
  */
 async function criarReserva(dados) {
-    return fetchAPI('/reservas', {
+    return fetchAPI('/consulta', {
         method: 'POST',
         body: JSON.stringify(dados)
     });
