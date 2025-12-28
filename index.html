@@ -114,11 +114,29 @@
         <div class="hero-overlay"></div>
     </section>
 
-    <!-- Reserva Rápida -->
+    <!-- Reserva Rápida - Botão -->
     <section class="reserva-rapida">
         <div class="container">
-            <div class="reserva-box">
+            <div class="reserva-box-simples">
                 <h3>Verificar Disponibilidade</h3>
+                <p class="reserva-box-subtitle">Confira as datas disponíveis e faça sua reserva</p>
+                <button class="btn-consultar-disponibilidade" id="btnConsultarDisponibilidade">
+                    <span>📅 Consultar Disponibilidade</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal de Consulta de Disponibilidade -->
+    <div id="modalConsulta" class="modal-consulta" style="display: none;">
+        <div class="modal-consulta-overlay"></div>
+        <div class="modal-consulta-content">
+            <button class="modal-consulta-close" aria-label="Fechar modal">&times;</button>
+            <div class="modal-consulta-header">
+                <h2>Consultar Disponibilidade</h2>
+                <p class="section-subtitle">Selecione as datas e verifique a disponibilidade</p>
+            </div>
+            <div class="modal-consulta-body">
                 <form class="form-reserva" id="formReserva">
                     <div class="form-group form-group-date">
                         <label>Data de Entrada</label>
@@ -134,26 +152,27 @@
                             <input type="hidden" name="checkout" id="checkoutHidden">
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>Adultos</label>
-                        <select name="adultos" required>
-                            <option value="1">1</option>
-                            <option value="2" selected>2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                        </select>
-                    </div>
-                    <div class="form-group form-group-with-button">
-                        <label>Crianças</label>
-                        <select name="criancas">
-                            <option value="0">0</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                        </select>
+                    <div class="form-row-consulta">
+                        <div class="form-group">
+                            <label>Adultos</label>
+                            <select name="adultos" required>
+                                <option value="1">1</option>
+                                <option value="2" selected>2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Crianças</label>
+                            <select name="criancas">
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="form-group form-group-button">
-                        <label>&nbsp;</label>
                         <button type="submit" class="btn-check">Verificar Disponibilidade</button>
                     </div>
                 </form>
@@ -191,7 +210,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
     <!-- Sobre -->
     <section id="sobre" class="sobre">
@@ -500,15 +519,31 @@
         </div>
     </section>
 
-    <!-- Reserva -->
-    <section id="reserva" class="reserva">
+    <!-- Reserva (mantida para compatibilidade com links #reserva) -->
+    <section id="reserva" class="reserva" style="display: none;">
         <div class="container">
             <div class="section-header">
                 <h2>Reserve seu Chalé</h2>
                 <p class="section-subtitle">Poucas unidades — datas de alta temporada esgotam rápido</p>
             </div>
-            <div class="reserva-content">
+        </div>
+    </section>
+
+    <!-- Modal de Reserva -->
+    <div id="modalReserva" class="modal-reserva" style="display: none;">
+        <div class="modal-reserva-overlay"></div>
+        <div class="modal-reserva-content">
+            <button class="modal-reserva-close" aria-label="Fechar modal">&times;</button>
+            <div class="modal-reserva-header">
+                <h2>Reserve seu Chalé</h2>
+                <p class="section-subtitle">Poucas unidades — datas de alta temporada esgotam rápido</p>
+            </div>
+            <div class="modal-reserva-body">
                 <form class="form-reserva-completo" id="formReservaCompleto">
+                    <input type="hidden" name="url_origem" id="urlOrigem">
+                    <input type="hidden" name="utm_source" id="utmSource">
+                    <input type="hidden" name="utm_medium" id="utmMedium">
+                    <input type="hidden" name="utm_campaign" id="utmCampaign">
                     <div class="form-row">
                         <div class="form-group">
                             <label>Nome Completo *</label>
@@ -571,7 +606,7 @@
                 </form>
             </div>
         </div>
-    </section>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">

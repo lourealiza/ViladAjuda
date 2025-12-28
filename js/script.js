@@ -48,11 +48,20 @@ document.querySelectorAll('.nav-menu a').forEach(link => {
     });
 });
 
-// Smooth Scroll
+// Smooth Scroll (exceto para #reserva que abre modal)
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        
+        // Se for link para reserva, abrir modal
+        if (href === '#reserva') {
+            e.preventDefault();
+            abrirModalReserva();
+            return;
+        }
+        
         e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
+        const target = document.querySelector(href);
         if (target) {
             const headerOffset = 80;
             const elementPosition = target.getBoundingClientRect().top;
@@ -158,11 +167,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Formulário de Reserva Rápida
+// Formulário de Reserva Rápida (Consulta de Disponibilidade)
 const formReserva = document.getElementById('formReserva');
 if (formReserva) {
     formReserva.addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        const submitButton = formReserva.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+        submitButton.disabled = true;
+        submitButton.textContent = 'Verificando...';
         
         const dataCheckin = document.getElementById('checkinHidden')?.value || dataCheckinSelecionada;
         const dataCheckout = document.getElementById('checkoutHidden')?.value || dataCheckoutSelecionada;
@@ -173,25 +187,46 @@ if (formReserva) {
         // Validação básica
         if (!dataCheckin || !dataCheckout) {
             showMessage('Por favor, selecione as datas de check-in e check-out', 'error');
+            submitButton.disabled = false;
+            submitButton.textContent = originalText;
             return;
         }
         
         try {
-            // Buscar chalés disponíveis na API
-            showMessage('Verificando disponibilidade...', 'info');
+            // Capturar dados de rastreamento
+            const dadosRastreamento = capturarDadosRastreamento();
             
+            // Enviar consulta para a API (envia email para você)
+            showMessage('Verificando disponibilidade e enviando consulta...', 'info');
+            
+            const dadosConsulta = {
+                data_checkin: dataCheckin,
+                data_checkout: dataCheckout,
+                num_adultos: parseInt(adultos),
+                num_criancas: parseInt(criancas) || 0,
+                url_origem: dadosRastreamento.url_origem,
+                utm_source: dadosRastreamento.utm_source,
+                utm_medium: dadosRastreamento.utm_medium,
+                utm_campaign: dadosRastreamento.utm_campaign
+            };
+            
+            // Enviar consulta (envia email)
+            await API.enviarConsultaDisponibilidade(dadosConsulta);
+            
+            // Buscar chalés disponíveis na API
             const resultado = await API.buscarChalesDisponiveis(dataCheckin, dataCheckout);
             
-            if (resultado.chales.length === 0) {
-                showMessage('😔 Não há chalés disponíveis para o período selecionado. Tente outras datas.', 'error');
+            const noites = API.calcularNoites(dataCheckin, dataCheckout);
+            const totalChales = resultado.chales.length;
+            
+            if (totalChales === 0) {
+                showMessage('😔 Não há chalés disponíveis para o período selecionado. Entraremos em contato em breve!', 'info');
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
                 return;
             }
             
-            const noites = API.calcularNoites(dataCheckin, dataCheckout);
-            // Mostrar quantidade real de chalés disponíveis retornados pela API
-            // Se estiver mostrando mais de 2, verificar se há chalés duplicados no banco ou na API
-            const totalChales = resultado.chales.length;
-            showMessage(`✅ ${totalChales} chalé(s) disponível(is) para ${noites} noite(s)!`, 'success');
+            showMessage(`✅ ${totalChales} chalé(s) disponível(is) para ${noites} noite(s)! Consulta enviada com sucesso.`, 'success');
             
             // Preencher formulário completo
             const formCompleto = document.getElementById('formReservaCompleto');
@@ -217,14 +252,18 @@ if (formReserva) {
                 }
             }
             
-            // Rolar para o formulário de reserva
+            // Abrir modal de reserva após verificar disponibilidade
             setTimeout(() => {
-                window.location.href = '#reserva';
-            }, 1000);
+                fecharModalConsulta(); // Fechar modal de consulta
+                abrirModalReserva(); // Abrir modal de reserva
+            }, 1500);
             
         } catch (erro) {
             console.error('Erro ao verificar disponibilidade:', erro);
             showMessage('❌ Erro ao verificar disponibilidade: ' + erro.message, 'error');
+        } finally {
+            submitButton.disabled = false;
+            submitButton.textContent = originalText;
         }
     });
 }
@@ -292,6 +331,170 @@ function showMessage(message, type = 'success') {
     }, duration);
 }
 
+// ==================== MODAL DE CONSULTA ====================
+
+// Função para abrir modal de consulta
+function abrirModalConsulta() {
+    const modal = document.getElementById('modalConsulta');
+    if (!modal) return;
+    
+    // Mostrar modal
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden'; // Prevenir scroll do body
+    
+    // Enviar evento para Google Analytics (se configurado)
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'modal_consulta_aberto', {
+            'event_category': 'Consulta',
+            'event_label': 'Modal de Consulta de Disponibilidade'
+        });
+    }
+}
+
+// Função para fechar modal de consulta
+function fecharModalConsulta() {
+    const modal = document.getElementById('modalConsulta');
+    if (!modal) return;
+    
+    modal.style.display = 'none';
+    document.body.style.overflow = ''; // Restaurar scroll do body
+}
+
+// Event listeners para modal de consulta
+document.addEventListener('DOMContentLoaded', () => {
+    const btnConsultar = document.getElementById('btnConsultarDisponibilidade');
+    const modalConsulta = document.getElementById('modalConsulta');
+    const closeBtnConsulta = document.querySelector('.modal-consulta-close');
+    const overlayConsulta = document.querySelector('.modal-consulta-overlay');
+    
+    // Abrir modal ao clicar no botão
+    if (btnConsultar) {
+        btnConsultar.addEventListener('click', abrirModalConsulta);
+    }
+    
+    // Fechar ao clicar no botão X
+    if (closeBtnConsulta) {
+        closeBtnConsulta.addEventListener('click', fecharModalConsulta);
+    }
+    
+    // Fechar ao clicar no overlay
+    if (overlayConsulta) {
+        overlayConsulta.addEventListener('click', fecharModalConsulta);
+    }
+    
+    // Fechar com ESC (verificar qual modal está aberto)
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (modalConsulta && modalConsulta.style.display === 'flex') {
+                fecharModalConsulta();
+            } else {
+                const modalReserva = document.getElementById('modalReserva');
+                if (modalReserva && modalReserva.style.display === 'flex') {
+                    fecharModalReserva();
+                }
+            }
+        }
+    });
+});
+
+// ==================== MODAL DE RESERVA ====================
+
+// Função para capturar parâmetros UTM e URL de origem
+function capturarDadosRastreamento() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const dados = {
+        url_origem: document.referrer || window.location.href,
+        utm_source: urlParams.get('utm_source') || '',
+        utm_medium: urlParams.get('utm_medium') || '',
+        utm_campaign: urlParams.get('utm_campaign') || ''
+    };
+    
+    // Salvar no sessionStorage para persistir durante a sessão
+    sessionStorage.setItem('dadosRastreamento', JSON.stringify(dados));
+    
+    return dados;
+}
+
+// Função para abrir modal de reserva
+function abrirModalReserva() {
+    const modal = document.getElementById('modalReserva');
+    if (!modal) return;
+    
+    // Capturar dados de rastreamento
+    const dadosRastreamento = capturarDadosRastreamento();
+    
+    // Preencher campos ocultos do formulário
+    const urlOrigem = document.getElementById('urlOrigem');
+    const utmSource = document.getElementById('utmSource');
+    const utmMedium = document.getElementById('utmMedium');
+    const utmCampaign = document.getElementById('utmCampaign');
+    
+    if (urlOrigem) urlOrigem.value = dadosRastreamento.url_origem;
+    if (utmSource) utmSource.value = dadosRastreamento.utm_source;
+    if (utmMedium) utmMedium.value = dadosRastreamento.utm_medium;
+    if (utmCampaign) utmCampaign.value = dadosRastreamento.utm_campaign;
+    
+    // Mostrar modal
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden'; // Prevenir scroll do body
+    
+    // Enviar evento para Google Analytics (se configurado)
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'modal_reserva_aberto', {
+            'event_category': 'Reserva',
+            'event_label': 'Modal de Reserva',
+            'utm_source': dadosRastreamento.utm_source,
+            'utm_medium': dadosRastreamento.utm_medium,
+            'utm_campaign': dadosRastreamento.utm_campaign
+        });
+    }
+}
+
+// Função para fechar modal de reserva
+function fecharModalReserva() {
+    const modal = document.getElementById('modalReserva');
+    if (!modal) return;
+    
+    modal.style.display = 'none';
+    document.body.style.overflow = ''; // Restaurar scroll do body
+}
+
+// Event listeners para abrir/fechar modal
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('modalReserva');
+    const closeBtn = document.querySelector('.modal-reserva-close');
+    const overlay = document.querySelector('.modal-reserva-overlay');
+    
+    // Fechar ao clicar no botão X
+    if (closeBtn) {
+        closeBtn.addEventListener('click', fecharModalReserva);
+    }
+    
+    // Fechar ao clicar no overlay
+    if (overlay) {
+        overlay.addEventListener('click', fecharModalReserva);
+    }
+    
+    // Fechar com ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal && modal.style.display === 'flex') {
+            fecharModalReserva();
+        }
+    });
+    
+    // Verificar se há parâmetro na URL para abrir modal automaticamente
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('abrir_reserva') === 'true' || window.location.hash === '#reserva') {
+        setTimeout(() => {
+            abrirModalReserva();
+            // Limpar hash da URL
+            if (window.history && window.history.replaceState) {
+                window.history.replaceState(null, null, window.location.pathname + window.location.search);
+            }
+        }, 500);
+    }
+});
+
 // Formulário de Reserva Completo
 const formReservaCompleto = document.getElementById('formReservaCompleto');
 if (formReservaCompleto) {
@@ -305,6 +508,17 @@ if (formReservaCompleto) {
         
         const formData = new FormData(formReservaCompleto);
         
+        // Recuperar dados de rastreamento do sessionStorage se não estiverem no formulário
+        let dadosRastreamento = {};
+        try {
+            const dadosSalvos = sessionStorage.getItem('dadosRastreamento');
+            if (dadosSalvos) {
+                dadosRastreamento = JSON.parse(dadosSalvos);
+            }
+        } catch (e) {
+            console.error('Erro ao recuperar dados de rastreamento:', e);
+        }
+        
         // Preparar dados para enviar à API
         const dados = {
             chale_id: formData.get('chale') ? parseInt(formData.get('chale')) : null,
@@ -315,7 +529,12 @@ if (formReservaCompleto) {
             data_checkout: formData.get('checkout'),
             num_adultos: parseInt(formData.get('adultos')),
             num_criancas: parseInt(formData.get('criancas')) || 0,
-            mensagem: formData.get('mensagem') || ''
+            mensagem: formData.get('mensagem') || '',
+            // Dados de rastreamento
+            url_origem: formData.get('url_origem') || dadosRastreamento.url_origem || window.location.href,
+            utm_source: formData.get('utm_source') || dadosRastreamento.utm_source || '',
+            utm_medium: formData.get('utm_medium') || dadosRastreamento.utm_medium || '',
+            utm_campaign: formData.get('utm_campaign') || dadosRastreamento.utm_campaign || ''
         };
         
         try {
@@ -347,6 +566,20 @@ if (formReservaCompleto) {
             
             showMessage(mensagemSucesso, 'success');
             
+            // Enviar evento de conversão para Google Analytics
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'conversion', {
+                    'send_to': 'AW-17836356824',
+                    'event_category': 'Reserva',
+                    'event_label': 'Formulário de Reserva Enviado',
+                    'value': resultado.reserva.valor_total || 0,
+                    'currency': 'BRL',
+                    'utm_source': dados.utm_source,
+                    'utm_medium': dados.utm_medium,
+                    'utm_campaign': dados.utm_campaign
+                });
+            }
+            
             // Salvar dados da reserva no localStorage para a página de agradecimento
             const dadosReserva = {
                 periodo: `${checkinFormatado} até ${checkoutFormatado} (${noites} noite${noites > 1 ? 's' : ''})`,
@@ -356,6 +589,9 @@ if (formReservaCompleto) {
             
             // Salvar no sessionStorage (limpa ao fechar a aba)
             sessionStorage.setItem('reservaDados', JSON.stringify(dadosReserva));
+            
+            // Fechar modal antes de redirecionar
+            fecharModalReserva();
             
             // Redirecionar para página de agradecimento após 2 segundos
             setTimeout(() => {

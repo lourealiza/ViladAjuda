@@ -51,6 +51,7 @@ require_once __DIR__ . '/controllers/ChaleController.php';
 require_once __DIR__ . '/controllers/DisponibilidadeController.php';
 require_once __DIR__ . '/controllers/ReservaController.php';
 require_once __DIR__ . '/controllers/AvaliacaoController.php';
+require_once __DIR__ . '/controllers/ConsultaController.php';
 
 // Rotas de Chalés
 if (preg_match('#^/chales/?$#', $path) && $method === 'GET') {
@@ -131,6 +132,13 @@ if (preg_match('#^/avaliacoes/homepage/?$#', $path) && $method === 'GET') {
 if (preg_match('#^/avaliacoes/estatisticas/?$#', $path) && $method === 'GET') {
     $controller = new AvaliacaoController($db);
     $controller->buscarEstatisticas();
+    exit();
+}
+
+// Rotas de Consultas
+if (preg_match('#^/consultas/?$#', $path) && $method === 'POST') {
+    $controller = new ConsultaController($db);
+    $controller->criar();
     exit();
 }
 

@@ -154,6 +154,16 @@ async function buscarCalendarioDisponibilidade(ano, mes, chaleId = null) {
     return fetchAPI(url);
 }
 
+/**
+ * Envia uma consulta de disponibilidade (envia email para admin)
+ */
+async function enviarConsultaDisponibilidade(dados) {
+    return fetchAPI('/consultas', {
+        method: 'POST',
+        body: JSON.stringify(dados)
+    });
+}
+
 // ==================== AUTENTICAÇÃO (para área admin futura) ====================
 
 /**
@@ -253,6 +263,9 @@ window.API = {
     buscarChalesDisponiveis,
     buscarCalendarioDisponibilidade,
     calcularPrecoReserva,
+    
+    // Consultas
+    enviarConsultaDisponibilidade,
     
     // Avaliações
     buscarAvaliacoesHomepage,
