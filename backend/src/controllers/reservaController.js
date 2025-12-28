@@ -54,6 +54,127 @@ class ReservaController {
         }
     }
 
+    /**
+     * Método para consultas - NÃO cria reserva, apenas envia notificação pendente
+     * Compatível com API PHP ConsultaController
+     */
+    async consultar(req, res) {
+        try {
+            const { 
+                chale_id, 
+                data_checkin, 
+                data_checkout,
+                num_adultos = 2,
+                num_criancas = 0,
+                nome_hospede,
+                email_hospede,
+                telefone_hospede,
+                mensagem,
+                url_origem,
+                utm_source,
+                utm_medium,
+                utm_campaign
+            } = req.body;
+            
+            // Verificar se é uma solicitação de reserva completa (tem dados do hóspede)
+            const ehSolicitacaoReserva = nome_hospede && email_hospede && telefone_hospede;
+            
+            // Verificar disponibilidade
+            let disponibilidade = null;
+            let precoInfo = null;
+            
+            try {
+                // Buscar chalés disponíveis
+                const chalesDisponiveis = await Reserva.buscarChalesDisponiveis(
+                    data_checkin,
+                    data_checkout,
+                    chale_id || null
+                );
+                
+                disponibilidade = {
+                    chales: chalesDisponiveis,
+                    periodo: {
+                        checkin: data_checkin,
+                        checkout: data_checkout
+                    }
+                };
+                
+                // Calcular preço se houver chalé específico e disponibilidade
+                if (chale_id && chalesDisponiveis.length > 0) {
+                    const chaleEncontrado = chalesDisponiveis.find(c => c.id === parseInt(chale_id));
+                    if (chaleEncontrado) {
+                        const calculo = await TarifaService.calcularValorEstadia({
+                            chale_id,
+                            data_checkin,
+                            data_checkout,
+                            num_adultos,
+                            num_criancas,
+                            cupom_codigo: req.body.cupom_codigo,
+                            idades_criancas: req.body.idades_criancas || []
+                        });
+                        
+                        precoInfo = {
+                            valor_total: calculo.valor_total,
+                            valor_subtotal: calculo.valor_subtotal,
+                            valor_desconto: calculo.desconto,
+                            num_diarias: calculo.num_diarias,
+                            valor_medio_diaria: calculo.valor_total / calculo.num_diarias
+                        };
+                    }
+                }
+            } catch (erro) {
+                console.error('Erro ao verificar disponibilidade:', erro);
+                // Continua mesmo com erro na verificação
+            }
+            
+            // Enviar notificação (email será implementado depois, por enquanto apenas log)
+            const dadosNotificacao = {
+                tipo: ehSolicitacaoReserva ? 'solicitacao_reserva' : 'consulta',
+                nome_hospede: nome_hospede || 'Não informado',
+                email_hospede: email_hospede || 'Não informado',
+                telefone_hospede: telefone_hospede || 'Não informado',
+                chale_id,
+                data_checkin,
+                data_checkout,
+                num_adultos,
+                num_criancas,
+                mensagem,
+                disponibilidade,
+                precoInfo,
+                url_origem,
+                utm_source,
+                utm_medium,
+                utm_campaign
+            };
+            
+            // TODO: Implementar envio de email para admin
+            // Por enquanto, apenas logar
+            console.log('📧 NOTIFICAÇÃO DE CONSULTA/RESERVA PENDENTE:');
+            console.log(JSON.stringify(dadosNotificacao, null, 2));
+            
+            // NÃO criar reserva no banco - apenas retornar resposta
+            return res.status(201).json({
+                mensagem: ehSolicitacaoReserva 
+                    ? 'Solicitação de reserva recebida! Entraremos em contato em breve para confirmar.' 
+                    : 'Consulta recebida com sucesso! Entraremos em contato em breve.',
+                disponibilidade: disponibilidade,
+                preco: precoInfo,
+                tipo: ehSolicitacaoReserva ? 'solicitacao_reserva' : 'consulta',
+                status: 'pendente'
+            });
+            
+        } catch (erro) {
+            console.error('Erro ao processar consulta:', erro);
+            // Mesmo com erro, tentar enviar notificação básica
+            return res.status(201).json({
+                mensagem: 'Consulta recebida! Entraremos em contato em breve.',
+                aviso: 'Não foi possível verificar disponibilidade automaticamente',
+                tipo: 'consulta',
+                status: 'pendente'
+            });
+        }
+    }
+
     async criar(req, res) {
         try {
             const { 
