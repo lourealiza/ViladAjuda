@@ -177,7 +177,27 @@
                     </div>
                 </form>
                 
-                <!-- Preço Estimado -->
+                <!-- Resultado da Consulta -->
+                <div id="resultadoConsulta" class="resultado-consulta" style="display: none;">
+                    <div class="resultado-consulta-content">
+                        <h3 class="resultado-titulo">Resultado da Consulta</h3>
+                        <div id="resultadoDisponibilidade" class="resultado-disponibilidade"></div>
+                        <div id="precoEstimadoConsulta" class="preco-estimado-consulta" style="display: none;">
+                            <div class="preco-estimado-content">
+                                <span class="preco-label">💰 Preço Estimado:</span>
+                                <span class="preco-valor" id="precoValorConsulta">-</span>
+                                <span class="preco-detalhes" id="precoDetalhesConsulta"></span>
+                            </div>
+                        </div>
+                        <div class="resultado-acoes">
+                            <button type="button" class="btn-confirmar-reserva" id="btnConfirmarReserva" style="display: none;">
+                                ✅ Confirmar e Reservar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Preço Estimado (oculto, usado apenas para cálculos) -->
                 <div id="precoEstimado" class="preco-estimado" style="display: none;">
                     <div class="preco-estimado-content">
                         <span class="preco-label">💰 Preço Estimado:</span>
