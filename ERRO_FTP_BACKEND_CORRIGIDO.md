@@ -50,7 +50,7 @@ Execute estes comandos via SSH:
 
 ```bash
 # 1. Conectar ao servidor
-ssh viladajuda@www.viladajuda.com.br
+ssh viladajuda01@www.viladajuda.com.br
 
 # 2. Fazer deploy do backend
 cd ~
