@@ -428,7 +428,9 @@ if (formReserva) {
                     resultado.chales.forEach(chale => {
                         const option = document.createElement('option');
                         option.value = chale.id;
-                        option.textContent = `${chale.nome} - ${API.formatarValor(chale.preco_diaria)}/noite`;
+                        // Usar preço dinâmico se disponível, senão usar preço base
+                        const precoExibir = chale.preco_diaria_atual || chale.preco_diaria || 0;
+                        option.textContent = `${chale.nome} - ${API.formatarValor(precoExibir)}/noite`;
                         selectChale.appendChild(option);
                     });
                 }
@@ -510,7 +512,9 @@ if (formReservaFinal) {
                     resultado.chales.forEach(chale => {
                         const option = document.createElement('option');
                         option.value = chale.id;
-                        option.textContent = `${chale.nome} - ${API.formatarValor(chale.preco_diaria)}/noite`;
+                        // Usar preço dinâmico se disponível, senão usar preço base
+                        const precoExibir = chale.preco_diaria_atual || chale.preco_diaria || 0;
+                        option.textContent = `${chale.nome} - ${API.formatarValor(precoExibir)}/noite`;
                         selectChale.appendChild(option);
                     });
                 }
