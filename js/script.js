@@ -655,6 +655,63 @@ function capturarDadosRastreamento() {
     return dados;
 }
 
+// Função para carregar chalés com preço dinâmico no dropdown
+async function carregarChalesNoDropdown() {
+    const formCompleto = document.getElementById('formReservaCompleto');
+    if (!formCompleto) return;
+    
+    const selectChale = formCompleto.querySelector('[name="chale"]');
+    if (!selectChale) return;
+    
+    // Obter datas do formulário
+    const dataCheckin = formCompleto.querySelector('[name="checkin"]')?.value;
+    const dataCheckout = formCompleto.querySelector('[name="checkout"]')?.value;
+    
+    // Se não houver datas, usar datas padrão (hoje e amanhã)
+    const hoje = new Date();
+    const amanha = new Date(hoje);
+    amanha.setDate(amanha.getDate() + 1);
+    
+    const checkin = dataCheckin || hoje.toISOString().split('T')[0];
+    const checkout = dataCheckout || amanha.toISOString().split('T')[0];
+    
+    try {
+        // Buscar chalés disponíveis com preço dinâmico
+        const resultado = await API.buscarChalesDisponiveis(checkin, checkout);
+        
+        // Limpar opções existentes
+        selectChale.innerHTML = '<option value="">Qualquer chalé</option>';
+        
+        // Adicionar chalés disponíveis com preço dinâmico
+        if (resultado.chales && resultado.chales.length > 0) {
+            resultado.chales.forEach(chale => {
+                const option = document.createElement('option');
+                option.value = chale.id;
+                // Usar preço dinâmico se disponível, senão usar preço base
+                const precoExibir = chale.preco_diaria_atual || chale.preco_diaria || 0;
+                option.textContent = `${chale.nome} - ${API.formatarValor(precoExibir)}/noite`;
+                selectChale.appendChild(option);
+            });
+        }
+    } catch (erro) {
+        console.error('Erro ao carregar chalés no dropdown:', erro);
+        // Em caso de erro, manter opções padrão ou tentar carregar sem preço dinâmico
+        try {
+            const chales = await API.listarChales();
+            selectChale.innerHTML = '<option value="">Qualquer chalé</option>';
+            chales.forEach(chale => {
+                const option = document.createElement('option');
+                option.value = chale.id;
+                const precoExibir = chale.preco_diaria_atual || chale.preco_diaria || 0;
+                option.textContent = `${chale.nome} - ${API.formatarValor(precoExibir)}/noite`;
+                selectChale.appendChild(option);
+            });
+        } catch (erro2) {
+            console.error('Erro ao carregar chalés alternativo:', erro2);
+        }
+    }
+}
+
 // Função para abrir modal de reserva
 function abrirModalReserva() {
     const modal = document.getElementById('modalReserva');
@@ -673,6 +730,9 @@ function abrirModalReserva() {
     if (utmSource) utmSource.value = dadosRastreamento.utm_source;
     if (utmMedium) utmMedium.value = dadosRastreamento.utm_medium;
     if (utmCampaign) utmCampaign.value = dadosRastreamento.utm_campaign;
+    
+    // Carregar chalés com preço dinâmico quando o modal abrir
+    carregarChalesNoDropdown();
     
     // Mostrar modal
     modal.style.display = 'flex';
@@ -1537,6 +1597,8 @@ function sincronizarCamposComCalendario() {
         
         if (inputCheckin) {
             inputCheckin.addEventListener('change', function() {
+                // Atualizar chalés com preço dinâmico quando a data de check-in mudar
+                carregarChalesNoDropdown();
                 dataCheckinSelecionada = this.value;
                 if (dataCheckoutSelecionada && new Date(dataCheckoutSelecionada) < new Date(dataCheckinSelecionada)) {
                     dataCheckoutSelecionada = null;
@@ -1552,6 +1614,8 @@ function sincronizarCamposComCalendario() {
                 dataCheckoutSelecionada = this.value;
                 atualizarVisualizacaoDatasSelecionadas();
                 recalcularPreco();
+                // Atualizar chalés com preço dinâmico quando a data de check-out mudar
+                carregarChalesNoDropdown();
             });
         }
         
