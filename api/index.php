@@ -91,6 +91,12 @@ if (preg_match('#^/disponibilidade/liberar-periodo/?$#', $path) && $method === '
 }
 
 // Rotas de Reservas
+if (preg_match('#^/reservas/?$#', $path) && $method === 'GET') {
+    $controller = new ReservaController($db);
+    $controller->listar();
+    exit();
+}
+
 if (preg_match('#^/reservas/disponiveis/?$#', $path) && $method === 'GET') {
     $controller = new ReservaController($db);
     $controller->buscarChalesDisponiveis();
