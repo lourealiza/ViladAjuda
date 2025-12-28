@@ -4,15 +4,17 @@ const Feriado = require('../models/Feriado');
 
 class ChaleController {
     /**
-     * Calcula o preço dinâmico do chalé baseado na temporada/feriado de hoje
+     * Calcula o preço dinâmico do chalé baseado na temporada/feriado de uma data específica
+     * @param {Object} chale - Objeto do chalé
+     * @param {String} data - Data no formato YYYY-MM-DD (opcional, usa hoje se não informado)
      */
-    async calcularPrecoDinamico(chale) {
+    static async calcularPrecoDinamico(chale, data = null) {
         try {
-            const hoje = new Date().toISOString().split('T')[0];
+            const dataConsulta = data || new Date().toISOString().split('T')[0];
             const precoBase = parseFloat(chale.preco_diaria || 350.00);
             
             // Verificar feriado primeiro (prioridade máxima)
-            const feriado = await Feriado.buscarPorData(hoje);
+            const feriado = await Feriado.buscarPorData(dataConsulta);
             if (feriado && feriado.preco_override) {
                 return {
                     preco_diaria_atual: parseFloat(feriado.preco_override),
@@ -24,7 +26,7 @@ class ChaleController {
             }
             
             // Verificar temporada
-            const temporada = await Temporada.buscarPorData(hoje);
+            const temporada = await Temporada.buscarPorData(dataConsulta);
             if (temporada) {
                 const multiplicador = parseFloat(temporada.multiplicador);
                 const precoAtual = precoBase * multiplicador;
@@ -68,7 +70,7 @@ class ChaleController {
             // Adicionar preço dinâmico para cada chalé
             const chalesComPreco = await Promise.all(
                 chales.map(async (chale) => {
-                    const precoDinamico = await this.calcularPrecoDinamico(chale);
+                    const precoDinamico = await ChaleController.calcularPrecoDinamico(chale);
                     return {
                         ...chale,
                         ...precoDinamico
@@ -102,7 +104,7 @@ class ChaleController {
             }
 
             // Adicionar preço dinâmico
-            const precoDinamico = await this.calcularPrecoDinamico(chale);
+            const precoDinamico = await ChaleController.calcularPrecoDinamico(chale);
             const chaleComPreco = {
                 ...chale,
                 ...precoDinamico

@@ -127,6 +127,71 @@ class ReservaController {
                 // Continua mesmo com erro na verificação
             }
             
+            // Se for solicitação de reserva completa (com dados do hóspede), criar reserva no banco
+            let reservaCriada = null;
+            if (ehSolicitacaoReserva && chale_id) {
+                try {
+                    // Buscar ou criar hóspede
+                    const Hospede = require('../models/Hospede');
+                    let hospede = null;
+                    if (email_hospede || telefone_hospede) {
+                        hospede = await Hospede.buscarOuCriar({
+                            nome: nome_hospede,
+                            email: email_hospede,
+                            telefone: telefone_hospede,
+                            cidade: req.body.cidade_hospede || null,
+                            estado: req.body.estado_hospede || null,
+                            origem_canal: req.body.origem_canal || 'site',
+                            como_nos_encontrou: req.body.como_nos_encontrou || req.body.origem_canal || null
+                        });
+                    }
+                    
+                    // Calcular valor total se não foi calculado
+                    let valor_total = precoInfo?.valor_total || 0;
+                    if (!valor_total && chale_id) {
+                        const calculo = await TarifaService.calcularValorEstadia({
+                            chale_id,
+                            data_checkin,
+                            data_checkout,
+                            num_adultos,
+                            num_criancas,
+                            cupom_codigo: req.body.cupom_codigo,
+                            idades_criancas: req.body.idades_criancas || []
+                        });
+                        valor_total = calculo.valor_total;
+                    }
+                    
+                    // Criar reserva no banco com status 'solicitacao_recebida'
+                    reservaCriada = await Reserva.criar({
+                        chale_id,
+                        hospede_id: hospede?.id,
+                        nome_hospede,
+                        email_hospede,
+                        telefone_hospede,
+                        data_checkin,
+                        data_checkout,
+                        num_adultos,
+                        num_criancas,
+                        valor_total: valor_total,
+                        valor_subtotal: precoInfo?.valor_subtotal || valor_total,
+                        valor_desconto: precoInfo?.valor_desconto || 0,
+                        mensagem: mensagem || null,
+                        status: 'solicitacao_recebida',
+                        origem_canal: req.body.origem_canal || 'site',
+                        utm_source: utm_source || null,
+                        utm_medium: utm_medium || null,
+                        utm_campaign: utm_campaign || null,
+                        consentimento_lgpd: req.body.consentimento_lgpd || false,
+                        politica_privacidade_aceita: req.body.politica_privacidade_aceita || false
+                    });
+                    
+                    console.log('✅ Reserva criada no banco com ID:', reservaCriada.id);
+                } catch (erroReserva) {
+                    console.error('Erro ao criar reserva no banco:', erroReserva);
+                    // Continua mesmo se não conseguir criar a reserva
+                }
+            }
+            
             // Enviar notificação (email será implementado depois, por enquanto apenas log)
             const dadosNotificacao = {
                 tipo: ehSolicitacaoReserva ? 'solicitacao_reserva' : 'consulta',
@@ -141,6 +206,7 @@ class ReservaController {
                 mensagem,
                 disponibilidade,
                 precoInfo,
+                reserva_id: reservaCriada?.id,
                 url_origem,
                 utm_source,
                 utm_medium,
@@ -152,7 +218,6 @@ class ReservaController {
             console.log('📧 NOTIFICAÇÃO DE CONSULTA/RESERVA PENDENTE:');
             console.log(JSON.stringify(dadosNotificacao, null, 2));
             
-            // NÃO criar reserva no banco - apenas retornar resposta
             return res.status(201).json({
                 mensagem: ehSolicitacaoReserva 
                     ? 'Solicitação de reserva recebida! Entraremos em contato em breve para confirmar.' 
@@ -160,7 +225,11 @@ class ReservaController {
                 disponibilidade: disponibilidade,
                 preco: precoInfo,
                 tipo: ehSolicitacaoReserva ? 'solicitacao_reserva' : 'consulta',
-                status: 'pendente'
+                status: 'pendente',
+                reserva: reservaCriada ? {
+                    id: reservaCriada.id,
+                    status: reservaCriada.status
+                } : null
             });
             
         } catch (erro) {
@@ -512,11 +581,26 @@ class ReservaController {
                 data_checkout
             );
             
+            // Calcular preço dinâmico para cada chalé baseado na data de check-in
+            const ChaleController = require('./chaleController');
+            const chalesComPreco = await Promise.all(chalesDisponiveis.map(async (chale) => {
+                const precoDinamico = await ChaleController.calcularPrecoDinamico(chale, data_checkin);
+                return {
+                    ...chale,
+                    preco_diaria_atual: precoDinamico.preco_diaria_atual,
+                    preco_base: precoDinamico.preco_base,
+                    temporada: precoDinamico.temporada,
+                    temporada_tipo: precoDinamico.temporada_tipo,
+                    feriado: precoDinamico.feriado,
+                    multiplicador: precoDinamico.multiplicador
+                };
+            }));
+            
             return res.json({
                 data_checkin,
                 data_checkout,
-                total: chalesDisponiveis.length,
-                chales: chalesDisponiveis
+                total: chalesComPreco.length,
+                chales: chalesComPreco
             });
 
         } catch (erro) {
