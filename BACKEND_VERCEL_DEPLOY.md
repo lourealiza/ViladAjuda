@@ -53,7 +53,7 @@ JWT_SECRET=aec08abd2d7cb846201f47f26d8b019d0dc4241b56ec84bd09bf098341443161f78a4
 ### **4. Deploy**
 1. Clique **"Deploy"**
 2. Aguarde o build (2-3 minutos)
-3. ✅ **URL gerada automaticamente**: `https://viladajuda-api.vercel.app`
+3. ✅ **URL gerada automaticamente**: `https://viladajuda.vercel.app`
 
 ---
 
@@ -70,7 +70,7 @@ const API_BASE_URL = window.location.hostname === 'www.viladajuda.com.br'
 
 // DEPOIS
 const API_BASE_URL = window.location.hostname === 'www.viladajuda.com.br'
-    ? 'https://viladajuda-api.vercel.app'  // <- URL DO VERCEL
+    ? 'https://viladajuda.vercel.app/api'  // <- URL DO VERCEL
     : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
         ? `${window.location.protocol}//${window.location.host}/api`
         : `${window.location.protocol}//${window.location.host}/api`);
@@ -90,7 +90,7 @@ git push origin main
 ```
 🌐 Frontend (KingHost) → https://www.viladajuda.com.br/
     ↓
-🔧 Backend API (Vercel) → https://viladajuda-api.vercel.app/
+🔧 Backend API (Vercel) → https://viladajuda.vercel.app/
     ↓
 🗄️ Database (KingHost) → viladajuda.web213.uni5.net
 ```
@@ -108,7 +108,7 @@ git push origin main
 
 ### **1. Testar API no Vercel**
 ```bash
-curl https://viladajuda-api.vercel.app/health
+curl https://viladajuda.vercel.app/api/health
 # Deve retornar: {"status":"ok","timestamp":"2025-..."}
 ```
 

@@ -48,7 +48,7 @@ Você tem **duas APIs** disponíveis:
    ```
 
 5. **Após deploy**, você receberá uma URL como:
-   - `https://viladajuda-api.vercel.app`
+   - `https://viladajuda.vercel.app`
 
 6. **Atualizar Frontend**:
    - Edite `js/api.js`
@@ -89,7 +89,7 @@ Se você fez deploy no Vercel, atualize `js/api.js`:
 
 ```javascript
 // Adicione após a linha 7:
-const API_VERCEL_BASE_URL = 'https://viladajuda-api.vercel.app/api'; // ← SUA URL DO VERCEL
+const API_VERCEL_BASE_URL = 'https://viladajuda.vercel.app/api'; // ← SUA URL DO VERCEL
 ```
 
 ### **2. O código já está preparado!**
@@ -116,10 +116,10 @@ curl https://www.viladajuda.com.br/api/health
 ### **Backend Node.js (Vercel - após deploy):**
 ```bash
 # Teste básico
-curl https://viladajuda-api.vercel.app/api/
+curl https://viladajuda.vercel.app/api/
 
 # Health check
-curl https://viladajuda-api.vercel.app/api/health
+curl https://viladajuda.vercel.app/api/health
 ```
 
 ---
