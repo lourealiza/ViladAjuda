@@ -126,7 +126,10 @@ async function carregarDashboard() {
         
         // Estatísticas
         const totalReservas = reservas.length || 0;
-        const reservasPendentes = reservas.filter(r => r.status === 'pendente').length;
+        // Considerar 'pendente' e 'solicitacao_recebida' como pendentes
+        const reservasPendentes = reservas.filter(r => 
+            r.status === 'pendente' || r.status === 'solicitacao_recebida'
+        ).length;
         const reservasConfirmadas = reservas.filter(r => r.status === 'confirmada').length;
         const totalChales = chales.length || 0;
         
@@ -192,7 +195,17 @@ async function carregarReservas() {
         // Filtrar por status se selecionado
         const filterStatus = document.getElementById('filterStatus').value;
         if (filterStatus) {
-            reservas = reservas.filter(r => r.status === filterStatus);
+            if (filterStatus === 'pendente') {
+                // Mostrar reservas pendentes E solicitações recebidas
+                reservas = reservas.filter(r => 
+                    r.status === 'pendente' || r.status === 'solicitacao_recebida'
+                );
+            } else {
+                reservas = reservas.filter(r => r.status === filterStatus);
+            }
+        } else {
+            // Se não há filtro, mostrar todas as reservas (incluindo solicitacao_recebida)
+            // Não precisa filtrar, já mostra todas
         }
         
         // Ordenar por data de criação (mais recentes primeiro)

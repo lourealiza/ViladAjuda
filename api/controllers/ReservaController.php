@@ -10,6 +10,30 @@ class ReservaController {
     }
     
     /**
+     * Lista todas as reservas
+     */
+    public function listar() {
+        // Ordenar por data de criação (se existir) ou data de checkin
+        $sql = "
+            SELECT r.*, c.nome as chale_nome
+            FROM reservas r
+            LEFT JOIN chales c ON r.chale_id = c.id
+            ORDER BY COALESCE(r.criado_em, r.data_checkin) DESC, r.data_checkin DESC
+        ";
+        
+        $reservas = executarQuery($this->db, $sql);
+        
+        if (isset($reservas['erro'])) {
+            responderErro('Erro ao buscar reservas', 500, $reservas['erro']);
+        }
+        
+        responderJSON([
+            'total' => count($reservas),
+            'reservas' => $reservas
+        ]);
+    }
+    
+    /**
      * Busca chalés disponíveis para um período
      */
     public function buscarChalesDisponiveis() {
@@ -189,13 +213,14 @@ class ReservaController {
         $mensagem = $dados['mensagem'] ?? null;
         
         // Inserir reserva - APENAS com campos que existem
+        // Status 'pendente' para aparecer no painel admin
         $sqlInserir = "
             INSERT INTO reservas (
                 chale_id, nome_hospede, email_hospede, telefone_hospede,
                 data_checkin, data_checkout, num_adultos, num_criancas,
                 valor_total, cidade_hospede, mensagem, status
             ) VALUES (
-                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'solicitacao_recebida'
+                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pendente'
             )
         ";
         
