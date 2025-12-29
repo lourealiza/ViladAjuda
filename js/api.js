@@ -14,14 +14,35 @@ const API_VERCEL_BASE_URL = 'https://viladajuda.vercel.app/api';
  * Usa API Vercel para rotas avançadas (auth, admin) se configurado, senão usa API PHP
  */
 async function fetchAPI(endpoint, options = {}) {
+    // Rotas que devem usar API PHP diretamente (não tentar Vercel)
+    const rotasPHP = ['/reservas/disponiveis', '/reservas/calcular-preco', '/consulta', '/consultas'];
+    
     // Rotas que devem usar API Vercel (Node.js) - apenas se API_VERCEL_BASE_URL estiver configurado
-    const rotasVercel = ['/auth', '/admin', '/hospedes', '/conteudos', '/tracking', '/bloqueios', '/lgpd', '/consulta', '/chales', '/reservas', '/disponibilidade', '/tarifas'];
+    const rotasVercel = ['/auth', '/admin', '/hospedes', '/conteudos', '/tracking', '/bloqueios', '/lgpd'];
+    
+    // Extrair apenas o path (sem query string) para verificação
+    const endpointPath = endpoint.split('?')[0];
+    
+    // Se for rota PHP, usar diretamente sem tentar Vercel
+    const usarPHP = rotasPHP.some(rota => endpointPath.startsWith(rota));
     
     // Determinar qual API usar baseado no endpoint
-    const usarVercel = API_VERCEL_BASE_URL && rotasVercel.some(rota => endpoint.startsWith(rota));
+    const usarVercel = !usarPHP && API_VERCEL_BASE_URL && rotasVercel.some(rota => endpointPath.startsWith(rota));
     const baseURL = usarVercel ? API_VERCEL_BASE_URL : API_BASE_URL;
     
     const url = `${baseURL}${endpoint}`;
+    
+    // Log para debug
+    console.log('🔍 fetchAPI:', { 
+        endpoint, 
+        endpointPath,
+        usarPHP, 
+        usarVercel, 
+        baseURL, 
+        url,
+        rotasPHPMatch: rotasPHP.filter(r => endpointPath.startsWith(r)),
+        rotasVercelMatch: rotasVercel.filter(r => endpointPath.startsWith(r))
+    });
     
     const defaultOptions = {
         headers: {
@@ -177,6 +198,7 @@ async function criarReserva(dados) {
 
 /**
  * Busca chalés disponíveis para um período
+ * Usa API PHP diretamente (configurado em fetchAPI)
  */
 async function buscarChalesDisponiveis(dataCheckin, dataCheckout) {
     return fetchAPI(`/reservas/disponiveis?data_checkin=${dataCheckin}&data_checkout=${dataCheckout}`);

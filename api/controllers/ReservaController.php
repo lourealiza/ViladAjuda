@@ -457,11 +457,15 @@ class ReservaController {
      * Calcula o preço de uma reserva sem criá-la
      */
     public function calcularPreco() {
+        error_log('💰 calcularPreco() - Requisição recebida');
+        error_log('💰 Parâmetros: ' . json_encode($_GET));
+        
         $dataCheckin = $_GET['data_checkin'] ?? null;
         $dataCheckout = $_GET['data_checkout'] ?? null;
         $numAdultos = isset($_GET['num_adultos']) ? (int)$_GET['num_adultos'] : 2;
         
         if (!$dataCheckin || !$dataCheckout) {
+            error_log('❌ Erro: Parâmetros obrigatórios ausentes');
             responderErro('Parâmetros data_checkin e data_checkout são obrigatórios', 400);
         }
         
@@ -473,12 +477,15 @@ class ReservaController {
         $checkout = new DateTime($dataCheckout);
         
         if ($checkout <= $checkin) {
+            error_log('❌ Erro: Data checkout <= checkin');
             responderErro('Data de checkout deve ser posterior à data de checkin', 400);
         }
         
         // Calcular valor usando sistema de temporadas
         require_once __DIR__ . '/../config/temporadas.php';
         $calculoEstadia = calcularValorEstadia($dataCheckin, $dataCheckout, $numAdultos);
+        
+        error_log('✅ Cálculo realizado: ' . json_encode($calculoEstadia));
         
         responderJSON([
             'data_checkin' => $dataCheckin,
