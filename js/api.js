@@ -15,7 +15,7 @@ const API_VERCEL_BASE_URL = 'https://viladajuda.vercel.app/api';
  */
 async function fetchAPI(endpoint, options = {}) {
     // Rotas que devem usar API PHP diretamente (não tentar Vercel)
-    const rotasPHP = ['/reservas/disponiveis', '/reservas/calcular-preco', '/consulta', '/consultas'];
+    const rotasPHP = ['/reservas/disponiveis', '/reservas/calcular-preco', '/consulta', '/consultas', '/disponibilidade'];
     
     // Rotas que devem usar API Vercel (Node.js) - apenas se API_VERCEL_BASE_URL estiver configurado
     const rotasVercel = ['/auth', '/admin', '/hospedes', '/conteudos', '/tracking', '/bloqueios', '/lgpd'];
@@ -213,7 +213,7 @@ async function calcularPrecoReserva(dataCheckin, dataCheckout, numAdultos = 2) {
 
 /**
  * Busca calendário de disponibilidade para um mês
- * Com fallback automático para API PHP se Vercel falhar
+ * Usa API PHP diretamente (configurado em fetchAPI)
  */
 async function buscarCalendarioDisponibilidade(ano, mes, chaleId = null) {
     let url = `/disponibilidade/calendario?ano=${ano}&mes=${mes}`;
@@ -221,28 +221,8 @@ async function buscarCalendarioDisponibilidade(ano, mes, chaleId = null) {
         url += `&chale_id=${chaleId}`;
     }
     
-    try {
-        return await fetchAPI(url);
-    } catch (erro) {
-        // Se falhar com Vercel, tentar API PHP diretamente
-        if (erro.tipo === 'CONEXAO' || erro.message.includes('CORS') || erro.message.includes('Failed to fetch')) {
-            console.warn('⚠️ Falha ao acessar Vercel, tentando API PHP...');
-            const urlPHP = `${API_BASE_URL}${url}`;
-            try {
-                const response = await fetch(urlPHP, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
-                if (response.ok) {
-                    return await response.json();
-                }
-            } catch (erroPHP) {
-                console.error('Erro ao tentar API PHP:', erroPHP);
-            }
-        }
-        throw erro;
-    }
+    // Usar fetchAPI que já está configurado para usar PHP para rotas /disponibilidade
+    return fetchAPI(url);
 }
 
 /**
