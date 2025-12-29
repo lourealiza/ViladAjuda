@@ -4,6 +4,9 @@ RewriteEngine On
 # Redirecionar /obrigado para obrigado.html
 RewriteRule ^obrigado/?$ obrigado.html [L]
 
+# Redirecionar /consulta para index.html (modal será aberto via JavaScript)
+RewriteRule ^consulta/?$ index.html [L]
+
 # CORS Headers (se necessário)
 <IfModule mod_headers.c>
     Header always set Access-Control-Allow-Origin "*"

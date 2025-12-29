@@ -781,6 +781,16 @@ function abrirModalReserva() {
         }
     }
     
+    // Atualizar URL para /consulta quando abrir modal
+    if (window.history && window.history.pushState) {
+        const pathAtual = window.location.pathname;
+        // Se já estiver em /consulta, não fazer nada
+        if (!pathAtual.endsWith('/consulta')) {
+            const novaURL = pathAtual === '/' ? '/consulta' : pathAtual + '/consulta';
+            window.history.pushState({ modal: 'aberto' }, 'Reservar Chalé', novaURL);
+        }
+    }
+    
     // Mostrar modal primeiro
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden'; // Prevenir scroll do body
@@ -818,6 +828,15 @@ function fecharModalReserva() {
     const modal = document.getElementById('modalReserva');
     if (!modal) return;
     
+    // Remover /consulta da URL quando fechar modal
+    if (window.history && window.history.replaceState) {
+        const urlAtual = window.location.pathname;
+        if (urlAtual.endsWith('/consulta')) {
+            const novaURL = urlAtual.replace('/consulta', '') || '/';
+            window.history.replaceState(null, '', novaURL + window.location.search);
+        }
+    }
+    
     modal.style.display = 'none';
     document.body.style.overflow = ''; // Restaurar scroll do body
 }
@@ -845,17 +864,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Verificar se há parâmetro na URL para abrir modal automaticamente
+    // Verificar se a URL é /consulta para abrir modal automaticamente
+    const urlAtual = window.location.pathname;
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('abrir_reserva') === 'true' || window.location.hash === '#reserva') {
+    
+    if (urlAtual.endsWith('/consulta') || 
+        urlParams.get('abrir_reserva') === 'true' || 
+        window.location.hash === '#reserva') {
         setTimeout(() => {
             abrirModalReserva();
-            // Limpar hash da URL
-            if (window.history && window.history.replaceState) {
-                window.history.replaceState(null, null, window.location.pathname + window.location.search);
-            }
         }, 500);
     }
+    
+    // Listener para botão voltar do navegador
+    window.addEventListener('popstate', (e) => {
+        const modal = document.getElementById('modalReserva');
+        if (modal && modal.style.display === 'flex') {
+            // Se o modal estiver aberto e o usuário clicar em voltar, fechar modal
+            if (!window.location.pathname.endsWith('/consulta')) {
+                fecharModalReserva();
+            }
+        } else if (window.location.pathname.endsWith('/consulta')) {
+            // Se a URL for /consulta mas o modal não estiver aberto, abrir
+            abrirModalReserva();
+        }
+    });
 });
 
 // Formulário de Reserva Completo
@@ -1805,4 +1838,5 @@ if ('loading' in HTMLImageElement.prototype) {
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js';
     document.body.appendChild(script);
 }
+
 
