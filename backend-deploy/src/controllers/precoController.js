@@ -1,9 +1,9 @@
-const { 
-    calcularValorEstadia, 
+const {
+    calcularValorEstadia,
     aplicarDescontoEstadiaLonga,
     aplicarDescontoBlackFriday,
     obterInfoTemporada,
-    determinarTemporada 
+    obterTabelaPrecos
 } = require('../config/precos');
 
 class PrecoController {
@@ -14,34 +14,33 @@ class PrecoController {
     async calcular(req, res) {
         try {
             const { capacidade, checkin, checkout } = req.query;
-            
+
             if (!capacidade || !checkin || !checkout) {
                 return res.status(400).json({
                     erro: 'Parâmetros inválidos',
                     mensagem: 'capacidade, checkin e checkout são obrigatórios'
                 });
             }
-            
-            // Calcular valor
-            const calculo = calcularValorEstadia(parseInt(capacidade), checkin, checkout);
-            
-            // Aplicar desconto Black Friday primeiro
+
+            const capacidadeInt = parseInt(capacidade, 10);
+
+            const calculo = calcularValorEstadia(capacidadeInt, checkin, checkout);
+
             let valorComDesconto = calculo.valorTotal;
-            let descontoBF = aplicarDescontoBlackFriday(calculo.valorTotal, checkin);
+            const descontoBF = aplicarDescontoBlackFriday(calculo.valorTotal, checkin);
             if (descontoBF.aplicado) {
                 valorComDesconto = descontoBF.valorFinal;
             }
-            
-            // Aplicar desconto para estadia longa
+
             const comDesconto = aplicarDescontoEstadiaLonga(valorComDesconto, calculo.numeroNoites);
-            
+
             return res.json({
                 periodo: {
                     checkin,
                     checkout,
                     numeroNoites: calculo.numeroNoites
                 },
-                capacidade: parseInt(capacidade),
+                capacidade: capacidadeInt,
                 valores: {
                     valorBase: calculo.valorTotal,
                     valorMedioDiaria: calculo.valorMedioDiaria,
@@ -57,13 +56,13 @@ class PrecoController {
                     } : null,
                     valorFinal: comDesconto.valorFinal
                 },
-                detalhamento: calculo.detalhes.map(d => ({
-                    data: d.data,
-                    temporada: d.temporada,
-                    diaria: d.valor
+                detalhamento: calculo.detalhes.map((detalhe) => ({
+                    data: detalhe.data,
+                    temporada: detalhe.temporada,
+                    diaria: detalhe.valor
                 }))
             });
-            
+
         } catch (erro) {
             console.error('Erro ao calcular preço:', erro);
             return res.status(500).json({
@@ -72,7 +71,7 @@ class PrecoController {
             });
         }
     }
-    
+
     /**
      * Obter informações sobre a temporada de uma data
      * GET /api/precos/temporada?data=2025-01-15
@@ -80,21 +79,21 @@ class PrecoController {
     async obterTemporada(req, res) {
         try {
             const { data } = req.query;
-            
+
             if (!data) {
                 return res.status(400).json({
                     erro: 'Parâmetros inválidos',
                     mensagem: 'data é obrigatória (formato: YYYY-MM-DD)'
                 });
             }
-            
+
             const info = obterInfoTemporada(data);
-            
+
             return res.json({
                 data,
                 ...info
             });
-            
+
         } catch (erro) {
             console.error('Erro ao obter temporada:', erro);
             return res.status(500).json({
@@ -103,16 +102,18 @@ class PrecoController {
             });
         }
     }
-    
+
     /**
      * Obter tabela de preços completa
      * GET /api/precos/tabela
      */
     async obterTabela(req, res) {
         try {
+            const temporadas = obterTabelaPrecos();
+
             return res.json({
                 informacoes: {
-                    localizacao: 'Arraial d\'Ajuda, BA',
+                    localizacao: "Arraial d'Ajuda, BA",
                     caracteristicas: [
                         'Sem piscina',
                         'Com cozinha equipada',
@@ -124,50 +125,9 @@ class PrecoController {
                         { noites: '30+', desconto: '15%' }
                     ]
                 },
-                precos: {
-                    ate2pessoas: {
-                        baixaTemporada: {
-                            periodo: 'Março-Junho, Agosto-Novembro',
-                            minimo: 250,
-                            maximo: 350,
-                            medio: 300
-                        },
-                        altaTemporada: {
-                            periodo: 'Julho, Dezembro (exc. Réveillon), Carnaval',
-                            minimo: 350,
-                            maximo: 450,
-                            medio: 400
-                        },
-                        altissimaTemporada: {
-                            periodo: 'Janeiro, Réveillon',
-                            minimo: 420,
-                            maximo: 530,
-                            medio: 475
-                        }
-                    },
-                    ate4pessoas: {
-                        baixaTemporada: {
-                            periodo: 'Março-Junho, Agosto-Novembro',
-                            minimo: 300,
-                            maximo: 400,
-                            medio: 350
-                        },
-                        altaTemporada: {
-                            periodo: 'Julho, Dezembro (exc. Réveillon), Carnaval',
-                            minimo: 420,
-                            maximo: 550,
-                            medio: 485
-                        },
-                        altissimaTemporada: {
-                            periodo: 'Janeiro, Réveillon',
-                            minimo: 500,
-                            maximo: 650,
-                            medio: 575
-                        }
-                    }
-                }
+                temporadas
             });
-            
+
         } catch (erro) {
             console.error('Erro ao obter tabela:', erro);
             return res.status(500).json({
