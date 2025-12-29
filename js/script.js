@@ -757,6 +757,30 @@ function abrirModalReserva() {
     if (utmMedium) utmMedium.value = dadosRastreamento.utm_medium;
     if (utmCampaign) utmCampaign.value = dadosRastreamento.utm_campaign;
     
+    // Limpar dropdown imediatamente para remover opções hardcoded
+    const formCompleto = document.getElementById('formReservaCompleto');
+    if (formCompleto) {
+        const selectChale = formCompleto.querySelector('[name="chale"]');
+        if (selectChale) {
+            selectChale.innerHTML = '<option value="">Qualquer chalé</option>';
+        }
+        
+        // Preencher datas padrão se não estiverem preenchidas (para cálculo de preço dinâmico)
+        const campoCheckin = formCompleto.querySelector('[name="checkin"]');
+        const campoCheckout = formCompleto.querySelector('[name="checkout"]');
+        
+        if (campoCheckin && !campoCheckin.value) {
+            const hoje = new Date();
+            campoCheckin.value = hoje.toISOString().split('T')[0];
+        }
+        
+        if (campoCheckout && !campoCheckout.value) {
+            const amanha = new Date();
+            amanha.setDate(amanha.getDate() + 1);
+            campoCheckout.value = amanha.toISOString().split('T')[0];
+        }
+    }
+    
     // Mostrar modal primeiro
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden'; // Prevenir scroll do body
@@ -766,6 +790,15 @@ function abrirModalReserva() {
     setTimeout(() => {
         console.log('🔄 Carregando chalés no dropdown após abrir modal...');
         carregarChalesNoDropdown();
+        
+        // Calcular e exibir preço estimado se as datas estiverem preenchidas
+        if (formCompleto) {
+            const campoCheckin = formCompleto.querySelector('[name="checkin"]');
+            const campoCheckout = formCompleto.querySelector('[name="checkout"]');
+            if (campoCheckin && campoCheckout && campoCheckin.value && campoCheckout.value) {
+                calcularEExibirPreco(campoCheckin.value, campoCheckout.value);
+            }
+        }
     }, 300);
     
     // Enviar evento para Google Analytics (se configurado)
@@ -876,8 +909,14 @@ if (formReservaCompleto) {
             // O admin é quem aprova ou não a reserva
             // Apenas datas bloqueadas são impedidas (já validado na seleção)
             
+            // Log dos dados que serão enviados
+            console.log('📤 Enviando formulário de reserva:', dados);
+            console.log('📤 URL da API:', API_BASE_URL + '/consulta');
+            
             // Enviar reserva para a API (via /consulta)
             const resultado = await API.criarReserva(dados);
+            
+            console.log('✅ Resposta da API:', resultado);
             
             // Calcular informações para mostrar ao usuário
             const noites = API.calcularNoites(dados.data_checkin, dados.data_checkout);
@@ -948,9 +987,23 @@ if (formReservaCompleto) {
             }, 2000);
             
         } catch (erro) {
-            console.error('Erro ao criar reserva:', erro);
+            console.error('❌ Erro ao enviar reserva:', erro);
+            console.error('❌ Detalhes do erro:', {
+                message: erro.message,
+                status: erro.status,
+                stack: erro.stack,
+                dadosEnviados: dados
+            });
             
             let mensagemErro = 'Erro ao enviar reserva: ' + erro.message;
+            
+            // Adicionar mais detalhes se disponível
+            if (erro.status) {
+                mensagemErro += ` (Status: ${erro.status})`;
+            }
+            if (erro.detalhes && Array.isArray(erro.detalhes)) {
+                mensagemErro += '\n\nDetalhes:\n' + erro.detalhes.map(d => `- ${d.campo}: ${d.mensagem}`).join('\n');
+            }
             
             // Mensagens de erro mais amigáveis
             if (erro.message.includes('indisponível')) {
@@ -959,6 +1012,8 @@ if (formReservaCompleto) {
                 mensagemErro = '⚠️ ' + erro.message;
             } else if (erro.message.includes('inválido')) {
                 mensagemErro = '⚠️ Por favor, verifique os dados informados.';
+            } else if (erro.message.includes('Failed to fetch') || erro.message.includes('CORS')) {
+                mensagemErro = '⚠️ Erro de conexão. Por favor, verifique sua internet e tente novamente.';
             }
             
             showMessage(mensagemErro, 'error');
@@ -1416,11 +1471,25 @@ function atualizarCamposData() {
 
 // Calcular e exibir preço estimado
 async function calcularEExibirPreco(dataCheckin, dataCheckout) {
-    const precoContainer = document.getElementById('precoEstimado');
-    const precoValor = document.getElementById('precoValor');
-    const precoDetalhes = document.getElementById('precoDetalhes');
+    // Verificar se estamos no modal ou no formulário principal
+    const formReservaCompleto = document.getElementById('formReservaCompleto');
+    const isModal = formReservaCompleto && formReservaCompleto.closest('#modalReserva');
     
-    if (!precoContainer || !precoValor || !precoDetalhes) return;
+    // Selecionar elementos corretos baseado no contexto
+    const precoContainer = isModal 
+        ? document.getElementById('precoEstimadoModal')
+        : document.getElementById('precoEstimado');
+    const precoValor = isModal
+        ? document.getElementById('precoValorModal')
+        : document.getElementById('precoValor');
+    const precoDetalhes = isModal
+        ? document.getElementById('precoDetalhesModal')
+        : document.getElementById('precoDetalhes');
+    
+    if (!precoContainer || !precoValor || !precoDetalhes) {
+        console.warn('⚠️ Elementos de preço não encontrados', { isModal, precoContainer, precoValor, precoDetalhes });
+        return;
+    }
     
     // Verificar se há datas reservadas no período selecionado
     const checkinDate = new Date(dataCheckin);
@@ -1444,14 +1513,19 @@ async function calcularEExibirPreco(dataCheckin, dataCheckout) {
         precoValor.textContent = 'Calculando...';
         precoDetalhes.textContent = '';
         
-        // Buscar número de adultos do formulário
+        // Buscar número de adultos do formulário (pode ser formReserva ou formReservaCompleto)
         const formReserva = document.getElementById('formReserva');
-        const numAdultos = formReserva ? parseInt(formReserva.querySelector('[name="adultos"]')?.value || '2') : 2;
+        const formReservaCompleto = document.getElementById('formReservaCompleto');
+        const formAtivo = formReservaCompleto || formReserva;
+        const numAdultos = formAtivo ? parseInt(formAtivo.querySelector('[name="adultos"]')?.value || '2') : 2;
         
+        console.log('🔍 Chamando API para calcular preço:', { dataCheckin, dataCheckout, numAdultos });
         const resultado = await API.calcularPrecoReserva(dataCheckin, dataCheckout, numAdultos);
+        console.log('📊 Resultado da API:', resultado);
         
         if (resultado && resultado.valor_total) {
             precoValor.textContent = API.formatarValor(resultado.valor_total);
+            console.log('✅ Preço exibido:', API.formatarValor(resultado.valor_total));
             
             const noites = resultado.numero_noites || API.calcularNoites(dataCheckin, dataCheckout);
             const diariaMedia = resultado.valor_medio_diaria || (resultado.valor_total / noites);
@@ -1491,7 +1565,13 @@ async function calcularEExibirPreco(dataCheckin, dataCheckout) {
 
 // Ocultar preço estimado
 function ocultarPreco() {
-    const precoContainer = document.getElementById('precoEstimado');
+    // Verificar se estamos no modal ou no formulário principal
+    const formReservaCompleto = document.getElementById('formReservaCompleto');
+    const isModal = formReservaCompleto && formReservaCompleto.closest('#modalReserva');
+    
+    const precoContainer = isModal 
+        ? document.getElementById('precoEstimadoModal')
+        : document.getElementById('precoEstimado');
     if (precoContainer) {
         precoContainer.style.display = 'none';
     }
@@ -1618,8 +1698,19 @@ function sincronizarCamposComCalendario() {
     function adicionarListeners(inputCheckin, inputCheckout, formElement) {
         // Função para recalcular preço quando necessário
         function recalcularPreco() {
-            if (dataCheckinSelecionada && dataCheckoutSelecionada) {
-                calcularEExibirPreco(dataCheckinSelecionada, dataCheckoutSelecionada);
+            // Tentar obter datas do formulário atual se não houver datas selecionadas
+            let checkin = dataCheckinSelecionada;
+            let checkout = dataCheckoutSelecionada;
+            
+            if (!checkin && inputCheckin) {
+                checkin = inputCheckin.value;
+            }
+            if (!checkout && inputCheckout) {
+                checkout = inputCheckout.value;
+            }
+            
+            if (checkin && checkout) {
+                calcularEExibirPreco(checkin, checkout);
             } else {
                 ocultarPreco();
             }
@@ -1627,6 +1718,7 @@ function sincronizarCamposComCalendario() {
         
         if (inputCheckin) {
             inputCheckin.addEventListener('change', function() {
+                console.log('📅 Data check-in mudou no modal:', this.value);
                 // Atualizar chalés com preço dinâmico quando a data de check-in mudar
                 carregarChalesNoDropdown();
                 dataCheckinSelecionada = this.value;
@@ -1641,11 +1733,15 @@ function sincronizarCamposComCalendario() {
         
         if (inputCheckout) {
             inputCheckout.addEventListener('change', function() {
+                console.log('📅 Data check-out mudou no modal:', this.value);
                 dataCheckoutSelecionada = this.value;
                 atualizarVisualizacaoDatasSelecionadas();
                 recalcularPreco();
                 // Atualizar chalés com preço dinâmico quando a data de check-out mudar
-                carregarChalesNoDropdown();
+                // Aguardar um pouco para garantir que o valor foi atualizado
+                setTimeout(() => {
+                    carregarChalesNoDropdown();
+                }, 100);
             });
         }
         
@@ -1665,6 +1761,13 @@ function sincronizarCamposComCalendario() {
         const inputCheckin = formReserva.querySelector('[name="checkin"]');
         const inputCheckout = formReserva.querySelector('[name="checkout"]');
         adicionarListeners(inputCheckin, inputCheckout, formReserva);
+    }
+    
+    // Adicionar listeners aos campos de data do formulário completo (modal)
+    if (formReservaCompleto) {
+        const inputCheckinCompleto = formReservaCompleto.querySelector('[name="checkin"]');
+        const inputCheckoutCompleto = formReservaCompleto.querySelector('[name="checkout"]');
+        adicionarListeners(inputCheckinCompleto, inputCheckoutCompleto, formReservaCompleto);
     }
     
     // Adicionar listeners aos campos de data do formulário completo

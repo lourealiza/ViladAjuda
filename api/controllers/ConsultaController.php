@@ -19,13 +19,24 @@ class ConsultaController {
      * Aceita tanto consultas simples quanto reservas completas
      */
     public function criar() {
+        // Log para debug - verificar se está recebendo requisição
+        error_log('📥 ConsultaController::criar() - Requisição recebida');
+        error_log('📥 Método: ' . $_SERVER['REQUEST_METHOD']);
+        error_log('📥 Content-Type: ' . ($_SERVER['CONTENT_TYPE'] ?? 'não informado'));
+        
         // Obter dados do POST
         $json = file_get_contents('php://input');
+        error_log('📥 JSON recebido (primeiros 500 chars): ' . substr($json, 0, 500));
+        
         $dados = json_decode($json, true);
         
         if (!$dados) {
+            error_log('❌ Erro: Dados JSON inválidos ou vazios');
+            error_log('❌ JSON raw: ' . $json);
             responderErro('Dados inválidos', 400);
         }
+        
+        error_log('✅ Dados decodificados com sucesso: ' . json_encode($dados));
         
         // Validar campos obrigatórios
         $camposObrigatorios = ['data_checkin', 'data_checkout'];
@@ -57,8 +68,119 @@ class ConsultaController {
             }
         }
         
-        // NÃO criar reserva no banco - apenas enviar email de notificação
-        // A reserva será criada manualmente pelo admin após aprovação
+        // Se for solicitação de reserva completa, salvar no banco de dados
+        $reservaId = null;
+        if ($ehSolicitacaoReserva) {
+            try {
+                error_log('💾 Tentando salvar reserva no banco de dados...');
+                
+                // Calcular valor total se ainda não foi calculado
+                if ($valorTotal === null) {
+                    require_once __DIR__ . '/../config/temporadas.php';
+                    $calculoEstadia = calcularValorEstadia($dataCheckin, $dataCheckout, $numAdultos);
+                    $valorTotal = $calculoEstadia['valor_total'];
+                }
+                
+                // Calcular número de diárias
+                $checkin = new DateTime($dataCheckin);
+                $checkout = new DateTime($dataCheckout);
+                $numDiarias = $checkin->diff($checkout)->days;
+                
+                // Preparar dados para inserção
+                $chaleId = !empty($dados['chale_id']) ? (int)$dados['chale_id'] : null;
+                $cidadeHospede = $dados['cidade_hospede'] ?? null;
+                $mensagem = $dados['mensagem'] ?? null;
+                
+                error_log('💾 Dados da reserva: ' . json_encode([
+                    'chale_id' => $chaleId,
+                    'nome_hospede' => $dados['nome_hospede'],
+                    'email_hospede' => $dados['email_hospede'],
+                    'data_checkin' => $dataCheckin,
+                    'data_checkout' => $dataCheckout,
+                    'num_adultos' => $numAdultos,
+                    'valor_total' => $valorTotal
+                ]));
+                
+                // Inserir reserva no banco de dados
+                // Status 'pendente' para aparecer no painel admin
+                // Usar SQL diferente dependendo se chale_id é null ou não
+                if ($chaleId) {
+                    $sqlInserir = "
+                        INSERT INTO reservas (
+                            chale_id, nome_hospede, email_hospede, telefone_hospede,
+                            data_checkin, data_checkout, num_adultos, num_criancas,
+                            valor_total, cidade_hospede, mensagem, status
+                        ) VALUES (
+                            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pendente'
+                        )
+                    ";
+                    $stmt = $this->db->prepare($sqlInserir);
+                    
+                    if ($stmt === false) {
+                        error_log('❌ Erro ao preparar SQL: ' . $this->db->error);
+                        throw new Exception('Erro ao preparar SQL: ' . $this->db->error);
+                    }
+                    
+                    $stmt->bind_param(
+                        'isssssiiiss',
+                        $chaleId,
+                        $dados['nome_hospede'],
+                        $dados['email_hospede'],
+                        $dados['telefone_hospede'],
+                        $dataCheckin,
+                        $dataCheckout,
+                        $numAdultos,
+                        $numCriancas,
+                        $valorTotal,
+                        $cidadeHospede,
+                        $mensagem
+                    );
+                } else {
+                    // Se chale_id for null, não incluir no INSERT
+                    $sqlInserir = "
+                        INSERT INTO reservas (
+                            nome_hospede, email_hospede, telefone_hospede,
+                            data_checkin, data_checkout, num_adultos, num_criancas,
+                            valor_total, cidade_hospede, mensagem, status
+                        ) VALUES (
+                            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pendente'
+                        )
+                    ";
+                    $stmt = $this->db->prepare($sqlInserir);
+                    
+                    if ($stmt === false) {
+                        error_log('❌ Erro ao preparar SQL: ' . $this->db->error);
+                        throw new Exception('Erro ao preparar SQL: ' . $this->db->error);
+                    }
+                    
+                    $stmt->bind_param(
+                        'sssssiiiss',
+                        $dados['nome_hospede'],
+                        $dados['email_hospede'],
+                        $dados['telefone_hospede'],
+                        $dataCheckin,
+                        $dataCheckout,
+                        $numAdultos,
+                        $numCriancas,
+                        $valorTotal,
+                        $cidadeHospede,
+                        $mensagem
+                    );
+                }
+                
+                if (!$stmt->execute()) {
+                    error_log('❌ Erro ao executar SQL: ' . $stmt->error);
+                    throw new Exception('Erro ao criar reserva: ' . $stmt->error);
+                }
+                
+                $reservaId = $stmt->insert_id;
+                error_log('✅ Reserva salva no banco com ID: ' . $reservaId);
+                
+            } catch (Exception $e) {
+                error_log('⚠️ Erro ao salvar reserva no banco: ' . $e->getMessage());
+                // Continuar mesmo se falhar - pelo menos enviar email
+            }
+        }
         
         // Verificar disponibilidade
         try {
@@ -107,9 +229,17 @@ class ConsultaController {
             }
             
             // Enviar email de notificação
-            $this->enviarEmailNotificacao($dados, $resultado, $precoInfo);
+            error_log('📧 Tentando enviar email de notificação...');
+            try {
+                $this->enviarEmailNotificacao($dados, $resultado, $precoInfo);
+                error_log('✅ Email enviado com sucesso');
+            } catch (Exception $e) {
+                error_log('⚠️ Erro ao enviar email: ' . $e->getMessage());
+                // Continuar mesmo se o email falhar
+            }
             
-            responderJSON([
+            error_log('✅ Preparando resposta JSON...');
+            $resposta = [
                 'mensagem' => $ehSolicitacaoReserva 
                     ? 'Solicitação de reserva recebida! Entraremos em contato em breve para confirmar.' 
                     : 'Consulta recebida com sucesso! Entraremos em contato em breve.',
@@ -117,13 +247,28 @@ class ConsultaController {
                 'preco' => $precoInfo ?: ($valorTotal ? ['valor_total' => $valorTotal] : null),
                 'tipo' => $ehSolicitacaoReserva ? 'solicitacao_reserva' : 'consulta',
                 'status' => 'pendente'
-            ], 201);
+            ];
+            
+            // Adicionar ID da reserva se foi criada
+            if ($reservaId) {
+                $resposta['reserva_id'] = $reservaId;
+                $resposta['mensagem'] = 'Solicitação de reserva enviada com sucesso! Aguardando aprovação. Entraremos em contato em breve.';
+            }
+            
+            error_log('✅ Resposta preparada: ' . json_encode($resposta));
+            
+            responderJSON($resposta, 201);
             
         } catch (Exception $e) {
+            error_log('⚠️ Erro na verificação de disponibilidade: ' . $e->getMessage());
             // Mesmo com erro na verificação, enviar email
-            $this->enviarEmailNotificacao($dados, null, null);
+            try {
+                $this->enviarEmailNotificacao($dados, null, null);
+            } catch (Exception $emailErro) {
+                error_log('⚠️ Erro ao enviar email: ' . $emailErro->getMessage());
+            }
             
-            responderJSON([
+            $respostaErro = [
                 'mensagem' => $ehSolicitacaoReserva 
                     ? 'Solicitação de reserva recebida! Entraremos em contato em breve para confirmar.' 
                     : 'Consulta recebida! Entraremos em contato em breve.',
@@ -131,7 +276,14 @@ class ConsultaController {
                 'preco' => $valorTotal ? ['valor_total' => $valorTotal] : null,
                 'tipo' => $ehSolicitacaoReserva ? 'solicitacao_reserva' : 'consulta',
                 'status' => 'pendente'
-            ], 201);
+            ];
+            
+            // Adicionar ID da reserva se foi criada
+            if ($reservaId) {
+                $respostaErro['reserva_id'] = $reservaId;
+            }
+            
+            responderJSON($respostaErro, 201);
         }
     }
     

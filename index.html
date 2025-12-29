@@ -623,8 +623,7 @@
                             <label>Chalé Preferido</label>
                             <select name="chale">
                                 <option value="">Qualquer chalé</option>
-                                <option value="1">Alvorada Tropical</option>
-                                <option value="2">Vila do Canto</option>
+                                <!-- Chalés serão carregados dinamicamente com preço baseado na temporada -->
                             </select>
                         </div>
                     </div>
@@ -662,6 +661,16 @@
                         <label>Mensagem</label>
                         <textarea name="mensagem" rows="4"></textarea>
                     </div>
+                    
+                    <!-- Preço Estimado no Modal -->
+                    <div id="precoEstimadoModal" class="preco-estimado" style="display: none;">
+                        <div class="preco-estimado-content">
+                            <span class="preco-label">💰 Preço Estimado:</span>
+                            <span class="preco-valor" id="precoValorModal">-</span>
+                            <span class="preco-detalhes" id="precoDetalhesModal"></span>
+                        </div>
+                    </div>
+                    
                     <button type="submit" class="btn-primary">Enviar Reserva</button>
                 </form>
             </div>

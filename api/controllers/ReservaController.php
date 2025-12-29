@@ -110,7 +110,26 @@ class ReservaController {
                 $numAdultos = $_GET['num_adultos'] ?? 2;
                 $calculoEstadia = calcularValorEstadia($dataCheckin, $dataCheckout, $numAdultos);
                 
+                // Calcular preço dinâmico para a data de check-in (primeira noite)
+                $temporadaCheckin = determinarTemporada($dataCheckin);
+                
+                // Obter preço base do chalé (do banco de dados)
+                $precoBase = floatval($chale['preco_diaria'] ?? 350.00);
+                
+                // Usar multiplicador fixo de 2x
+                $multiplicador = 2.0;
+                
+                // Calcular preço base para casal na temporada
+                $precoBaseCasalCheckin = $precoBase * $multiplicador;
+                
+                // Calcular pessoas adicionais e preço final
+                $pessoasAdicionais = max(0, $numAdultos - 2);
+                $precoPorPessoaAdicional = 150.00;
+                $precoDiariaAtual = $precoBaseCasalCheckin + ($pessoasAdicionais * $precoPorPessoaAdicional);
+                
                 // Adicionar informações de preço ao chalé
+                $chale['preco_diaria_atual'] = round($precoDiariaAtual, 2); // Preço dinâmico para a data de check-in
+                $chale['preco_base'] = $precoBase; // Preço base do chalé
                 $chale['preco_diaria_media'] = $calculoEstadia['valor_medio_diaria'];
                 $chale['preco_total'] = $calculoEstadia['valor_total'];
                 $chale['numero_noites'] = $calculoEstadia['numero_noites'];
@@ -119,9 +138,25 @@ class ReservaController {
                 $chale['pessoas_adicionais'] = $calculoEstadia['pessoas_adicionais'];
                 $chale['preco_por_pessoa_adicional'] = $calculoEstadia['preco_por_pessoa_adicional'];
                 $chale['detalhes_preco'] = $calculoEstadia['detalhes'];
+                $chale['temporada'] = $temporadaCheckin['nome']; // Nome da temporada
+                $chale['temporada_tipo'] = $temporadaCheckin['tipo']; // Tipo da temporada
+                
+                // Log para debug
+                error_log('💰 Chalé preparado: ' . $chale['nome'] . ' - preco_diaria_atual: ' . $chale['preco_diaria_atual'] . ' - preco_base: ' . $chale['preco_base']);
                 
                 $disponiveis[] = $chale;
             }
+        }
+        
+        // Log para debug antes de enviar resposta
+        if (count($disponiveis) > 0) {
+            error_log('📤 Enviando resposta com ' . count($disponiveis) . ' chalés');
+            error_log('📤 Primeiro chalé: ' . json_encode([
+                'nome' => $disponiveis[0]['nome'],
+                'preco_diaria_atual' => $disponiveis[0]['preco_diaria_atual'] ?? 'NÃO DEFINIDO',
+                'preco_base' => $disponiveis[0]['preco_base'] ?? 'NÃO DEFINIDO',
+                'preco_diaria' => $disponiveis[0]['preco_diaria'] ?? 'NÃO DEFINIDO'
+            ]));
         }
         
         responderJSON([
@@ -436,11 +471,15 @@ class ReservaController {
      * Calcula o preço de uma reserva sem criá-la
      */
     public function calcularPreco() {
+        error_log('💰 calcularPreco() - Requisição recebida');
+        error_log('💰 Parâmetros: ' . json_encode($_GET));
+        
         $dataCheckin = $_GET['data_checkin'] ?? null;
         $dataCheckout = $_GET['data_checkout'] ?? null;
         $numAdultos = isset($_GET['num_adultos']) ? (int)$_GET['num_adultos'] : 2;
         
         if (!$dataCheckin || !$dataCheckout) {
+            error_log('❌ Erro: Parâmetros obrigatórios ausentes');
             responderErro('Parâmetros data_checkin e data_checkout são obrigatórios', 400);
         }
         
@@ -452,12 +491,15 @@ class ReservaController {
         $checkout = new DateTime($dataCheckout);
         
         if ($checkout <= $checkin) {
+            error_log('❌ Erro: Data checkout <= checkin');
             responderErro('Data de checkout deve ser posterior à data de checkin', 400);
         }
         
         // Calcular valor usando sistema de temporadas
         require_once __DIR__ . '/../config/temporadas.php';
         $calculoEstadia = calcularValorEstadia($dataCheckin, $dataCheckout, $numAdultos);
+        
+        error_log('✅ Cálculo realizado: ' . json_encode($calculoEstadia));
         
         responderJSON([
             'data_checkin' => $dataCheckin,
