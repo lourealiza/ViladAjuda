@@ -32,16 +32,26 @@ async function fetchAPI(endpoint, options = {}) {
     
     const url = `${baseURL}${endpoint}`;
     
+    // Garantir que rotas PHP não tentem Vercel (verificação de segurança)
+    let baseURLFinal = baseURL;
+    if (usarPHP && baseURL === API_VERCEL_BASE_URL) {
+        console.error('❌ ERRO: Rota PHP tentando usar Vercel! Forçando API PHP...');
+        baseURLFinal = API_BASE_URL;
+    }
+    const urlFinal = `${baseURLFinal}${endpoint}`;
+    
     // Log para debug
     console.log('🔍 fetchAPI:', { 
         endpoint, 
         endpointPath,
         usarPHP, 
         usarVercel, 
-        baseURL, 
-        url,
+        baseURL: baseURLFinal, 
+        url: urlFinal,
         rotasPHPMatch: rotasPHP.filter(r => endpointPath.startsWith(r)),
-        rotasVercelMatch: rotasVercel.filter(r => endpointPath.startsWith(r))
+        rotasVercelMatch: rotasVercel.filter(r => endpointPath.startsWith(r)),
+        API_BASE_URL,
+        API_VERCEL_BASE_URL
     });
     
     const defaultOptions = {
@@ -66,15 +76,31 @@ async function fetchAPI(endpoint, options = {}) {
     };
     
     try {
-        const response = await fetch(url, config);
+        console.log('🌐 Fazendo requisição:', {
+            url: urlFinal,
+            method: config.method || 'GET',
+            headers: config.headers,
+            body: config.body ? (typeof config.body === 'string' ? config.body.substring(0, 200) : config.body) : undefined
+        });
+        
+        const response = await fetch(urlFinal, config);
+        
+        console.log('📥 Resposta recebida:', {
+            status: response.status,
+            statusText: response.statusText,
+            headers: Object.fromEntries(response.headers.entries()),
+            ok: response.ok
+        });
         
         // Verificar se a resposta é JSON válido
         let data;
         const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {
             data = await response.json();
+            console.log('📦 Dados JSON recebidos:', data);
         } else {
             const text = await response.text();
+            console.warn('⚠️ Resposta não é JSON:', text.substring(0, 200));
             throw new Error(`Resposta inválida do servidor: ${text.substring(0, 100)}`);
         }
         
@@ -109,7 +135,7 @@ async function fetchAPI(endpoint, options = {}) {
         return data;
     } catch (erro) {
         console.error('Erro na API:', erro);
-        console.error('URL tentada:', url);
+        console.error('URL tentada:', urlFinal);
         
         // Se for erro de conexão/CORS e estiver usando Vercel, tentar fallback para API PHP
         const rotasComFallback = ['/consulta', '/disponibilidade', '/chales', '/reservas'];
@@ -190,10 +216,20 @@ async function verificarDisponibilidade(chaleId, dataCheckin, dataCheckout) {
  * Cria uma nova reserva (via /consulta)
  */
 async function criarReserva(dados) {
-    return fetchAPI('/consulta', {
-        method: 'POST',
-        body: JSON.stringify(dados)
-    });
+    console.log('📧 criarReserva() chamado com dados:', dados);
+    console.log('📧 Endpoint: /consulta (POST)');
+    
+    try {
+        const resultado = await fetchAPI('/consulta', {
+            method: 'POST',
+            body: JSON.stringify(dados)
+        });
+        console.log('✅ criarReserva() - Sucesso:', resultado);
+        return resultado;
+    } catch (erro) {
+        console.error('❌ criarReserva() - Erro:', erro);
+        throw erro;
+    }
 }
 
 /**

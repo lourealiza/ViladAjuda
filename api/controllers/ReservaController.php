@@ -141,8 +141,22 @@ class ReservaController {
                 $chale['temporada'] = $temporadaCheckin['nome']; // Nome da temporada
                 $chale['temporada_tipo'] = $temporadaCheckin['tipo']; // Tipo da temporada
                 
+                // Log para debug
+                error_log('💰 Chalé preparado: ' . $chale['nome'] . ' - preco_diaria_atual: ' . $chale['preco_diaria_atual'] . ' - preco_base: ' . $chale['preco_base']);
+                
                 $disponiveis[] = $chale;
             }
+        }
+        
+        // Log para debug antes de enviar resposta
+        if (count($disponiveis) > 0) {
+            error_log('📤 Enviando resposta com ' . count($disponiveis) . ' chalés');
+            error_log('📤 Primeiro chalé: ' . json_encode([
+                'nome' => $disponiveis[0]['nome'],
+                'preco_diaria_atual' => $disponiveis[0]['preco_diaria_atual'] ?? 'NÃO DEFINIDO',
+                'preco_base' => $disponiveis[0]['preco_base'] ?? 'NÃO DEFINIDO',
+                'preco_diaria' => $disponiveis[0]['preco_diaria'] ?? 'NÃO DEFINIDO'
+            ]));
         }
         
         responderJSON([

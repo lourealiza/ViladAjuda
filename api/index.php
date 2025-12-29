@@ -151,6 +151,8 @@ if (preg_match('#^/avaliacoes/estatisticas/?$#', $path) && $method === 'GET') {
 // Compatibilidade: aceitar tanto /consulta quanto /consultas
 if ((preg_match('#^/consulta/?$#', $path) || preg_match('#^/consultas/?$#', $path)) && $method === 'POST') {
     error_log('✅ Rota /consulta capturada - Path: ' . $path . ' - Method: ' . $method);
+    error_log('✅ Headers recebidos: ' . json_encode(getallheaders()));
+    error_log('✅ POST data: ' . file_get_contents('php://input'));
     $controller = new ConsultaController($db);
     $controller->criar();
     exit();

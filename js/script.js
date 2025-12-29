@@ -909,8 +909,14 @@ if (formReservaCompleto) {
             // O admin é quem aprova ou não a reserva
             // Apenas datas bloqueadas são impedidas (já validado na seleção)
             
+            // Log dos dados que serão enviados
+            console.log('📤 Enviando formulário de reserva:', dados);
+            console.log('📤 URL da API:', API_BASE_URL + '/consulta');
+            
             // Enviar reserva para a API (via /consulta)
             const resultado = await API.criarReserva(dados);
+            
+            console.log('✅ Resposta da API:', resultado);
             
             // Calcular informações para mostrar ao usuário
             const noites = API.calcularNoites(dados.data_checkin, dados.data_checkout);
@@ -981,9 +987,23 @@ if (formReservaCompleto) {
             }, 2000);
             
         } catch (erro) {
-            console.error('Erro ao criar reserva:', erro);
+            console.error('❌ Erro ao enviar reserva:', erro);
+            console.error('❌ Detalhes do erro:', {
+                message: erro.message,
+                status: erro.status,
+                stack: erro.stack,
+                dadosEnviados: dados
+            });
             
             let mensagemErro = 'Erro ao enviar reserva: ' + erro.message;
+            
+            // Adicionar mais detalhes se disponível
+            if (erro.status) {
+                mensagemErro += ` (Status: ${erro.status})`;
+            }
+            if (erro.detalhes && Array.isArray(erro.detalhes)) {
+                mensagemErro += '\n\nDetalhes:\n' + erro.detalhes.map(d => `- ${d.campo}: ${d.mensagem}`).join('\n');
+            }
             
             // Mensagens de erro mais amigáveis
             if (erro.message.includes('indisponível')) {
@@ -992,6 +1012,8 @@ if (formReservaCompleto) {
                 mensagemErro = '⚠️ ' + erro.message;
             } else if (erro.message.includes('inválido')) {
                 mensagemErro = '⚠️ Por favor, verifique os dados informados.';
+            } else if (erro.message.includes('Failed to fetch') || erro.message.includes('CORS')) {
+                mensagemErro = '⚠️ Erro de conexão. Por favor, verifique sua internet e tente novamente.';
             }
             
             showMessage(mensagemErro, 'error');
