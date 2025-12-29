@@ -714,10 +714,13 @@ async function carregarChalesNoDropdown() {
                 const precoExibir = chale.preco_diaria_atual || chale.preco_diaria || 0;
                 option.textContent = `${chale.nome} - ${API.formatarValor(precoExibir)}/noite`;
                 selectChale.appendChild(option);
+                console.log(`✅ Adicionado ao dropdown: ${chale.nome} - ${API.formatarValor(precoExibir)}/noite (preco_diaria_atual: ${chale.preco_diaria_atual}, preco_diaria: ${chale.preco_diaria})`);
             });
+        } else {
+            console.warn('⚠️ Nenhum chalé retornado pela API');
         }
     } catch (erro) {
-        console.error('Erro ao carregar chalés no dropdown:', erro);
+        console.error('❌ Erro ao carregar chalés no dropdown:', erro);
         // Em caso de erro, manter opções padrão ou tentar carregar sem preço dinâmico
         try {
             const chales = await API.listarChales();

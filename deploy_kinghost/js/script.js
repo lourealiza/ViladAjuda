@@ -1089,11 +1089,18 @@ function sincronizarCamposComCalendario() {
 
 // Função para carregar chalés com preço dinâmico no dropdown
 async function carregarChalesNoDropdown() {
+    console.log('🚀 Iniciando carregarChalesNoDropdown()...');
     const formCompleto = document.getElementById('formReservaCompleto');
-    if (!formCompleto) return;
+    if (!formCompleto) {
+        console.warn('⚠️ Formulário completo não encontrado');
+        return;
+    }
     
     const selectChale = formCompleto.querySelector('[name="chale"]');
-    if (!selectChale) return;
+    if (!selectChale) {
+        console.warn('⚠️ Select de chalé não encontrado');
+        return;
+    }
     
     // Obter datas do formulário
     let dataCheckin = formCompleto.querySelector('[name="checkin"]')?.value;
