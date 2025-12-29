@@ -102,7 +102,7 @@
     <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="hero-slider">
-            <div class="hero-slide active" style="background-image: url('images/Jardim%20-%20Copia.JPG');">
+            <div class="hero-slide active" style="background-image: url('images/hero-patio-varanda.png');">
                 <div class="hero-content">
                     <h2 class="hero-title">Seu refúgio em<br>Arraial d'Ajuda</h2>
                     <p class="hero-subtitle">Natureza, aconchego e praticidade a 3 quadras do centro</p>
@@ -114,29 +114,11 @@
         <div class="hero-overlay"></div>
     </section>
 
-    <!-- Reserva Rápida - Botão -->
+    <!-- Reserva Rápida -->
     <section class="reserva-rapida">
         <div class="container">
-            <div class="reserva-box-simples">
+            <div class="reserva-box">
                 <h3>Verificar Disponibilidade</h3>
-                <p class="reserva-box-subtitle">Confira as datas disponíveis e faça sua reserva</p>
-                <button class="btn-consultar-disponibilidade" id="btnConsultarDisponibilidade">
-                    <span>📅 Consultar Disponibilidade</span>
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Modal de Consulta de Disponibilidade -->
-    <div id="modalConsulta" class="modal-consulta" style="display: none;">
-        <div class="modal-consulta-overlay"></div>
-        <div class="modal-consulta-content">
-            <button class="modal-consulta-close" aria-label="Fechar modal">&times;</button>
-            <div class="modal-consulta-header">
-                <h2>Consultar Disponibilidade</h2>
-                <p class="section-subtitle">Selecione as datas e verifique a disponibilidade</p>
-            </div>
-            <div class="modal-consulta-body">
                 <form class="form-reserva" id="formReserva">
                     <div class="form-group form-group-date">
                         <label>Data de Entrada</label>
@@ -152,33 +134,27 @@
                             <input type="hidden" name="checkout" id="checkoutHidden">
                         </div>
                     </div>
-                    <div class="form-row-consulta">
-                        <div class="form-group">
-                            <label>Adultos</label>
-                            <select name="adultos" required>
-                                <option value="1">1</option>
-                                <option value="2" selected>2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Crianças</label>
-                            <select name="criancas">
-                                <option value="0">0</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                            </select>
-                        </div>
+                    <div class="form-group">
+                        <label>Adultos</label>
+                        <select name="adultos" required>
+                            <option value="1">1</option>
+                            <option value="2" selected>2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+                    </div>
+                    <div class="form-group form-group-with-button">
+                        <label>Crianças</label>
+                        <select name="criancas">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
                     </div>
                     <div class="form-group form-group-button">
+                        <label>&nbsp;</label>
                         <button type="submit" class="btn-check">Verificar Disponibilidade</button>
-                    </div>
-                    <div class="form-group form-group-button" style="margin-top: 1rem;">
-                        <button type="button" class="btn-solicitar-reserva" id="btnSolicitarReserva" style="display: none;">
-                            📝 Solicitar Reserva
-                        </button>
                     </div>
                 </form>
                 
@@ -215,7 +191,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- Sobre -->
     <section id="sobre" class="sobre">
@@ -530,6 +506,85 @@
             <div class="section-header">
                 <h2>Reserve seu Chalé</h2>
                 <p class="section-subtitle">Poucas unidades — datas de alta temporada esgotam rápido</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reserva Rápida (Final da Página) -->
+    <section class="reserva-rapida">
+        <div class="container">
+            <div class="reserva-box">
+                <h3>Verificar Disponibilidade</h3>
+                <form class="form-reserva" id="formReservaFinal">
+                    <div class="form-group form-group-date">
+                        <label>Data de Entrada</label>
+                        <div class="date-input-wrapper">
+                            <input type="text" name="checkin" id="checkinInputFinal" class="date-input" placeholder="Insira as datas" readonly required>
+                            <input type="hidden" name="checkin" id="checkinHiddenFinal">
+                        </div>
+                    </div>
+                    <div class="form-group form-group-date">
+                        <label>Data de Saída</label>
+                        <div class="date-input-wrapper">
+                            <input type="text" name="checkout" id="checkoutInputFinal" class="date-input" placeholder="Insira as datas" readonly required>
+                            <input type="hidden" name="checkout" id="checkoutHiddenFinal">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Adultos</label>
+                        <select name="adultos" required>
+                            <option value="1">1</option>
+                            <option value="2" selected>2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+                    </div>
+                    <div class="form-group form-group-with-button">
+                        <label>Crianças</label>
+                        <select name="criancas">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                    <div class="form-group form-group-button">
+                        <label>&nbsp;</label>
+                        <button type="submit" class="btn-check">Verificar Disponibilidade</button>
+                    </div>
+                </form>
+                
+                <!-- Preço Estimado -->
+                <div id="precoEstimadoFinal" class="preco-estimado" style="display: none;">
+                    <div class="preco-estimado-content">
+                        <span class="preco-label">💰 Preço Estimado:</span>
+                        <span class="preco-valor" id="precoValorFinal">-</span>
+                        <span class="preco-detalhes" id="precoDetalhesFinal"></span>
+                    </div>
+                </div>
+                
+                <!-- Calendário Pop-up -->
+                <div id="datepickerPopupFinal" class="datepicker-popup" style="display: none;">
+                    <div class="datepicker-popup-content">
+                        <div id="calendarioContainerFinal" class="calendario-container">
+                            <div class="calendario-loading">Carregando calendário...</div>
+                        </div>
+                        <div class="calendario-legend">
+                            <div class="legend-item">
+                                <span class="legend-dot disponivel"></span>
+                                <span>Disponível</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot reservado"></span>
+                                <span>Reservado</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot hoje"></span>
+                                <span>Hoje</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>

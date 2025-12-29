@@ -15,7 +15,7 @@ const API_VERCEL_BASE_URL = 'https://viladajuda.vercel.app/api';
  */
 async function fetchAPI(endpoint, options = {}) {
     // Rotas que devem usar API Vercel (Node.js) - apenas se API_VERCEL_BASE_URL estiver configurado
-    const rotasVercel = ['/auth', '/admin', '/hospedes', '/conteudos', '/tracking', '/bloqueios', '/lgpd'];
+    const rotasVercel = ['/auth', '/admin', '/hospedes', '/conteudos', '/tracking', '/bloqueios', '/lgpd', '/consulta', '/chales', '/reservas', '/disponibilidade', '/tarifas'];
     
     // Determinar qual API usar baseado no endpoint
     const usarVercel = API_VERCEL_BASE_URL && rotasVercel.some(rota => endpoint.startsWith(rota));
@@ -58,6 +58,18 @@ async function fetchAPI(endpoint, options = {}) {
         }
         
         if (!response.ok) {
+            // Se for erro 404 e estiver usando Vercel, tentar fallback para API PHP
+            if (response.status === 404 && usarVercel && endpoint === '/consulta') {
+                console.warn('⚠️ Rota /consulta não encontrada no Vercel, tentando API PHP...');
+                // Tentar novamente com API PHP
+                const urlPHP = `${API_BASE_URL}${endpoint}`;
+                const responsePHP = await fetch(urlPHP, config);
+                if (responsePHP.ok) {
+                    const dataPHP = await responsePHP.json();
+                    return dataPHP;
+                }
+            }
+            
             // Incluir detalhes de validação se existirem
             let mensagemErro = data.mensagem || data.erro || 'Erro na requisição';
             
@@ -78,9 +90,43 @@ async function fetchAPI(endpoint, options = {}) {
         console.error('Erro na API:', erro);
         console.error('URL tentada:', url);
         
+        // Se for erro de conexão/CORS e estiver usando Vercel, tentar fallback para API PHP
+        const rotasComFallback = ['/consulta', '/disponibilidade', '/chales', '/reservas'];
+        const deveFazerFallback = usarVercel && rotasComFallback.some(rota => endpoint.startsWith(rota));
+        
+        if ((erro.name === 'TypeError' && erro.message.includes('fetch')) || 
+            erro.message.includes('CORS') || 
+            erro.message.includes('Failed to fetch')) {
+            
+            if (deveFazerFallback) {
+                console.warn(`⚠️ Falha ao acessar Vercel (${endpoint}), tentando API PHP...`);
+                try {
+                    const urlPHP = `${API_BASE_URL}${endpoint}`;
+                    const responsePHP = await fetch(urlPHP, config);
+                    if (responsePHP.ok) {
+                        const dataPHP = await responsePHP.json();
+                        return dataPHP;
+                    } else {
+                        // Se API PHP também falhar, tentar decodificar erro
+                        const textPHP = await responsePHP.text();
+                        try {
+                            const dataErroPHP = JSON.parse(textPHP);
+                            throw new Error(dataErroPHP.mensagem || dataErroPHP.erro || 'Erro na API PHP');
+                        } catch {
+                            throw new Error(`Erro ${responsePHP.status} na API PHP`);
+                        }
+                    }
+                } catch (erroPHP) {
+                    console.error('Erro ao tentar API PHP:', erroPHP);
+                    // Se ambos falharem, lançar erro original
+                    throw erro;
+                }
+            }
+        }
+        
         // Melhorar mensagens de erro de rede
         if (erro.name === 'TypeError' && erro.message.includes('fetch')) {
-            const mensagemErro = `Não foi possível conectar ao servidor. Verifique se o backend está rodando em ${API_BASE_URL}`;
+            const mensagemErro = `Não foi possível conectar ao servidor. Verifique se o backend está rodando em ${baseURL}`;
             const erroMelhorado = new Error(mensagemErro);
             erroMelhorado.tipo = 'CONEXAO';
             throw erroMelhorado;
@@ -120,10 +166,10 @@ async function verificarDisponibilidade(chaleId, dataCheckin, dataCheckout) {
 // ==================== RESERVAS ====================
 
 /**
- * Cria uma nova reserva
+ * Cria uma nova reserva (via /consulta)
  */
 async function criarReserva(dados) {
-    return fetchAPI('/reservas', {
+    return fetchAPI('/consulta', {
         method: 'POST',
         body: JSON.stringify(dados)
     });
@@ -145,13 +191,36 @@ async function calcularPrecoReserva(dataCheckin, dataCheckout, numAdultos = 2) {
 
 /**
  * Busca calendário de disponibilidade para um mês
+ * Com fallback automático para API PHP se Vercel falhar
  */
 async function buscarCalendarioDisponibilidade(ano, mes, chaleId = null) {
     let url = `/disponibilidade/calendario?ano=${ano}&mes=${mes}`;
     if (chaleId) {
         url += `&chale_id=${chaleId}`;
     }
-    return fetchAPI(url);
+    
+    try {
+        return await fetchAPI(url);
+    } catch (erro) {
+        // Se falhar com Vercel, tentar API PHP diretamente
+        if (erro.tipo === 'CONEXAO' || erro.message.includes('CORS') || erro.message.includes('Failed to fetch')) {
+            console.warn('⚠️ Falha ao acessar Vercel, tentando API PHP...');
+            const urlPHP = `${API_BASE_URL}${url}`;
+            try {
+                const response = await fetch(urlPHP, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                if (response.ok) {
+                    return await response.json();
+                }
+            } catch (erroPHP) {
+                console.error('Erro ao tentar API PHP:', erroPHP);
+            }
+        }
+        throw erro;
+    }
 }
 
 /**

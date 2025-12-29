@@ -16,6 +16,14 @@ function gerarEmailConsultaDisponibilidade($dados) {
     $utmCampaign = $dados['utm_campaign'] ?? '';
     $dataHora = date('d/m/Y H:i:s');
     
+    // Verificar se é solicitação de reserva completa
+    $ehSolicitacaoReserva = !empty($dados['nome_hospede']) && !empty($dados['email_hospede']) && !empty($dados['telefone_hospede']);
+    $nomeHospede = $dados['nome_hospede'] ?? '';
+    $emailHospede = $dados['email_hospede'] ?? '';
+    $telefoneHospede = $dados['telefone_hospede'] ?? '';
+    $mensagem = $dados['mensagem'] ?? '';
+    $chaleId = $dados['chale_id'] ?? null;
+    
     // Calcular noites
     $checkin = new DateTime($dados['data_checkin']);
     $checkout = new DateTime($dados['data_checkout']);
@@ -46,7 +54,7 @@ function gerarEmailConsultaDisponibilidade($dados) {
                     <!-- Header -->
                     <tr>
                         <td style="background: linear-gradient(135deg, #4a7c2a 0%, #6b9e3e 100%); padding: 30px 40px; text-align: center;">
-                            <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 600;">📅 Nova Consulta de Disponibilidade</h1>
+                            <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 600;">📅 {$ehSolicitacaoReserva ? 'Nova Solicitação de Reserva' : 'Nova Consulta de Disponibilidade'}</h1>
                             <p style="color: #ffffff; margin: 10px 0 0 0; font-size: 14px; opacity: 0.9;">Recebida em $dataHora</p>
                         </td>
                     </tr>
@@ -54,8 +62,64 @@ function gerarEmailConsultaDisponibilidade($dados) {
                     <!-- Conteúdo -->
                     <tr>
                         <td style="padding: 30px 40px;">
+HTML;
+    
+    // Se for solicitação de reserva, mostrar dados do hóspede primeiro
+    if ($ehSolicitacaoReserva) {
+        $html .= <<<HTML
+                            
+                            <!-- Dados do Hóspede -->
+                            <div style="background-color: #e3f2fd; border-left: 4px solid #1976d2; padding: 20px; margin: 0 0 25px 0; border-radius: 5px;">
+                                <h2 style="color: #0d47a1; margin: 0 0 15px 0; font-size: 20px;">👤 Dados do Hóspede</h2>
+                                <table width="100%" cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td style="padding: 8px 0; color: #2c2c2c;">
+                                            <strong>Nome:</strong> $nomeHospede
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px 0; color: #2c2c2c;">
+                                            <strong>E-mail:</strong> <a href="mailto:$emailHospede" style="color: #1976d2;">$emailHospede</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px 0; color: #2c2c2c;">
+                                            <strong>Telefone:</strong> <a href="tel:$telefoneHospede" style="color: #1976d2;">$telefoneHospede</a>
+                                        </td>
+                                    </tr>
+HTML;
+        
+        if ($chaleId) {
+            $html .= <<<HTML
+                                    <tr>
+                                        <td style="padding: 8px 0; color: #2c2c2c;">
+                                            <strong>Chalé Preferido:</strong> ID $chaleId
+                                        </td>
+                                    </tr>
+HTML;
+        }
+        
+        if ($mensagem) {
+            $mensagemEscapada = htmlspecialchars($mensagem);
+            $html .= <<<HTML
+                                    <tr>
+                                        <td style="padding: 8px 0; color: #2c2c2c;">
+                                            <strong>Mensagem:</strong><br>
+                                            <div style="margin-top: 5px; padding: 10px; background-color: #ffffff; border-radius: 5px; font-style: italic;">$mensagemEscapada</div>
+                                        </td>
+                                    </tr>
+HTML;
+        }
+        
+        $html .= <<<HTML
+                                </table>
+                            </div>
                             
                             <!-- Período -->
+HTML;
+    }
+    
+    $html .= <<<HTML
                             <div style="background-color: #f5f1e8; border-left: 4px solid #4a7c2a; padding: 20px; margin: 0 0 25px 0; border-radius: 5px;">
                                 <h2 style="color: #2d5016; margin: 0 0 15px 0; font-size: 20px;">📅 Período Solicitado</h2>
                                 <table width="100%" cellpadding="0" cellspacing="0">
@@ -215,7 +279,7 @@ HTML;
                             <!-- Ação -->
                             <div style="background-color: #fff3cd; border-left: 4px solid #ff9800; padding: 15px; margin: 0 0 25px 0; border-radius: 5px;">
                                 <p style="color: #856404; margin: 0; font-size: 14px;">
-                                    💡 <strong>Próximo passo:</strong> Entre em contato com o interessado para confirmar a disponibilidade e prosseguir com a reserva.
+                                    💡 <strong>Próximo passo:</strong> {$ehSolicitacaoReserva ? 'Esta é uma solicitação de reserva pendente. Entre em contato com o hóspede para confirmar e criar a reserva no sistema.' : 'Entre em contato com o interessado para confirmar a disponibilidade e prosseguir com a reserva.'}
                                 </p>
                             </div>
                             

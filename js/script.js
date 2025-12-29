@@ -75,6 +75,18 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
+// Fechar modal com ESC
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const modalReserva = document.getElementById('modalReserva');
+        if (modalReserva && modalReserva.style.display === 'flex') {
+            fecharModalReserva();
+        }
+    }
+});
+
+// Carregar chalés dinamicamente
+
 // FAQ Accordion
 const faqItems = document.querySelectorAll('.faq-item');
 
@@ -127,6 +139,194 @@ function fecharCalendarioPopup() {
     const popup = document.getElementById('datepickerPopup');
     if (popup) {
         popup.style.display = 'none';
+    }
+    const popupFinal = document.getElementById('datepickerPopupFinal');
+    if (popupFinal) {
+        popupFinal.style.display = 'none';
+    }
+}
+
+function fecharCalendarioPopupFinal() {
+    calendarioPopupAberto = false;
+    campoAtivo = null;
+    const popupFinal = document.getElementById('datepickerPopupFinal');
+    if (popupFinal) {
+        popupFinal.style.display = 'none';
+    }
+}
+
+async function carregarCalendarioFinal() {
+    const container = document.getElementById('calendarioContainerFinal');
+    if (!container) return;
+    
+    try {
+        container.innerHTML = '<div class="calendario-loading">Carregando calendário...</div>';
+        
+        // Carregar apenas 1 mês (o atual)
+        const meses = [];
+        for (let i = 0; i < 1; i++) {
+            const mes = calendarioMesAtual + i;
+            const ano = calendarioAnoAtual;
+            let mesAjustado = mes;
+            let anoAjustado = ano;
+            
+            if (mesAjustado > 12) {
+                mesAjustado -= 12;
+                anoAjustado += 1;
+            }
+            
+            meses.push({ mes: mesAjustado, ano: anoAjustado });
+        }
+        
+        const promessas = meses.map(({ mes, ano }) => 
+            API.buscarCalendarioDisponibilidade(ano, mes)
+        );
+        
+        const resultados = await Promise.all(promessas);
+        
+        let html = '<div class="calendario-meses">';
+        
+        resultados.forEach((resultado, index) => {
+            if (!resultado || !resultado.calendario) {
+                console.error('Resultado inválido:', resultado);
+                return;
+            }
+            const { mes, ano, calendario } = resultado;
+            html += renderizarMesFinal(mes, ano, calendario, index === 0);
+        });
+        
+        html += '</div>';
+        container.innerHTML = html;
+        
+        // Adicionar event listeners aos dias clicáveis
+        adicionarEventListenersCalendarioFinal();
+        
+        // Atualizar visualização das datas selecionadas
+        atualizarVisualizacaoDatasSelecionadasFinal();
+        
+    } catch (erro) {
+        console.error('Erro ao carregar calendário:', erro);
+        let mensagemErro = 'Erro ao carregar calendário.';
+        
+        if (erro.tipo === 'CONEXAO') {
+            mensagemErro = 'Não foi possível conectar ao servidor. Verifique se o backend está rodando.';
+        } else if (erro.message) {
+            mensagemErro = erro.message;
+        }
+        
+        container.innerHTML = `<div class="calendario-loading" style="color: #d32f2f;">${mensagemErro}</div>`;
+    }
+}
+
+function renderizarMesFinal(mes, ano, diasCalendario, isPrimeiroMes) {
+    // Reutilizar a mesma função de renderização, mas com IDs diferentes
+    return renderizarMes(mes, ano, diasCalendario, isPrimeiroMes);
+}
+
+function adicionarEventListenersCalendarioFinal() {
+    const container = document.getElementById('calendarioContainerFinal');
+    if (!container) return;
+    
+    const dias = container.querySelectorAll('.calendario-dia.clicavel');
+    dias.forEach(dia => {
+        dia.addEventListener('click', () => {
+            const dataStr = dia.getAttribute('data-data');
+            if (!dataStr) return;
+            
+            const data = new Date(dataStr + 'T00:00:00');
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+            
+            if (data < hoje) {
+                return; // Não permitir selecionar datas passadas
+            }
+            
+            const checkinHidden = document.getElementById('checkinHiddenFinal');
+            const checkoutHidden = document.getElementById('checkoutHiddenFinal');
+            const checkinInput = document.getElementById('checkinInputFinal');
+            const checkoutInput = document.getElementById('checkoutInputFinal');
+            
+            if (!checkinHidden || !checkoutHidden || !checkinInput || !checkoutInput) return;
+            
+            const checkinAtual = checkinHidden.value;
+            const checkoutAtual = checkoutHidden.value;
+            
+            if (!checkinAtual || (checkinAtual && checkoutAtual)) {
+                // Nova seleção: definir check-in
+                checkinHidden.value = dataStr;
+                checkoutHidden.value = '';
+                dataCheckinSelecionada = dataStr;
+                dataCheckoutSelecionada = null;
+            } else if (checkinAtual && !checkoutAtual) {
+                // Check-in já definido: definir check-out
+                const checkinDate = new Date(checkinAtual + 'T00:00:00');
+                if (data <= checkinDate) {
+                    // Se a data selecionada é anterior ou igual ao check-in, redefine o check-in
+                    checkinHidden.value = dataStr;
+                    checkoutHidden.value = '';
+                    dataCheckinSelecionada = dataStr;
+                    dataCheckoutSelecionada = null;
+                } else {
+                    // Define o check-out
+                    checkoutHidden.value = dataStr;
+                    dataCheckoutSelecionada = dataStr;
+                }
+            }
+            
+            atualizarVisualizacaoDatasSelecionadasFinal();
+        });
+    });
+}
+
+function atualizarVisualizacaoDatasSelecionadasFinal() {
+    const checkinHidden = document.getElementById('checkinHiddenFinal');
+    const checkoutHidden = document.getElementById('checkoutHiddenFinal');
+    const checkinInput = document.getElementById('checkinInputFinal');
+    const checkoutInput = document.getElementById('checkoutInputFinal');
+    
+    if (!checkinHidden || !checkoutHidden || !checkinInput || !checkoutInput) return;
+    
+    const checkin = checkinHidden.value;
+    const checkout = checkoutHidden.value;
+    
+    if (checkin) {
+        const dataCheckin = new Date(checkin + 'T00:00:00');
+        const opcoes = { weekday: 'short', day: 'numeric', month: 'short' };
+        checkinInput.value = dataCheckin.toLocaleDateString('pt-BR', opcoes);
+    } else {
+        checkinInput.value = '';
+    }
+    
+    if (checkout) {
+        const dataCheckout = new Date(checkout + 'T00:00:00');
+        const opcoes = { weekday: 'short', day: 'numeric', month: 'short' };
+        checkoutInput.value = dataCheckout.toLocaleDateString('pt-BR', opcoes);
+    } else {
+        checkoutInput.value = '';
+    }
+    
+    // Atualizar visualização no calendário
+    const container = document.getElementById('calendarioContainerFinal');
+    if (container) {
+        const dias = container.querySelectorAll('.calendario-dia');
+        dias.forEach(dia => {
+            dia.classList.remove('selecionado', 'checkin', 'checkout', 'no-intervalo');
+            const dataStr = dia.getAttribute('data-data');
+            if (!dataStr) return;
+            
+            if (checkin && dataStr === checkin) {
+                dia.classList.add('selecionado', 'checkin');
+            } else if (checkout && dataStr === checkout) {
+                dia.classList.add('selecionado', 'checkout');
+            } else if (checkin && checkout) {
+                const data = new Date(dataStr + 'T00:00:00');
+                const checkinDate = new Date(checkin + 'T00:00:00');
+                const checkoutDate = new Date(checkout + 'T00:00:00');
+                if (data > checkinDate && data < checkoutDate) {
+                    dia.classList.add('no-intervalo');
+                }
+            }
+        });
     }
 }
 
@@ -201,11 +401,79 @@ if (formReserva) {
             const noites = API.calcularNoites(dataCheckin, dataCheckout);
             const totalChales = resultado.chales.length;
             
-            // Ocultar botão solicitar inicialmente
-            const btnSolicitar = document.getElementById('btnSolicitarReserva');
-            if (btnSolicitar) {
-                btnSolicitar.style.display = 'none';
+            if (totalChales === 0) {
+                showMessage('😔 Não há chalés disponíveis para o período selecionado. Tente outras datas.', 'error');
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+                return;
             }
+            
+            showMessage(`✅ ${totalChales} chalé(s) disponível(is) para ${noites} noite(s)!`, 'success');
+            
+            // Preencher formulário completo
+            const formCompleto = document.getElementById('formReservaCompleto');
+            if (formCompleto) {
+                formCompleto.querySelector('[name="checkin"]').value = dataCheckin;
+                formCompleto.querySelector('[name="checkout"]').value = dataCheckout;
+                formCompleto.querySelector('[name="adultos"]').value = adultos;
+                formCompleto.querySelector('[name="criancas"]').value = criancas;
+                
+                // Não preencher dropdown aqui - será preenchido pela função carregarChalesNoDropdown()
+                // que busca preço dinâmico baseado na data de check-in
+            }
+            
+            // Abrir modal de reserva após verificar disponibilidade
+            setTimeout(() => {
+                abrirModalReserva();
+                // Aguardar um pouco para garantir que o modal está visível e campos preenchidos
+                setTimeout(() => {
+                    carregarChalesNoDropdown();
+                }, 200);
+            }, 1000);
+            
+        } catch (erro) {
+            console.error('Erro ao verificar disponibilidade:', erro);
+            showMessage('❌ Erro ao verificar disponibilidade: ' + erro.message, 'error');
+        } finally {
+            submitButton.disabled = false;
+            submitButton.textContent = originalText;
+        }
+    });
+}
+
+// Formulário de Reserva Rápida (Final da Página)
+const formReservaFinal = document.getElementById('formReservaFinal');
+if (formReservaFinal) {
+    formReservaFinal.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const submitButton = formReservaFinal.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+        submitButton.disabled = true;
+        submitButton.textContent = 'Verificando...';
+        
+        const dataCheckin = document.getElementById('checkinHiddenFinal')?.value || dataCheckinSelecionada;
+        const dataCheckout = document.getElementById('checkoutHiddenFinal')?.value || dataCheckoutSelecionada;
+        const formData = new FormData(formReservaFinal);
+        const adultos = formData.get('adultos');
+        const criancas = formData.get('criancas');
+        
+        // Validação básica
+        if (!dataCheckin || !dataCheckout) {
+            showMessage('Por favor, selecione as datas de check-in e check-out', 'error');
+            submitButton.disabled = false;
+            submitButton.textContent = originalText;
+            return;
+        }
+        
+        try {
+            // Buscar chalés disponíveis na API
+            showMessage('Verificando disponibilidade...', 'info');
+            
+            const resultado = await API.buscarChalesDisponiveis(dataCheckin, dataCheckout);
+            
+            const noites = API.calcularNoites(dataCheckin, dataCheckout);
+            const totalChales = resultado.chales.length;
             
             if (totalChales === 0) {
                 showMessage('😔 Não há chalés disponíveis para o período selecionado. Tente outras datas.', 'error');
@@ -216,41 +484,26 @@ if (formReserva) {
             
             showMessage(`✅ ${totalChales} chalé(s) disponível(is) para ${noites} noite(s)!`, 'success');
             
-            // Mostrar botão "Solicitar Reserva"
-            if (btnSolicitar) {
-                btnSolicitar.style.display = 'block';
+            // Preencher formulário completo
+            const formCompleto = document.getElementById('formReservaCompleto');
+            if (formCompleto) {
+                formCompleto.querySelector('[name="checkin"]').value = dataCheckin;
+                formCompleto.querySelector('[name="checkout"]').value = dataCheckout;
+                formCompleto.querySelector('[name="adultos"]').value = adultos;
+                formCompleto.querySelector('[name="criancas"]').value = criancas;
                 
-                // Salvar dados para usar no botão
-                btnSolicitar.onclick = () => {
-                    // Preencher formulário completo
-                    const formCompleto = document.getElementById('formReservaCompleto');
-                    if (formCompleto) {
-                        formCompleto.querySelector('[name="checkin"]').value = dataCheckin;
-                        formCompleto.querySelector('[name="checkout"]').value = dataCheckout;
-                        formCompleto.querySelector('[name="adultos"]').value = adultos;
-                        formCompleto.querySelector('[name="criancas"]').value = criancas;
-                        
-                        // Atualizar opções de chalés disponíveis
-                        const selectChale = formCompleto.querySelector('[name="chale"]');
-                        if (selectChale) {
-                            // Limpar opções existentes exceto "Qualquer chalé"
-                            selectChale.innerHTML = '<option value="">Qualquer chalé</option>';
-                            
-                            // Adicionar chalés disponíveis
-                            resultado.chales.forEach(chale => {
-                                const option = document.createElement('option');
-                                option.value = chale.id;
-                                option.textContent = `${chale.nome} - ${API.formatarValor(chale.preco_diaria)}/noite`;
-                                selectChale.appendChild(option);
-                            });
-                        }
-                    }
-                    
-                    // Fechar modal de consulta e abrir modal de reserva
-                    fecharModalConsulta();
-                    abrirModalReserva();
-                };
+                // Não preencher dropdown aqui - será preenchido pela função carregarChalesNoDropdown()
+                // que busca preço dinâmico baseado na data de check-in
             }
+            
+            // Abrir modal de reserva após verificar disponibilidade
+            setTimeout(() => {
+                abrirModalReserva();
+                // Aguardar um pouco para garantir que o modal está visível e campos preenchidos
+                setTimeout(() => {
+                    carregarChalesNoDropdown();
+                }, 200);
+            }, 1000);
             
         } catch (erro) {
             console.error('Erro ao verificar disponibilidade:', erro);
@@ -260,6 +513,44 @@ if (formReserva) {
             submitButton.textContent = originalText;
         }
     });
+    
+    // Inicializar datepicker para o formulário final
+    const checkinInputFinal = document.getElementById('checkinInputFinal');
+    const checkoutInputFinal = document.getElementById('checkoutInputFinal');
+    const popupFinal = document.getElementById('datepickerPopupFinal');
+    
+    if (checkinInputFinal) {
+        checkinInputFinal.addEventListener('click', (e) => {
+            e.preventDefault();
+            campoAtivo = 'checkinFinal';
+            calendarioPopupAberto = true;
+            if (popupFinal) {
+                popupFinal.style.display = 'flex';
+                carregarCalendarioFinal();
+            }
+        });
+    }
+    
+    if (checkoutInputFinal) {
+        checkoutInputFinal.addEventListener('click', (e) => {
+            e.preventDefault();
+            campoAtivo = 'checkoutFinal';
+            calendarioPopupAberto = true;
+            if (popupFinal) {
+                popupFinal.style.display = 'flex';
+                carregarCalendarioFinal();
+            }
+        });
+    }
+    
+    // Fechar pop-up ao clicar fora (formulário final)
+    if (popupFinal) {
+        popupFinal.addEventListener('click', (e) => {
+            if (e.target === popupFinal) {
+                fecharCalendarioPopupFinal();
+            }
+        });
+    }
 }
 
 // Configuração EmailJS
@@ -325,71 +616,6 @@ function showMessage(message, type = 'success') {
     }, duration);
 }
 
-// ==================== MODAL DE CONSULTA ====================
-
-// Função para abrir modal de consulta
-function abrirModalConsulta() {
-    const modal = document.getElementById('modalConsulta');
-    if (!modal) return;
-    
-    // Mostrar modal
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden'; // Prevenir scroll do body
-    
-    // Enviar evento para Google Analytics (se configurado)
-    if (typeof gtag !== 'undefined') {
-        gtag('event', 'modal_consulta_aberto', {
-            'event_category': 'Consulta',
-            'event_label': 'Modal de Consulta de Disponibilidade'
-        });
-    }
-}
-
-// Função para fechar modal de consulta
-function fecharModalConsulta() {
-    const modal = document.getElementById('modalConsulta');
-    if (!modal) return;
-    
-    modal.style.display = 'none';
-    document.body.style.overflow = ''; // Restaurar scroll do body
-}
-
-// Event listeners para modal de consulta
-document.addEventListener('DOMContentLoaded', () => {
-    const btnConsultar = document.getElementById('btnConsultarDisponibilidade');
-    const modalConsulta = document.getElementById('modalConsulta');
-    const closeBtnConsulta = document.querySelector('.modal-consulta-close');
-    const overlayConsulta = document.querySelector('.modal-consulta-overlay');
-    
-    // Abrir modal ao clicar no botão
-    if (btnConsultar) {
-        btnConsultar.addEventListener('click', abrirModalConsulta);
-    }
-    
-    // Fechar ao clicar no botão X
-    if (closeBtnConsulta) {
-        closeBtnConsulta.addEventListener('click', fecharModalConsulta);
-    }
-    
-    // Fechar ao clicar no overlay
-    if (overlayConsulta) {
-        overlayConsulta.addEventListener('click', fecharModalConsulta);
-    }
-    
-    // Fechar com ESC (verificar qual modal está aberto)
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            if (modalConsulta && modalConsulta.style.display === 'flex') {
-                fecharModalConsulta();
-            } else {
-                const modalReserva = document.getElementById('modalReserva');
-                if (modalReserva && modalReserva.style.display === 'flex') {
-                    fecharModalReserva();
-                }
-            }
-        }
-    });
-});
 
 // ==================== MODAL DE RESERVA ====================
 
@@ -407,6 +633,109 @@ function capturarDadosRastreamento() {
     sessionStorage.setItem('dadosRastreamento', JSON.stringify(dados));
     
     return dados;
+}
+
+// Função para carregar chalés com preço dinâmico no dropdown
+async function carregarChalesNoDropdown() {
+    console.log('🚀 Iniciando carregarChalesNoDropdown()...');
+    const formCompleto = document.getElementById('formReservaCompleto');
+    if (!formCompleto) {
+        console.warn('⚠️ Formulário completo não encontrado');
+        return;
+    }
+    
+    const selectChale = formCompleto.querySelector('[name="chale"]');
+    if (!selectChale) {
+        console.warn('⚠️ Select de chalé não encontrado');
+        return;
+    }
+    
+    // Obter datas do formulário
+    let dataCheckin = formCompleto.querySelector('[name="checkin"]')?.value;
+    let dataCheckout = formCompleto.querySelector('[name="checkout"]')?.value;
+    
+    // Converter data de DD/MM/YYYY para YYYY-MM-DD se necessário
+    function converterDataParaISO(data) {
+        if (!data) return null;
+        // Se já está no formato YYYY-MM-DD, retornar como está
+        if (/^\d{4}-\d{2}-\d{2}$/.test(data)) {
+            return data;
+        }
+        // Se está no formato DD/MM/YYYY, converter
+        if (/^\d{2}\/\d{2}\/\d{4}$/.test(data)) {
+            const [dia, mes, ano] = data.split('/');
+            return `${ano}-${mes}-${dia}`;
+        }
+        return data;
+    }
+    
+    dataCheckin = converterDataParaISO(dataCheckin);
+    dataCheckout = converterDataParaISO(dataCheckout);
+    
+    // Se não houver datas, usar datas padrão (hoje e amanhã)
+    const hoje = new Date();
+    const amanha = new Date(hoje);
+    amanha.setDate(amanha.getDate() + 1);
+    
+    const checkin = dataCheckin || hoje.toISOString().split('T')[0];
+    const checkout = dataCheckout || amanha.toISOString().split('T')[0];
+    
+    console.log('🔍 Carregando chalés com preço dinâmico:', {
+        dataCheckinOriginal: formCompleto.querySelector('[name="checkin"]')?.value,
+        dataCheckoutOriginal: formCompleto.querySelector('[name="checkout"]')?.value,
+        checkinFormatado: checkin,
+        checkoutFormatado: checkout
+    });
+    
+    try {
+        // Buscar chalés disponíveis com preço dinâmico
+        const resultado = await API.buscarChalesDisponiveis(checkin, checkout);
+        
+        console.log('📊 Resultado da API buscarChalesDisponiveis:', resultado);
+        if (resultado.chales && resultado.chales.length > 0) {
+            console.log('💰 Preços dos chalés:', resultado.chales.map(c => ({
+                nome: c.nome,
+                preco_diaria_atual: c.preco_diaria_atual,
+                preco_diaria: c.preco_diaria,
+                temporada: c.temporada,
+                feriado: c.feriado
+            })));
+        }
+        
+        // Limpar opções existentes
+        selectChale.innerHTML = '<option value="">Qualquer chalé</option>';
+        
+        // Adicionar chalés disponíveis com preço dinâmico
+        if (resultado.chales && resultado.chales.length > 0) {
+            resultado.chales.forEach(chale => {
+                const option = document.createElement('option');
+                option.value = chale.id;
+                // Usar preço dinâmico se disponível, senão usar preço base
+                const precoExibir = chale.preco_diaria_atual || chale.preco_diaria || 0;
+                option.textContent = `${chale.nome} - ${API.formatarValor(precoExibir)}/noite`;
+                selectChale.appendChild(option);
+                console.log(`✅ Adicionado ao dropdown: ${chale.nome} - ${API.formatarValor(precoExibir)}/noite (preco_diaria_atual: ${chale.preco_diaria_atual}, preco_diaria: ${chale.preco_diaria})`);
+            });
+        } else {
+            console.warn('⚠️ Nenhum chalé retornado pela API');
+        }
+    } catch (erro) {
+        console.error('❌ Erro ao carregar chalés no dropdown:', erro);
+        // Em caso de erro, manter opções padrão ou tentar carregar sem preço dinâmico
+        try {
+            const chales = await API.listarChales();
+            selectChale.innerHTML = '<option value="">Qualquer chalé</option>';
+            chales.forEach(chale => {
+                const option = document.createElement('option');
+                option.value = chale.id;
+                const precoExibir = chale.preco_diaria_atual || chale.preco_diaria || 0;
+                option.textContent = `${chale.nome} - ${API.formatarValor(precoExibir)}/noite`;
+                selectChale.appendChild(option);
+            });
+        } catch (erro2) {
+            console.error('Erro ao carregar chalés alternativo:', erro2);
+        }
+    }
 }
 
 // Função para abrir modal de reserva
@@ -428,9 +757,16 @@ function abrirModalReserva() {
     if (utmMedium) utmMedium.value = dadosRastreamento.utm_medium;
     if (utmCampaign) utmCampaign.value = dadosRastreamento.utm_campaign;
     
-    // Mostrar modal
+    // Mostrar modal primeiro
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden'; // Prevenir scroll do body
+    
+    // Carregar chalés com preço dinâmico após o modal estar visível
+    // Aguardar um pouco para garantir que os campos de data estão preenchidos
+    setTimeout(() => {
+        console.log('🔄 Carregando chalés no dropdown após abrir modal...');
+        carregarChalesNoDropdown();
+    }, 300);
     
     // Enviar evento para Google Analytics (se configurado)
     if (typeof gtag !== 'undefined') {
@@ -540,7 +876,7 @@ if (formReservaCompleto) {
             // O admin é quem aprova ou não a reserva
             // Apenas datas bloqueadas são impedidas (já validado na seleção)
             
-            // Enviar reserva para a API
+            // Enviar reserva para a API (via /consulta)
             const resultado = await API.criarReserva(dados);
             
             // Calcular informações para mostrar ao usuário
@@ -551,8 +887,11 @@ if (formReservaCompleto) {
             let mensagemSucesso = `✅ Solicitação de reserva enviada com sucesso!<br><br>`;
             mensagemSucesso += `📅 ${checkinFormatado} até ${checkoutFormatado} (${noites} noite${noites > 1 ? 's' : ''})<br>`;
             
-            if (resultado.reserva.valor_total) {
+            // Verificar se há valor no resultado (pode estar em resultado.reserva ou resultado.preco)
+            if (resultado.reserva && resultado.reserva.valor_total) {
                 mensagemSucesso += `💰 Valor estimado: ${API.formatarValor(resultado.reserva.valor_total)}<br>`;
+            } else if (resultado.preco && resultado.preco.valor_total) {
+                mensagemSucesso += `💰 Valor estimado: ${API.formatarValor(resultado.preco.valor_total)}<br>`;
             }
             
             mensagemSucesso += `<br>⏳ Sua solicitação está aguardando aprovação.<br>`;
@@ -560,13 +899,22 @@ if (formReservaCompleto) {
             
             showMessage(mensagemSucesso, 'success');
             
+            // Obter valor total (pode estar em resultado.reserva, resultado.preco ou resultado.preco.valor_total)
+            const valorTotal = (resultado.reserva && resultado.reserva.valor_total) 
+                ? resultado.reserva.valor_total 
+                : (resultado.preco && typeof resultado.preco === 'object' && resultado.preco.valor_total) 
+                    ? resultado.preco.valor_total 
+                    : (typeof resultado.preco === 'number')
+                        ? resultado.preco
+                        : 0;
+            
             // Enviar evento de conversão para Google Analytics
             if (typeof gtag !== 'undefined') {
                 gtag('event', 'conversion', {
                     'send_to': 'AW-17836356824',
                     'event_category': 'Reserva',
                     'event_label': 'Formulário de Reserva Enviado',
-                    'value': resultado.reserva.valor_total || 0,
+                    'value': valorTotal,
                     'currency': 'BRL',
                     'utm_source': dados.utm_source,
                     'utm_medium': dados.utm_medium,
@@ -577,7 +925,7 @@ if (formReservaCompleto) {
             // Salvar dados da reserva no localStorage para a página de agradecimento
             const dadosReserva = {
                 periodo: `${checkinFormatado} até ${checkoutFormatado} (${noites} noite${noites > 1 ? 's' : ''})`,
-                valor: resultado.reserva.valor_total ? API.formatarValor(resultado.reserva.valor_total) : 'A confirmar',
+                valor: valorTotal ? API.formatarValor(valorTotal) : 'A confirmar',
                 email: dados.email_hospede
             };
             
@@ -1279,6 +1627,8 @@ function sincronizarCamposComCalendario() {
         
         if (inputCheckin) {
             inputCheckin.addEventListener('change', function() {
+                // Atualizar chalés com preço dinâmico quando a data de check-in mudar
+                carregarChalesNoDropdown();
                 dataCheckinSelecionada = this.value;
                 if (dataCheckoutSelecionada && new Date(dataCheckoutSelecionada) < new Date(dataCheckinSelecionada)) {
                     dataCheckoutSelecionada = null;
@@ -1294,6 +1644,8 @@ function sincronizarCamposComCalendario() {
                 dataCheckoutSelecionada = this.value;
                 atualizarVisualizacaoDatasSelecionadas();
                 recalcularPreco();
+                // Atualizar chalés com preço dinâmico quando a data de check-out mudar
+                carregarChalesNoDropdown();
             });
         }
         

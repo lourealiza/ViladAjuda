@@ -72,6 +72,12 @@ if (preg_match('#^/chales/(\d+)/disponibilidade/?$#', $path, $matches) && $metho
     exit();
 }
 
+if (preg_match('#^/chales/(\d+)/?$#', $path, $matches) && $method === 'DELETE') {
+    $controller = new ChaleController($db);
+    $controller->deletar($matches[1]);
+    exit();
+}
+
 // Rotas de Disponibilidade
 if (preg_match('#^/disponibilidade/verificar-rapida/?$#', $path) && $method === 'GET') {
     $controller = new DisponibilidadeController($db);
@@ -122,6 +128,12 @@ if (preg_match('#^/reservas/(\d+)/status/?$#', $path, $matches) && $method === '
     exit();
 }
 
+if (preg_match('#^/reservas/(\d+)/?$#', $path, $matches) && $method === 'DELETE') {
+    $controller = new ReservaController($db);
+    $controller->deletar($matches[1]);
+    exit();
+}
+
 // Rotas de Avaliações
 if (preg_match('#^/avaliacoes/homepage/?$#', $path) && $method === 'GET') {
     $controller = new AvaliacaoController($db);
@@ -136,7 +148,8 @@ if (preg_match('#^/avaliacoes/estatisticas/?$#', $path) && $method === 'GET') {
 }
 
 // Rotas de Consultas
-if (preg_match('#^/consultas/?$#', $path) && $method === 'POST') {
+// Compatibilidade: aceitar tanto /consulta quanto /consultas
+if ((preg_match('#^/consulta/?$#', $path) || preg_match('#^/consultas/?$#', $path)) && $method === 'POST') {
     $controller = new ConsultaController($db);
     $controller->criar();
     exit();

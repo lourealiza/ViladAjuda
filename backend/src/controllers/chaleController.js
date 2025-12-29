@@ -1,14 +1,99 @@
 const Chale = require('../models/Chale');
+const Temporada = require('../models/Temporada');
+const Feriado = require('../models/Feriado');
 
 class ChaleController {
+    /**
+     * Calcula o preço dinâmico do chalé baseado na temporada/feriado de uma data específica
+     * @param {Object} chale - Objeto do chalé
+     * @param {String} data - Data no formato YYYY-MM-DD (opcional, usa hoje se não informado)
+     */
+    static async calcularPrecoDinamico(chale, data = null) {
+        try {
+            const dataConsulta = data || new Date().toISOString().split('T')[0];
+            const precoBase = parseFloat(chale.preco_diaria || 350.00);
+            
+            // Verificar feriado primeiro (prioridade máxima)
+            const feriado = await Feriado.buscarPorData(dataConsulta);
+            if (feriado && feriado.preco_override) {
+                return {
+                    preco_diaria_atual: parseFloat(feriado.preco_override),
+                    preco_base: precoBase,
+                    temporada: null,
+                    feriado: feriado.nome,
+                    multiplicador: parseFloat((feriado.preco_override / precoBase).toFixed(2))
+                };
+            }
+            
+            // Verificar temporada
+            const temporada = await Temporada.buscarPorData(dataConsulta);
+            if (temporada) {
+                const multiplicador = parseFloat(temporada.multiplicador);
+                const precoAtual = precoBase * multiplicador;
+                
+                return {
+                    preco_diaria_atual: parseFloat(precoAtual.toFixed(2)),
+                    preco_base: precoBase,
+                    temporada: temporada.nome,
+                    temporada_tipo: temporada.tipo,
+                    feriado: null,
+                    multiplicador: multiplicador
+                };
+            }
+            
+            // Sem temporada/feriado, usar preço base
+            return {
+                preco_diaria_atual: precoBase,
+                preco_base: precoBase,
+                temporada: null,
+                feriado: null,
+                multiplicador: 1.0
+            };
+        } catch (erro) {
+            console.error('Erro ao calcular preço dinâmico:', erro);
+            // Em caso de erro, retornar preço base
+            return {
+                preco_diaria_atual: parseFloat(chale.preco_diaria || 350.00),
+                preco_base: parseFloat(chale.preco_diaria || 350.00),
+                temporada: null,
+                feriado: null,
+                multiplicador: 1.0
+            };
+        }
+    }
+
     async listar(req, res) {
         try {
             const apenasAtivos = req.query.ativo === 'true';
             const chales = await Chale.buscarTodos(apenasAtivos);
             
+            // Adicionar preço dinâmico para cada chalé (baseado na data de hoje)
+            const chalesComPreco = await Promise.all(
+                chales.map(async (chale) => {
+                    try {
+                        const precoDinamico = await ChaleController.calcularPrecoDinamico(chale);
+                        return {
+                            ...chale,
+                            ...precoDinamico
+                        };
+                    } catch (erro) {
+                        console.error(`Erro ao calcular preço dinâmico para chalé ${chale.id}:`, erro);
+                        // Em caso de erro, retornar chalé com preço base
+                        return {
+                            ...chale,
+                            preco_diaria_atual: parseFloat(chale.preco_diaria || 350.00),
+                            preco_base: parseFloat(chale.preco_diaria || 350.00),
+                            temporada: null,
+                            feriado: null,
+                            multiplicador: 1.0
+                        };
+                    }
+                })
+            );
+            
             return res.json({ 
-                total: chales.length,
-                chales 
+                total: chalesComPreco.length,
+                chales: chalesComPreco
             });
 
         } catch (erro) {
@@ -31,7 +116,14 @@ class ChaleController {
                 });
             }
 
-            return res.json({ chale });
+            // Adicionar preço dinâmico
+            const precoDinamico = await ChaleController.calcularPrecoDinamico(chale);
+            const chaleComPreco = {
+                ...chale,
+                ...precoDinamico
+            };
+
+            return res.json({ chale: chaleComPreco });
 
         } catch (erro) {
             console.error('Erro ao buscar chalé:', erro);

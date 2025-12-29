@@ -96,6 +96,14 @@ class TarifaService {
                 tipoAplicado = `feriado:${feriado.nome}`;
             }
 
+            // Aplicar desconto para casal (10-15% abaixo do valor de 4 pessoas)
+            // Se for casal (2 pessoas), aplicar desconto de 12.5% (média entre 10-15%)
+            if (num_adultos === 2) {
+                const descontoCasal = precoBase * 0.125; // 12.5% de desconto
+                precoBase = precoBase - descontoCasal;
+                tipoAplicado += ' (desconto casal 12.5%)';
+            }
+
             const valorDia = precoBase;
             valorTotal += valorDia;
 
@@ -131,10 +139,23 @@ class TarifaService {
         let desconto = 0;
         let cupomAplicado = null;
         let blackFridayAplicado = null;
+        let descontoPacote = null;
 
-        // 6. Aplicar desconto Black Friday (15%) se aplicável
+        // 6. Aplicar desconto para pacotes (5+ noites): 5-10%
+        const { aplicarDescontoEstadiaLonga } = require('../config/precos');
+        const descontoPacoteResult = aplicarDescontoEstadiaLonga(valorSubtotal, dias);
+        if (descontoPacoteResult.aplicado) {
+            desconto += descontoPacoteResult.valorDesconto;
+            descontoPacote = {
+                percentual: descontoPacoteResult.percentualDesconto,
+                valor: descontoPacoteResult.valorDesconto,
+                numero_noites: dias
+            };
+        }
+
+        // 7. Aplicar desconto Black Friday (15%) se aplicável
         const { aplicarDescontoBlackFriday } = require('../config/precos');
-        const descontoBF = aplicarDescontoBlackFriday(valorSubtotal, data_checkin);
+        const descontoBF = aplicarDescontoBlackFriday(valorSubtotal - desconto, data_checkin);
         if (descontoBF.aplicado) {
             desconto += descontoBF.valorDesconto;
             blackFridayAplicado = {
@@ -144,7 +165,7 @@ class TarifaService {
             };
         }
 
-        // 7. Aplicar cupom se fornecido (desconto adicional)
+        // 8. Aplicar cupom se fornecido (desconto adicional)
         if (cupom_codigo) {
             const temporadaTipo = temporada ? temporada.tipo : null;
             const resultadoCupom = await Cupom.aplicarCupom(cupom_codigo, valorSubtotal, {
@@ -176,6 +197,7 @@ class TarifaService {
             valor_total: valorFinal,
             cupom: cupomAplicado,
             black_friday: blackFridayAplicado,
+            desconto_pacote: descontoPacote,
             detalhes: detalhes,
             regras_aplicadas: {
                 pessoas_extras: valorPessoasExtras > 0,
@@ -186,6 +208,7 @@ class TarifaService {
 
     /**
      * Calcula valor adicional por pessoas extras
+     * Se for casal (2 pessoas), aplica desconto de 10-15% em relação ao valor de 4 pessoas
      */
     static async _calcularPessoasExtras(chaleId, numAdultos, regras, numDiarias) {
         const regraPessoaExtra = regras.find(r => r.tipo === 'pessoa_extra' && r.ativo);
@@ -194,13 +217,33 @@ class TarifaService {
             return 0;
         }
 
-        const pessoasExtras = Math.max(0, numAdultos - regraPessoaExtra.limite_pessoas_base);
+        const limiteBase = regraPessoaExtra.limite_pessoas_base || 2;
+        const pessoasExtras = Math.max(0, numAdultos - limiteBase);
+        
+        // Se for casal (2 pessoas) e o limite base for 2, aplicar desconto de 10-15%
+        // O desconto será aplicado no cálculo do preço base, não aqui
+        // Este método apenas calcula o adicional para pessoas acima do limite
         
         if (pessoasExtras === 0) {
             return 0;
         }
 
         return parseFloat((pessoasExtras * regraPessoaExtra.valor_adicional * numDiarias).toFixed(2));
+    }
+    
+    /**
+     * Calcula desconto para casal (10-15% abaixo do valor de 4 pessoas)
+     * @param {number} valorBase4Pessoas - Valor base para 4 pessoas
+     * @param {number} numAdultos - Número de adultos
+     * @returns {number} - Desconto a ser aplicado (valor negativo)
+     */
+    static _calcularDescontoCasal(valorBase4Pessoas, numAdultos) {
+        // Se for casal (2 pessoas), aplicar desconto de 12.5% (média entre 10-15%)
+        if (numAdultos === 2) {
+            const percentualDesconto = 12.5; // Média entre 10% e 15%
+            return -parseFloat((valorBase4Pessoas * (percentualDesconto / 100)).toFixed(2));
+        }
+        return 0;
     }
 
     /**

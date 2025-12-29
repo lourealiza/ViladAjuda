@@ -4,6 +4,7 @@ const router = express.Router();
 const authRoutes = require('./authRoutes');
 const chaleRoutes = require('./chaleRoutes');
 const reservaRoutes = require('./reservaRoutes');
+const consultaRoutes = require('./consultaRoutes');
 const precoRoutes = require('./precoRoutes');
 const disponibilidadeRoutes = require('./disponibilidadeRoutes');
 const tarifaRoutes = require('./tarifaRoutes');
@@ -46,6 +47,7 @@ router.get('/health', (req, res) => {
 router.use('/auth', authRoutes);
 router.use('/chales', chaleRoutes);
 router.use('/reservas', reservaRoutes);
+router.use('/consulta', consultaRoutes); // Compatibilidade com API PHP
 router.use('/precos', precoRoutes);
 router.use('/disponibilidade', disponibilidadeRoutes);
 router.use('/tarifas', tarifaRoutes);

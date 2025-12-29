@@ -203,15 +203,21 @@ function aplicarDescontoBlackFriday(valorTotal, dataCheckin) {
  * @param {number} numeroNoites 
  * @returns {object}
  */
+/**
+ * Aplica desconto para pacotes (5+ noites): 5-10% de desconto
+ * @param {number} valorTotal 
+ * @param {number} numeroNoites 
+ * @returns {object}
+ */
 function aplicarDescontoEstadiaLonga(valorTotal, numeroNoites) {
     let percentualDesconto = 0;
     
-    if (numeroNoites >= 7 && numeroNoites < 15) {
-        percentualDesconto = 5; // 5% para 1 semana
-    } else if (numeroNoites >= 15 && numeroNoites < 30) {
-        percentualDesconto = 10; // 10% para 15+ dias
-    } else if (numeroNoites >= 30) {
-        percentualDesconto = 15; // 15% para 1 mês+
+    if (numeroNoites >= 5 && numeroNoites < 7) {
+        percentualDesconto = 5; // 5% para 5-6 noites
+    } else if (numeroNoites >= 7 && numeroNoites < 15) {
+        percentualDesconto = 7; // 7% para 7-14 noites (média entre 5-10%)
+    } else if (numeroNoites >= 15) {
+        percentualDesconto = 10; // 10% para 15+ noites
     }
     
     const valorDesconto = Math.round(valorTotal * (percentualDesconto / 100));
