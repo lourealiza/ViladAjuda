@@ -418,27 +418,17 @@ if (formReserva) {
                 formCompleto.querySelector('[name="adultos"]').value = adultos;
                 formCompleto.querySelector('[name="criancas"]').value = criancas;
                 
-                // Atualizar opções de chalés disponíveis
-                const selectChale = formCompleto.querySelector('[name="chale"]');
-                if (selectChale) {
-                    // Limpar opções existentes exceto "Qualquer chalé"
-                    selectChale.innerHTML = '<option value="">Qualquer chalé</option>';
-                    
-                    // Adicionar chalés disponíveis
-                    resultado.chales.forEach(chale => {
-                        const option = document.createElement('option');
-                        option.value = chale.id;
-                        // Usar preço dinâmico se disponível, senão usar preço base
-                        const precoExibir = chale.preco_diaria_atual || chale.preco_diaria || 0;
-                        option.textContent = `${chale.nome} - ${API.formatarValor(precoExibir)}/noite`;
-                        selectChale.appendChild(option);
-                    });
-                }
+                // Não preencher dropdown aqui - será preenchido pela função carregarChalesNoDropdown()
+                // que busca preço dinâmico baseado na data de check-in
             }
             
             // Abrir modal de reserva após verificar disponibilidade
             setTimeout(() => {
                 abrirModalReserva();
+                // Aguardar um pouco para garantir que o modal está visível e campos preenchidos
+                setTimeout(() => {
+                    carregarChalesNoDropdown();
+                }, 200);
             }, 1000);
             
         } catch (erro) {
@@ -502,27 +492,17 @@ if (formReservaFinal) {
                 formCompleto.querySelector('[name="adultos"]').value = adultos;
                 formCompleto.querySelector('[name="criancas"]').value = criancas;
                 
-                // Atualizar opções de chalés disponíveis
-                const selectChale = formCompleto.querySelector('[name="chale"]');
-                if (selectChale) {
-                    // Limpar opções existentes exceto "Qualquer chalé"
-                    selectChale.innerHTML = '<option value="">Qualquer chalé</option>';
-                    
-                    // Adicionar chalés disponíveis
-                    resultado.chales.forEach(chale => {
-                        const option = document.createElement('option');
-                        option.value = chale.id;
-                        // Usar preço dinâmico se disponível, senão usar preço base
-                        const precoExibir = chale.preco_diaria_atual || chale.preco_diaria || 0;
-                        option.textContent = `${chale.nome} - ${API.formatarValor(precoExibir)}/noite`;
-                        selectChale.appendChild(option);
-                    });
-                }
+                // Não preencher dropdown aqui - será preenchido pela função carregarChalesNoDropdown()
+                // que busca preço dinâmico baseado na data de check-in
             }
             
             // Abrir modal de reserva após verificar disponibilidade
             setTimeout(() => {
                 abrirModalReserva();
+                // Aguardar um pouco para garantir que o modal está visível e campos preenchidos
+                setTimeout(() => {
+                    carregarChalesNoDropdown();
+                }, 200);
             }, 1000);
             
         } catch (erro) {
@@ -657,11 +637,18 @@ function capturarDadosRastreamento() {
 
 // Função para carregar chalés com preço dinâmico no dropdown
 async function carregarChalesNoDropdown() {
+    console.log('🚀 Iniciando carregarChalesNoDropdown()...');
     const formCompleto = document.getElementById('formReservaCompleto');
-    if (!formCompleto) return;
+    if (!formCompleto) {
+        console.warn('⚠️ Formulário completo não encontrado');
+        return;
+    }
     
     const selectChale = formCompleto.querySelector('[name="chale"]');
-    if (!selectChale) return;
+    if (!selectChale) {
+        console.warn('⚠️ Select de chalé não encontrado');
+        return;
+    }
     
     // Obter datas do formulário
     let dataCheckin = formCompleto.querySelector('[name="checkin"]')?.value;
@@ -767,12 +754,16 @@ function abrirModalReserva() {
     if (utmMedium) utmMedium.value = dadosRastreamento.utm_medium;
     if (utmCampaign) utmCampaign.value = dadosRastreamento.utm_campaign;
     
-    // Carregar chalés com preço dinâmico quando o modal abrir
-    carregarChalesNoDropdown();
-    
-    // Mostrar modal
+    // Mostrar modal primeiro
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden'; // Prevenir scroll do body
+    
+    // Carregar chalés com preço dinâmico após o modal estar visível
+    // Aguardar um pouco para garantir que os campos de data estão preenchidos
+    setTimeout(() => {
+        console.log('🔄 Carregando chalés no dropdown após abrir modal...');
+        carregarChalesNoDropdown();
+    }, 300);
     
     // Enviar evento para Google Analytics (se configurado)
     if (typeof gtag !== 'undefined') {
