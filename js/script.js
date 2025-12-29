@@ -757,6 +757,15 @@ function abrirModalReserva() {
     if (utmMedium) utmMedium.value = dadosRastreamento.utm_medium;
     if (utmCampaign) utmCampaign.value = dadosRastreamento.utm_campaign;
     
+    // Limpar dropdown imediatamente para remover opções hardcoded
+    const formCompleto = document.getElementById('formReservaCompleto');
+    if (formCompleto) {
+        const selectChale = formCompleto.querySelector('[name="chale"]');
+        if (selectChale) {
+            selectChale.innerHTML = '<option value="">Qualquer chalé</option>';
+        }
+    }
+    
     // Mostrar modal primeiro
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden'; // Prevenir scroll do body
@@ -1645,7 +1654,10 @@ function sincronizarCamposComCalendario() {
                 atualizarVisualizacaoDatasSelecionadas();
                 recalcularPreco();
                 // Atualizar chalés com preço dinâmico quando a data de check-out mudar
-                carregarChalesNoDropdown();
+                // Aguardar um pouco para garantir que o valor foi atualizado
+                setTimeout(() => {
+                    carregarChalesNoDropdown();
+                }, 100);
             });
         }
         
