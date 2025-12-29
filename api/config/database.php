@@ -58,7 +58,10 @@ function executarQuery($db, $sql, $tipos = '', $parametros = []) {
 
 // Função auxiliar para responder JSON
 function responderJSON($dados, $status = 200) {
+    error_log('📤 responderJSON() - Status: ' . $status);
+    error_log('📤 Dados (primeiros 500 chars): ' . substr(json_encode($dados), 0, 500));
     http_response_code($status);
+    header('Content-Type: application/json; charset=utf-8');
     echo json_encode($dados, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
     exit();
 }

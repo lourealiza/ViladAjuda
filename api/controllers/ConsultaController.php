@@ -19,13 +19,24 @@ class ConsultaController {
      * Aceita tanto consultas simples quanto reservas completas
      */
     public function criar() {
+        // Log para debug - verificar se está recebendo requisição
+        error_log('📥 ConsultaController::criar() - Requisição recebida');
+        error_log('📥 Método: ' . $_SERVER['REQUEST_METHOD']);
+        error_log('📥 Content-Type: ' . ($_SERVER['CONTENT_TYPE'] ?? 'não informado'));
+        
         // Obter dados do POST
         $json = file_get_contents('php://input');
+        error_log('📥 JSON recebido (primeiros 500 chars): ' . substr($json, 0, 500));
+        
         $dados = json_decode($json, true);
         
         if (!$dados) {
+            error_log('❌ Erro: Dados JSON inválidos ou vazios');
+            error_log('❌ JSON raw: ' . $json);
             responderErro('Dados inválidos', 400);
         }
+        
+        error_log('✅ Dados decodificados com sucesso: ' . json_encode($dados));
         
         // Validar campos obrigatórios
         $camposObrigatorios = ['data_checkin', 'data_checkout'];
@@ -107,9 +118,17 @@ class ConsultaController {
             }
             
             // Enviar email de notificação
-            $this->enviarEmailNotificacao($dados, $resultado, $precoInfo);
+            error_log('📧 Tentando enviar email de notificação...');
+            try {
+                $this->enviarEmailNotificacao($dados, $resultado, $precoInfo);
+                error_log('✅ Email enviado com sucesso');
+            } catch (Exception $e) {
+                error_log('⚠️ Erro ao enviar email: ' . $e->getMessage());
+                // Continuar mesmo se o email falhar
+            }
             
-            responderJSON([
+            error_log('✅ Preparando resposta JSON...');
+            $resposta = [
                 'mensagem' => $ehSolicitacaoReserva 
                     ? 'Solicitação de reserva recebida! Entraremos em contato em breve para confirmar.' 
                     : 'Consulta recebida com sucesso! Entraremos em contato em breve.',
@@ -117,7 +136,10 @@ class ConsultaController {
                 'preco' => $precoInfo ?: ($valorTotal ? ['valor_total' => $valorTotal] : null),
                 'tipo' => $ehSolicitacaoReserva ? 'solicitacao_reserva' : 'consulta',
                 'status' => 'pendente'
-            ], 201);
+            ];
+            error_log('✅ Resposta preparada: ' . json_encode($resposta));
+            
+            responderJSON($resposta, 201);
             
         } catch (Exception $e) {
             // Mesmo com erro na verificação, enviar email

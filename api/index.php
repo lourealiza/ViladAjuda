@@ -150,6 +150,7 @@ if (preg_match('#^/avaliacoes/estatisticas/?$#', $path) && $method === 'GET') {
 // Rotas de Consultas
 // Compatibilidade: aceitar tanto /consulta quanto /consultas
 if ((preg_match('#^/consulta/?$#', $path) || preg_match('#^/consultas/?$#', $path)) && $method === 'POST') {
+    error_log('✅ Rota /consulta capturada - Path: ' . $path . ' - Method: ' . $method);
     $controller = new ConsultaController($db);
     $controller->criar();
     exit();

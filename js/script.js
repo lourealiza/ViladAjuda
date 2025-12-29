@@ -764,6 +764,21 @@ function abrirModalReserva() {
         if (selectChale) {
             selectChale.innerHTML = '<option value="">Qualquer chalé</option>';
         }
+        
+        // Preencher datas padrão se não estiverem preenchidas (para cálculo de preço dinâmico)
+        const campoCheckin = formCompleto.querySelector('[name="checkin"]');
+        const campoCheckout = formCompleto.querySelector('[name="checkout"]');
+        
+        if (campoCheckin && !campoCheckin.value) {
+            const hoje = new Date();
+            campoCheckin.value = hoje.toISOString().split('T')[0];
+        }
+        
+        if (campoCheckout && !campoCheckout.value) {
+            const amanha = new Date();
+            amanha.setDate(amanha.getDate() + 1);
+            campoCheckout.value = amanha.toISOString().split('T')[0];
+        }
     }
     
     // Mostrar modal primeiro
@@ -775,6 +790,15 @@ function abrirModalReserva() {
     setTimeout(() => {
         console.log('🔄 Carregando chalés no dropdown após abrir modal...');
         carregarChalesNoDropdown();
+        
+        // Calcular e exibir preço estimado se as datas estiverem preenchidas
+        if (formCompleto) {
+            const campoCheckin = formCompleto.querySelector('[name="checkin"]');
+            const campoCheckout = formCompleto.querySelector('[name="checkout"]');
+            if (campoCheckin && campoCheckout && campoCheckin.value && campoCheckout.value) {
+                calcularEExibirPreco(campoCheckin.value, campoCheckout.value);
+            }
+        }
     }, 300);
     
     // Enviar evento para Google Analytics (se configurado)
@@ -1453,9 +1477,11 @@ async function calcularEExibirPreco(dataCheckin, dataCheckout) {
         precoValor.textContent = 'Calculando...';
         precoDetalhes.textContent = '';
         
-        // Buscar número de adultos do formulário
+        // Buscar número de adultos do formulário (pode ser formReserva ou formReservaCompleto)
         const formReserva = document.getElementById('formReserva');
-        const numAdultos = formReserva ? parseInt(formReserva.querySelector('[name="adultos"]')?.value || '2') : 2;
+        const formReservaCompleto = document.getElementById('formReservaCompleto');
+        const formAtivo = formReservaCompleto || formReserva;
+        const numAdultos = formAtivo ? parseInt(formAtivo.querySelector('[name="adultos"]')?.value || '2') : 2;
         
         const resultado = await API.calcularPrecoReserva(dataCheckin, dataCheckout, numAdultos);
         
@@ -1627,8 +1653,19 @@ function sincronizarCamposComCalendario() {
     function adicionarListeners(inputCheckin, inputCheckout, formElement) {
         // Função para recalcular preço quando necessário
         function recalcularPreco() {
-            if (dataCheckinSelecionada && dataCheckoutSelecionada) {
-                calcularEExibirPreco(dataCheckinSelecionada, dataCheckoutSelecionada);
+            // Tentar obter datas do formulário atual se não houver datas selecionadas
+            let checkin = dataCheckinSelecionada;
+            let checkout = dataCheckoutSelecionada;
+            
+            if (!checkin && inputCheckin) {
+                checkin = inputCheckin.value;
+            }
+            if (!checkout && inputCheckout) {
+                checkout = inputCheckout.value;
+            }
+            
+            if (checkin && checkout) {
+                calcularEExibirPreco(checkin, checkout);
             } else {
                 ocultarPreco();
             }
@@ -1677,6 +1714,13 @@ function sincronizarCamposComCalendario() {
         const inputCheckin = formReserva.querySelector('[name="checkin"]');
         const inputCheckout = formReserva.querySelector('[name="checkout"]');
         adicionarListeners(inputCheckin, inputCheckout, formReserva);
+    }
+    
+    // Adicionar listeners aos campos de data do formulário completo (modal)
+    if (formReservaCompleto) {
+        const inputCheckinCompleto = formReservaCompleto.querySelector('[name="checkin"]');
+        const inputCheckoutCompleto = formReservaCompleto.querySelector('[name="checkout"]');
+        adicionarListeners(inputCheckinCompleto, inputCheckoutCompleto, formReservaCompleto);
     }
     
     // Adicionar listeners aos campos de data do formulário completo

@@ -110,7 +110,26 @@ class ReservaController {
                 $numAdultos = $_GET['num_adultos'] ?? 2;
                 $calculoEstadia = calcularValorEstadia($dataCheckin, $dataCheckout, $numAdultos);
                 
+                // Calcular preço dinâmico para a data de check-in (primeira noite)
+                $temporadaCheckin = determinarTemporada($dataCheckin);
+                
+                // Obter preço base do chalé (do banco de dados)
+                $precoBase = floatval($chale['preco_diaria'] ?? 350.00);
+                
+                // Usar multiplicador fixo de 2x
+                $multiplicador = 2.0;
+                
+                // Calcular preço base para casal na temporada
+                $precoBaseCasalCheckin = $precoBase * $multiplicador;
+                
+                // Calcular pessoas adicionais e preço final
+                $pessoasAdicionais = max(0, $numAdultos - 2);
+                $precoPorPessoaAdicional = 150.00;
+                $precoDiariaAtual = $precoBaseCasalCheckin + ($pessoasAdicionais * $precoPorPessoaAdicional);
+                
                 // Adicionar informações de preço ao chalé
+                $chale['preco_diaria_atual'] = round($precoDiariaAtual, 2); // Preço dinâmico para a data de check-in
+                $chale['preco_base'] = $precoBase; // Preço base do chalé
                 $chale['preco_diaria_media'] = $calculoEstadia['valor_medio_diaria'];
                 $chale['preco_total'] = $calculoEstadia['valor_total'];
                 $chale['numero_noites'] = $calculoEstadia['numero_noites'];
@@ -119,6 +138,8 @@ class ReservaController {
                 $chale['pessoas_adicionais'] = $calculoEstadia['pessoas_adicionais'];
                 $chale['preco_por_pessoa_adicional'] = $calculoEstadia['preco_por_pessoa_adicional'];
                 $chale['detalhes_preco'] = $calculoEstadia['detalhes'];
+                $chale['temporada'] = $temporadaCheckin['nome']; // Nome da temporada
+                $chale['temporada_tipo'] = $temporadaCheckin['tipo']; // Tipo da temporada
                 
                 $disponiveis[] = $chale;
             }
