@@ -32,7 +32,7 @@ async function cadastrarFeriados2026() {
             
             console.log('📅 Cadastrando feriados 2026 com preço no topo da faixa...\n');
             
-            const PRECO_BASE = 350.00; // Preço base dos chalés
+            const PRECO_BASE = 315.00; // Preço base dos chalés (reduzido 10% de R$ 350)
             let cadastrados = 0;
             let atualizados = 0;
             

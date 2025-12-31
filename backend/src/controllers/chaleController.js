@@ -11,7 +11,7 @@ class ChaleController {
     static async calcularPrecoDinamico(chale, data = null) {
         try {
             const dataConsulta = data || new Date().toISOString().split('T')[0];
-            const precoBase = parseFloat(chale.preco_diaria || 350.00);
+            const precoBase = parseFloat(chale.preco_diaria || 315.00); // Reduzido 10% de R$ 350
             
             // Verificar feriado primeiro (prioridade máxima)
             const feriado = await Feriado.buscarPorData(dataConsulta);

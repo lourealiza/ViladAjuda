@@ -73,8 +73,8 @@ async function cadastrarTemporadas() {
         const posCarnavalAtual = new Date(quartaCinzasAtual);
         posCarnavalAtual.setDate(posCarnavalAtual.getDate() + 1);
         
-        // Preço base dos chalés: R$ 350
-        const PRECO_BASE = 350.00;
+        // Preço base dos chalés: R$ 315 (reduzido 10% de R$ 350)
+        const PRECO_BASE = 315.00;
         
         // Definir temporadas
         const temporadas = [
@@ -272,7 +272,7 @@ async function cadastrarTemporadas() {
              ORDER BY data_inicio`
         );
         
-        const PRECO_BASE_DISPLAY = 350.00; // Preço base para exibição
+        const PRECO_BASE_DISPLAY = 315.00; // Preço base para exibição (reduzido 10%)
         todas.forEach(temp => {
             const precoMin = (PRECO_BASE_DISPLAY * parseFloat(temp.multiplicador) * 0.93).toFixed(0);
             const precoMax = (PRECO_BASE_DISPLAY * parseFloat(temp.multiplicador) * 1.07).toFixed(0);

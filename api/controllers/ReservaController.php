@@ -113,8 +113,8 @@ class ReservaController {
                 // Calcular preço dinâmico para a data de check-in (primeira noite)
                 $temporadaCheckin = determinarTemporada($dataCheckin);
                 
-                // Obter preço base do chalé (do banco de dados)
-                $precoBase = floatval($chale['preco_diaria'] ?? 350.00);
+                // Obter preço base do chalé (do banco de dados) - reduzido 10%
+                $precoBase = floatval($chale['preco_diaria'] ?? 315.00);
                 
                 // Usar multiplicador fixo de 2x
                 $multiplicador = 2.0;
@@ -122,9 +122,9 @@ class ReservaController {
                 // Calcular preço base para casal na temporada
                 $precoBaseCasalCheckin = $precoBase * $multiplicador;
                 
-                // Calcular pessoas adicionais e preço final
+                // Calcular pessoas adicionais e preço final - reduzido 10%
                 $pessoasAdicionais = max(0, $numAdultos - 2);
-                $precoPorPessoaAdicional = 150.00;
+                $precoPorPessoaAdicional = 135.00;
                 $precoDiariaAtual = $precoBaseCasalCheckin + ($pessoasAdicionais * $precoPorPessoaAdicional);
                 
                 // Adicionar informações de preço ao chalé
@@ -219,6 +219,7 @@ class ReservaController {
         }
         
         // Calcular número de diárias e valor
+        // Permite check-in no mesmo dia (hoje) desde que checkout seja posterior
         $checkin = new DateTime($dataCheckin);
         $checkout = new DateTime($dataCheckout);
         $numDiarias = $checkin->diff($checkout)->days;
@@ -486,7 +487,7 @@ class ReservaController {
         // Validar número de adultos (mínimo 1, máximo 4)
         $numAdultos = max(1, min(4, $numAdultos));
         
-        // Validar datas
+        // Validar datas - permite check-in no mesmo dia (hoje) desde que checkout seja posterior
         $checkin = new DateTime($dataCheckin);
         $checkout = new DateTime($dataCheckout);
         
