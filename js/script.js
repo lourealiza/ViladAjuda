@@ -1277,7 +1277,11 @@ function renderizarMes(mes, ano, diasCalendario, isPrimeiroMes) {
     
     const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
     const hoje = new Date();
-    const hojeStr = hoje.toISOString().split('T')[0];
+    // Criar string da data de hoje no formato YYYY-MM-DD usando data local
+    const anoHoje = hoje.getFullYear();
+    const mesHoje = String(hoje.getMonth() + 1).padStart(2, '0');
+    const diaHoje = String(hoje.getDate()).padStart(2, '0');
+    const hojeStr = `${anoHoje}-${mesHoje}-${diaHoje}`;
     
     // Verificar se há datas selecionadas para este mês
     const checkinDate = dataCheckinSelecionada ? new Date(dataCheckinSelecionada) : null;
@@ -1390,9 +1394,14 @@ function adicionarEventListenersCalendario() {
 
 // Selecionar data (check-in ou check-out)
 function selecionarData(data) {
+    // Criar data de hoje sem hora (meia-noite)
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
-    const dataSelecionada = new Date(data);
+    
+    // Criar data selecionada a partir da string (formato YYYY-MM-DD)
+    // Usar método que evita problemas de timezone
+    const [ano, mes, dia] = data.split('-').map(Number);
+    const dataSelecionada = new Date(ano, mes - 1, dia);
     dataSelecionada.setHours(0, 0, 0, 0);
     
     // Verificar se o dia está disponível
@@ -1413,7 +1422,12 @@ function selecionarData(data) {
     }
     
     // Não permitir selecionar datas no passado (permite hoje)
-    if (dataSelecionada < hoje) {
+    // Comparar usando getTime() para evitar problemas de timezone
+    const hojeTime = hoje.getTime();
+    const dataSelecionadaTime = dataSelecionada.getTime();
+    
+    // Permitir hoje e datas futuras (>= hoje)
+    if (dataSelecionadaTime < hojeTime) {
         showMessage('Não é possível selecionar datas no passado', 'error');
         return;
     }
@@ -1838,5 +1852,240 @@ if ('loading' in HTMLImageElement.prototype) {
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js';
     document.body.appendChild(script);
 }
+
+// ============================================
+// LIGHTBOX PARA GALERIA
+// ============================================
+
+(function() {
+    let currentImageIndex = 0;
+    let images = [];
+    let zoomLevel = 1;
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let translateX = 0;
+    let translateY = 0;
+
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxTitle = document.getElementById('lightbox-title');
+    const lightboxClose = document.querySelector('.lightbox-close');
+    const lightboxPrev = document.querySelector('.lightbox-prev');
+    const lightboxNext = document.querySelector('.lightbox-next');
+    const lightboxZoomIn = document.querySelector('.lightbox-zoom-in');
+    const lightboxZoomOut = document.querySelector('.lightbox-zoom-out');
+    const lightboxReset = document.querySelector('.lightbox-reset');
+    const galeriaItems = document.querySelectorAll('.galeria-item[data-lightbox]');
+
+    // Coletar todas as imagens da galeria
+    function initLightbox() {
+        images = Array.from(galeriaItems).map(item => {
+            const img = item.querySelector('img');
+            return {
+                src: img ? img.src : '',
+                title: item.getAttribute('data-title') || img ? img.alt : ''
+            };
+        }).filter(img => img.src); // Filtrar imagens sem src
+
+        // Adicionar event listeners aos itens da galeria
+        galeriaItems.forEach((item, index) => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                openLightbox(index);
+            });
+        });
+
+        // Event listeners do lightbox
+        if (lightboxClose) {
+            lightboxClose.addEventListener('click', closeLightbox);
+        }
+
+        if (lightboxPrev) {
+            lightboxPrev.addEventListener('click', () => showPrevImage());
+        }
+
+        if (lightboxNext) {
+            lightboxNext.addEventListener('click', () => showNextImage());
+        }
+
+        if (lightboxZoomIn) {
+            lightboxZoomIn.addEventListener('click', () => zoomIn());
+        }
+
+        if (lightboxZoomOut) {
+            lightboxZoomOut.addEventListener('click', () => zoomOut());
+        }
+
+        if (lightboxReset) {
+            lightboxReset.addEventListener('click', () => resetZoom());
+        }
+
+        // Fechar ao clicar fora da imagem
+        if (lightbox) {
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) {
+                    closeLightbox();
+                }
+            });
+        }
+
+        // Navegação com teclado
+        document.addEventListener('keydown', (e) => {
+            if (!lightbox || !lightbox.classList.contains('active')) return;
+
+            switch(e.key) {
+                case 'Escape':
+                    closeLightbox();
+                    break;
+                case 'ArrowLeft':
+                    showPrevImage();
+                    break;
+                case 'ArrowRight':
+                    showNextImage();
+                    break;
+                case '+':
+                case '=':
+                    zoomIn();
+                    break;
+                case '-':
+                    zoomOut();
+                    break;
+                case '0':
+                    resetZoom();
+                    break;
+            }
+        });
+
+        // Zoom com scroll do mouse
+        if (lightboxImg) {
+            lightboxImg.addEventListener('wheel', (e) => {
+                if (e.ctrlKey || e.metaKey) {
+                    e.preventDefault();
+                    if (e.deltaY < 0) {
+                        zoomIn();
+                    } else {
+                        zoomOut();
+                    }
+                }
+            });
+
+            // Drag para mover imagem quando zoom > 1
+            lightboxImg.addEventListener('mousedown', (e) => {
+                if (zoomLevel > 1) {
+                    isDragging = true;
+                    startX = e.clientX - translateX;
+                    startY = e.clientY - translateY;
+                    lightboxImg.style.cursor = 'grabbing';
+                }
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging && zoomLevel > 1) {
+                    translateX = e.clientX - startX;
+                    translateY = e.clientY - startY;
+                    updateImageTransform();
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    lightboxImg.style.cursor = 'grab';
+                }
+            });
+        }
+    }
+
+    function openLightbox(index) {
+        if (images.length === 0) return;
+        
+        currentImageIndex = index;
+        zoomLevel = 1;
+        translateX = 0;
+        translateY = 0;
+        
+        updateLightboxImage();
+        
+        if (lightbox) {
+            lightbox.style.display = 'flex';
+            setTimeout(() => {
+                lightbox.classList.add('active');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeLightbox() {
+        if (lightbox) {
+            lightbox.classList.remove('active');
+            setTimeout(() => {
+                lightbox.style.display = 'none';
+            }, 300);
+            document.body.style.overflow = '';
+        }
+        resetZoom();
+    }
+
+    function updateLightboxImage() {
+        if (!lightboxImg || images.length === 0) return;
+        
+        const currentImage = images[currentImageIndex];
+        lightboxImg.src = currentImage.src;
+        lightboxImg.alt = currentImage.title;
+        
+        if (lightboxTitle) {
+            lightboxTitle.textContent = currentImage.title;
+        }
+        
+        resetZoom();
+    }
+
+    function showPrevImage() {
+        if (images.length === 0) return;
+        currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+        updateLightboxImage();
+    }
+
+    function showNextImage() {
+        if (images.length === 0) return;
+        currentImageIndex = (currentImageIndex + 1) % images.length;
+        updateLightboxImage();
+    }
+
+    function zoomIn() {
+        zoomLevel = Math.min(zoomLevel + 0.25, 3);
+        updateImageTransform();
+    }
+
+    function zoomOut() {
+        zoomLevel = Math.max(zoomLevel - 0.25, 1);
+        if (zoomLevel === 1) {
+            translateX = 0;
+            translateY = 0;
+        }
+        updateImageTransform();
+    }
+
+    function resetZoom() {
+        zoomLevel = 1;
+        translateX = 0;
+        translateY = 0;
+        updateImageTransform();
+    }
+
+    function updateImageTransform() {
+        if (lightboxImg) {
+            lightboxImg.style.transform = `scale(${zoomLevel}) translate(${translateX / zoomLevel}px, ${translateY / zoomLevel}px)`;
+        }
+    }
+
+    // Inicializar quando o DOM estiver pronto
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initLightbox);
+    } else {
+        initLightbox();
+    }
+})();
 
 

@@ -312,41 +312,47 @@
                 <p class="section-subtitle">Varandas, redes e jardim em meio à natureza</p>
             </div>
             <div class="galeria-grid">
-                <div class="galeria-item">
-                    <img src="images/Jardim%20-%20Copia.JPG" alt="Jardim da Vila d'Ajuda" loading="lazy">
+                <div class="galeria-item" data-lightbox="galeria" data-title="Jardim Natural">
+                    <img src="images/Jardim - Copia.JPG" alt="Jardim da Vila d'Ajuda" loading="lazy" onerror="this.style.display='none'; this.parentElement.querySelector('.galeria-placeholder').style.display='flex';">
                     <div class="galeria-overlay">
-                        <span>Jardim Natural</span>
+                        <span>🔍 Clique para ampliar</span>
                     </div>
+                    <div class="galeria-placeholder" style="display: none;">Jardim Natural</div>
                 </div>
-                <div class="galeria-item">
-                    <img src="images/Quintal%20-%20Copia.png" alt="Quintal da Vila d'Ajuda" loading="lazy">
+                <div class="galeria-item" data-lightbox="galeria" data-title="Quintal Espaçoso">
+                    <img src="images/Quintal - Copia.png" alt="Quintal da Vila d'Ajuda" loading="lazy" onerror="this.style.display='none'; this.parentElement.querySelector('.galeria-placeholder').style.display='flex';">
                     <div class="galeria-overlay">
-                        <span>Quintal Espaçoso</span>
+                        <span>🔍 Clique para ampliar</span>
                     </div>
+                    <div class="galeria-placeholder" style="display: none;">Quintal Espaçoso</div>
                 </div>
-                <div class="galeria-item">
-                    <img src="images/Cozinha%20americana%20e%20sala.png" alt="Cozinha e Sala" loading="lazy">
+                <div class="galeria-item" data-lightbox="galeria" data-title="Interior Aconchegante">
+                    <img src="images/Cozinha americana e sala.png" alt="Cozinha e Sala" loading="lazy" onerror="this.style.display='none'; this.parentElement.querySelector('.galeria-placeholder').style.display='flex';">
                     <div class="galeria-overlay">
-                        <span>Interior Aconchegante</span>
+                        <span>🔍 Clique para ampliar</span>
                     </div>
+                    <div class="galeria-placeholder" style="display: none;">Interior Aconchegante</div>
                 </div>
-                <div class="galeria-item">
-                    <img src="images/Banheiro%20-%20Copia.jpg" alt="Banheiro" loading="lazy">
+                <div class="galeria-item" data-lightbox="galeria" data-title="Banheiro Completo">
+                    <img src="images/Banheiro - Copia.jpg" alt="Banheiro" loading="lazy" onerror="this.style.display='none'; this.parentElement.querySelector('.galeria-placeholder').style.display='flex';">
                     <div class="galeria-overlay">
-                        <span>Banheiro Completo</span>
+                        <span>🔍 Clique para ampliar</span>
                     </div>
+                    <div class="galeria-placeholder" style="display: none;">Banheiro Completo</div>
                 </div>
-                <div class="galeria-item">
-                    <img src="images/33175620-1024x1024.jpg" alt="Vista dos Chalés" loading="lazy">
+                <div class="galeria-item" data-lightbox="galeria" data-title="Vista dos Chalés">
+                    <img src="images/33175620-1024x1024.jpg" alt="Vista dos Chalés" loading="lazy" onerror="this.style.display='none'; this.parentElement.querySelector('.galeria-placeholder').style.display='flex';">
                     <div class="galeria-overlay">
-                        <span>Vista dos Chalés</span>
+                        <span>🔍 Clique para ampliar</span>
                     </div>
+                    <div class="galeria-placeholder" style="display: none;">Vista dos Chalés</div>
                 </div>
-                <div class="galeria-item">
-                    <img src="images/48340042_267824703881146_1244187815890124800_n-1024x1024.jpg" alt="Natureza ao Redor" loading="lazy">
+                <div class="galeria-item" data-lightbox="galeria" data-title="Natureza ao Redor">
+                    <img src="images/48340042_267824703881146_1244187815890124800_n-1024x1024.jpg" alt="Natureza ao Redor" loading="lazy" onerror="this.style.display='none'; this.parentElement.querySelector('.galeria-placeholder').style.display='flex';">
                     <div class="galeria-overlay">
-                        <span>Natureza ao Redor</span>
+                        <span>🔍 Clique para ampliar</span>
                     </div>
+                    <div class="galeria-placeholder" style="display: none;">Natureza ao Redor</div>
                 </div>
             </div>
         </div>
@@ -708,6 +714,24 @@
             </div>
         </div>
     </footer>
+
+    <!-- Lightbox para Galeria -->
+    <div id="lightbox" class="lightbox" style="display: none;">
+        <div class="lightbox-content">
+            <span class="lightbox-close">&times;</span>
+            <img id="lightbox-img" src="" alt="">
+            <div class="lightbox-controls">
+                <button class="lightbox-prev" aria-label="Imagem anterior">‹</button>
+                <button class="lightbox-next" aria-label="Próxima imagem">›</button>
+            </div>
+            <div class="lightbox-title" id="lightbox-title"></div>
+            <div class="lightbox-zoom-controls">
+                <button class="lightbox-zoom-in" aria-label="Ampliar">+</button>
+                <button class="lightbox-zoom-out" aria-label="Reduzir">−</button>
+                <button class="lightbox-reset" aria-label="Resetar zoom">⟲</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Botão WhatsApp Flutuante -->
     <a href="https://wa.me/5527988513096" 
