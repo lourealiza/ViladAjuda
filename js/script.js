@@ -238,7 +238,7 @@ function adicionarEventListenersCalendarioFinal() {
             hoje.setHours(0, 0, 0, 0);
             
             if (data < hoje) {
-                return; // Não permitir selecionar datas passadas
+                return; // Não permitir selecionar datas passadas (permite hoje)
             }
             
             const checkinHidden = document.getElementById('checkinHiddenFinal');
@@ -1169,10 +1169,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Definir data mínima para inputs de data (hoje)
+// Definir data mínima para inputs de data (hoje) - permite reservas no mesmo dia
 const today = new Date().toISOString().split('T')[0];
 document.querySelectorAll('input[type="date"]').forEach(input => {
-    input.setAttribute('min', today);
+    input.setAttribute('min', today); // Permite selecionar hoje
 });
 
 // Animação ao scroll
@@ -1412,7 +1412,7 @@ function selecionarData(data) {
         showMessage('⚠️ Esta data já está reservada. Você pode fazer uma solicitação, mas será necessário aguardar aprovação do administrador.', 'info');
     }
     
-    // Não permitir selecionar datas no passado
+    // Não permitir selecionar datas no passado (permite hoje)
     if (dataSelecionada < hoje) {
         showMessage('Não é possível selecionar datas no passado', 'error');
         return;

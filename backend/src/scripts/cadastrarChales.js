@@ -47,7 +47,7 @@ async function cadastrarChales() {
                 descricao: 'Chalé completo com varanda espaçosa, rede e vista para o jardim. Perfeito para casais.',
                 capacidade_adultos: 2,
                 capacidade_criancas: 2,
-                preco_diaria: 350.00,
+                preco_diaria: 315.00,
                 ativo: 1,
                 amenidades: JSON.stringify([
                     'Quarto com ar-condicionado',
@@ -63,7 +63,7 @@ async function cadastrarChales() {
                 descricao: 'Chalé completo com varanda espaçosa, rede e vista para o jardim. Perfeito para casais.',
                 capacidade_adultos: 2,
                 capacidade_criancas: 2,
-                preco_diaria: 350.00,
+                preco_diaria: 315.00,
                 ativo: 1,
                 amenidades: JSON.stringify([
                     'Quarto com ar-condicionado',

@@ -245,8 +245,8 @@ function calcularValorEstadia($dataCheckin, $dataCheckout, $numAdultos = 2) {
     // Validar número de adultos (mínimo 1, máximo 4)
     $numAdultos = max(1, min(4, (int)$numAdultos));
     
-    // Preço por pessoa adicional (acima de 2 pessoas)
-    $precoPorPessoaAdicional = 150.00;
+    // Preço por pessoa adicional (acima de 2 pessoas) - reduzido 10%
+    $precoPorPessoaAdicional = 135.00;
     
     // Calcular quantas pessoas adicionais (acima do casal)
     $pessoasAdicionais = max(0, $numAdultos - 2);

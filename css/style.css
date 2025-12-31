@@ -2028,4 +2028,96 @@ img[loading="lazy"].loaded {
 
 /* Modal de Consulta de Disponibilidade */
 
+/* Botão WhatsApp Flutuante */
+.whatsapp-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: #25D366;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: white;
+    animation: whatsappPulse 2s ease-in-out infinite;
+}
+
+.whatsapp-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
+    background: #20BA5A;
+}
+
+.whatsapp-button:active {
+    transform: scale(0.95);
+}
+
+.whatsapp-button svg {
+    width: 32px;
+    height: 32px;
+}
+
+.whatsapp-tooltip {
+    position: absolute;
+    right: 70px;
+    background: var(--texto-escuro);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    font-family: var(--fonte-texto);
+}
+
+.whatsapp-tooltip::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 6px solid transparent;
+    border-left-color: var(--texto-escuro);
+}
+
+.whatsapp-button:hover .whatsapp-tooltip {
+    opacity: 1;
+}
+
+@keyframes whatsappPulse {
+    0%, 100% {
+        box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+    }
+    50% {
+        box-shadow: 0 4px 20px rgba(37, 211, 102, 0.6);
+    }
+}
+
+/* Responsivo - Botão WhatsApp */
+@media (max-width: 768px) {
+    .whatsapp-button {
+        width: 56px;
+        height: 56px;
+        bottom: 16px;
+        right: 16px;
+    }
+    
+    .whatsapp-button svg {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .whatsapp-tooltip {
+        display: none; /* Ocultar tooltip no mobile para economizar espaço */
+    }
+}
+
 
