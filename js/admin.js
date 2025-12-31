@@ -188,6 +188,7 @@ function mostrarReservasRecentes(reservas) {
                 <p>📧 ${reserva.email_hospede}</p>
                 <p>📞 ${reserva.telefone_hospede}</p>
                 <p>📅 ${API.formatarData(reserva.data_checkin)} - ${API.formatarData(reserva.data_checkout)}</p>
+                <p>👥 ${reserva.num_adultos ?? 0} adulto(s)${(reserva.num_criancas && reserva.num_criancas > 0) ? `, ${reserva.num_criancas} criança(s)` : ''}</p>
                 <span class="reserva-status ${reserva.status}">${reserva.status}</span>
             </div>
             <div class="reserva-actions">
@@ -260,6 +261,7 @@ function mostrarReservas(reservas) {
                 <p>📧 ${reserva.email_hospede}</p>
                 <p>📞 ${reserva.telefone_hospede}</p>
                 <p>📅 ${API.formatarData(reserva.data_checkin)} - ${API.formatarData(reserva.data_checkout)}</p>
+                <p>👥 ${reserva.num_adultos ?? 0} adulto(s)${(reserva.num_criancas && reserva.num_criancas > 0) ? `, ${reserva.num_criancas} criança(s)` : ''}</p>
                 ${reserva.chale_id ? `<p>🏠 Chalé ID: ${reserva.chale_id}</p>` : ''}
                 ${reserva.valor_total ? `<p>💰 ${API.formatarValor(reserva.valor_total)}</p>` : ''}
                 ${reserva.mensagem ? `<p>💬 ${reserva.mensagem}</p>` : ''}
