@@ -27,6 +27,13 @@ class ReservaController {
             responderErro('Erro ao buscar reservas', 500, $reservas['erro']);
         }
         
+        // Log para debug - verificar se campos num_adultos e num_criancas estão presentes
+        if (!empty($reservas)) {
+            error_log('📋 Primeira reserva (campos): ' . json_encode(array_keys($reservas[0])));
+            error_log('📋 Primeira reserva (num_adultos): ' . ($reservas[0]['num_adultos'] ?? 'NÃO DEFINIDO'));
+            error_log('📋 Primeira reserva (num_criancas): ' . ($reservas[0]['num_criancas'] ?? 'NÃO DEFINIDO'));
+        }
+        
         responderJSON([
             'total' => count($reservas),
             'reservas' => $reservas

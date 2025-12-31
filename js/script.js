@@ -1427,7 +1427,10 @@ function selecionarData(data) {
     const dataSelecionadaTime = dataSelecionada.getTime();
     
     // Permitir hoje e datas futuras (>= hoje)
-    if (dataSelecionadaTime < hojeTime) {
+    // Comparar apenas as datas (sem hora) - se a diferença for menor que 24h e positiva ou zero, permitir
+    const diferencaDias = Math.floor((dataSelecionadaTime - hojeTime) / (1000 * 60 * 60 * 24));
+    
+    if (diferencaDias < 0) {
         showMessage('Não é possível selecionar datas no passado', 'error');
         return;
     }
@@ -1890,10 +1893,32 @@ if ('loading' in HTMLImageElement.prototype) {
 
         // Adicionar event listeners aos itens da galeria
         galeriaItems.forEach((item, index) => {
+            // Adicionar listener no item inteiro (incluindo overlay)
             item.addEventListener('click', (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 openLightbox(index);
             });
+            
+            // Também adicionar no overlay para garantir que funcione
+            const overlay = item.querySelector('.galeria-overlay');
+            if (overlay) {
+                overlay.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openLightbox(index);
+                });
+            }
+            
+            // Adicionar na imagem também
+            const img = item.querySelector('img');
+            if (img) {
+                img.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openLightbox(index);
+                });
+            }
         });
 
         // Event listeners do lightbox

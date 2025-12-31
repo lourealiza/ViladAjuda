@@ -1256,6 +1256,12 @@ section {
     justify-content: center;
     opacity: 0;
     transition: opacity 0.3s ease;
+    pointer-events: none; /* Permitir cliques passarem quando não visível */
+    cursor: pointer;
+}
+
+.galeria-item:hover .galeria-overlay {
+    pointer-events: all; /* Permitir cliques quando visível no hover */
 }
 
 .galeria-overlay span {
@@ -1271,6 +1277,7 @@ section {
 
 .galeria-item:hover .galeria-overlay {
     opacity: 1;
+    pointer-events: all; /* Permitir cliques quando visível no hover */
 }
 
 .galeria-item:hover img {
