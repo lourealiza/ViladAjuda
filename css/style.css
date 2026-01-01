@@ -1218,6 +1218,133 @@ section {
     background: var(--branco);
 }
 
+/* Carrossel de Galeria */
+.galeria-carousel-container {
+    position: relative;
+    max-width: 100%;
+    margin: 2rem auto;
+    overflow: hidden;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.galeria-carousel {
+    display: flex;
+    transition: transform 0.6s ease-in-out;
+    will-change: transform;
+}
+
+.galeria-slide {
+    min-width: 100%;
+    height: 500px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.galeria-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.galeria-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(45, 80, 22, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    cursor: pointer;
+}
+
+.galeria-slide:hover .galeria-overlay {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.galeria-overlay span {
+    color: var(--branco);
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Controles do Carrossel */
+.galeria-carousel-prev,
+.galeria-carousel-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 30px;
+    color: var(--verde-primario);
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.galeria-carousel-prev:hover,
+.galeria-carousel-next:hover {
+    background: var(--branco);
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.galeria-carousel-prev {
+    left: 20px;
+}
+
+.galeria-carousel-next {
+    right: 20px;
+}
+
+/* Indicadores */
+.galeria-carousel-indicators {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+
+.galeria-carousel-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    border: 2px solid var(--branco);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.galeria-carousel-indicator.active {
+    background: var(--branco);
+    transform: scale(1.2);
+}
+
+.galeria-carousel-indicator:hover {
+    background: rgba(255, 255, 255, 0.8);
+}
+
+/* Grid antigo (mantido para compatibilidade) */
 .galeria-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -1244,51 +1371,37 @@ section {
     transition: transform 0.3s ease;
 }
 
-.galeria-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(45, 80, 22, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none; /* Permitir cliques passarem quando não visível */
-    cursor: pointer;
-}
-
-.galeria-item:hover .galeria-overlay {
-    pointer-events: all; /* Permitir cliques quando visível no hover */
-}
-
-.galeria-overlay span {
-    color: var(--branco);
-    font-size: 1.2rem;
-    font-weight: 600;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-}
-
-.galeria-item:hover {
-    transform: scale(1.05);
-}
-
-.galeria-item:hover .galeria-overlay {
-    opacity: 1;
-    pointer-events: all; /* Permitir cliques quando visível no hover */
-}
-
-.galeria-item:hover img {
-    transform: scale(1.1);
-}
-
 .galeria-placeholder {
     color: var(--branco);
     font-size: 1.2rem;
     font-weight: 600;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsivo - Carrossel */
+@media (max-width: 768px) {
+    .galeria-slide {
+        height: 350px;
+    }
+    
+    .galeria-carousel-prev,
+    .galeria-carousel-next {
+        width: 40px;
+        height: 40px;
+        font-size: 24px;
+    }
+    
+    .galeria-carousel-prev {
+        left: 10px;
+    }
+    
+    .galeria-carousel-next {
+        right: 10px;
+    }
+    
+    .galeria-overlay span {
+        font-size: 1.2rem;
+    }
 }
 
 /* Proximidades */
