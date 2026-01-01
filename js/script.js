@@ -1879,20 +1879,23 @@ if ('loading' in HTMLImageElement.prototype) {
     const lightboxZoomIn = document.querySelector('.lightbox-zoom-in');
     const lightboxZoomOut = document.querySelector('.lightbox-zoom-out');
     const lightboxReset = document.querySelector('.lightbox-reset');
-    const galeriaItems = document.querySelectorAll('.galeria-item[data-lightbox]');
+    // Incluir tanto galeria-item quanto galeria-slide
+    const galeriaItems = document.querySelectorAll('.galeria-item[data-lightbox], .galeria-slide[data-lightbox]');
 
     // Coletar todas as imagens da galeria
     function initLightbox() {
-        images = Array.from(galeriaItems).map(item => {
+        // Buscar novamente os itens (pode ter mudado após carregar o carrossel)
+        const allItems = document.querySelectorAll('.galeria-item[data-lightbox], .galeria-slide[data-lightbox]');
+        images = Array.from(allItems).map(item => {
             const img = item.querySelector('img');
             return {
                 src: img ? img.src : '',
-                title: item.getAttribute('data-title') || img ? img.alt : ''
+                title: item.getAttribute('data-title') || (img ? img.alt : '')
             };
         }).filter(img => img.src); // Filtrar imagens sem src
 
         // Adicionar event listeners aos itens da galeria
-        galeriaItems.forEach((item, index) => {
+        allItems.forEach((item, index) => {
             // Adicionar listener no item inteiro (incluindo overlay)
             item.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -2105,12 +2108,172 @@ if ('loading' in HTMLImageElement.prototype) {
         }
     }
 
+    // Expor função para re-inicialização
+    window.reinitLightbox = initLightbox;
+    
     // Inicializar quando o DOM estiver pronto
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initLightbox);
     } else {
         initLightbox();
     }
+})();
+
+// ============================================
+// CARROSSEL DE GALERIA
+// ============================================
+
+(function() {
+    let currentSlide = 0;
+    let carouselInterval = null;
+    let isPaused = false;
+    
+    const carousel = document.getElementById('galeriaCarousel');
+    const slides = document.querySelectorAll('.galeria-slide');
+    const prevBtn = document.querySelector('.galeria-carousel-prev');
+    const nextBtn = document.querySelector('.galeria-carousel-next');
+    const indicatorsContainer = document.getElementById('galeriaIndicators');
+    
+    if (!carousel || slides.length === 0) return;
+    
+    // Criar indicadores
+    function criarIndicadores() {
+        if (!indicatorsContainer) return;
+        
+        indicatorsContainer.innerHTML = '';
+        slides.forEach((_, index) => {
+            const indicator = document.createElement('div');
+            indicator.className = 'galeria-carousel-indicator';
+            if (index === 0) indicator.classList.add('active');
+            indicator.addEventListener('click', () => goToSlide(index));
+            indicatorsContainer.appendChild(indicator);
+        });
+    }
+    
+    // Atualizar indicadores
+    function atualizarIndicadores() {
+        const indicators = document.querySelectorAll('.galeria-carousel-indicator');
+        indicators.forEach((indicator, index) => {
+            if (index === currentSlide) {
+                indicator.classList.add('active');
+            } else {
+                indicator.classList.remove('active');
+            }
+        });
+    }
+    
+    // Atualizar posição do carrossel
+    function updateCarousel() {
+        if (!carousel) return;
+        carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
+        atualizarIndicadores();
+    }
+    
+    // Ir para slide específico
+    function goToSlide(index) {
+        currentSlide = index;
+        if (currentSlide >= slides.length) {
+            currentSlide = 0;
+        } else if (currentSlide < 0) {
+            currentSlide = slides.length - 1;
+        }
+        updateCarousel();
+        resetAutoPlay();
+    }
+    
+    // Próximo slide
+    function nextSlide() {
+        goToSlide(currentSlide + 1);
+    }
+    
+    // Slide anterior
+    function prevSlide() {
+        goToSlide(currentSlide - 1);
+    }
+    
+    // Iniciar autoplay
+    function startAutoPlay() {
+        if (carouselInterval) clearInterval(carouselInterval);
+        carouselInterval = setInterval(() => {
+            if (!isPaused) {
+                nextSlide();
+            }
+        }, 4000); // Muda a cada 4 segundos
+    }
+    
+    // Resetar autoplay
+    function resetAutoPlay() {
+        startAutoPlay();
+    }
+    
+    // Pausar ao passar o mouse
+    function pauseOnHover() {
+        if (!carousel) return;
+        
+        carousel.addEventListener('mouseenter', () => {
+            isPaused = true;
+        });
+        
+        carousel.addEventListener('mouseleave', () => {
+            isPaused = false;
+        });
+    }
+    
+    // Event listeners
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            prevSlide();
+            resetAutoPlay();
+        });
+    }
+    
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            nextSlide();
+            resetAutoPlay();
+        });
+    }
+    
+    // Navegação com teclado
+    document.addEventListener('keydown', (e) => {
+        const galeriaSection = document.getElementById('galeria');
+        if (!galeriaSection) return;
+        
+        const rect = galeriaSection.getBoundingClientRect();
+        const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+        
+        if (isVisible) {
+            if (e.key === 'ArrowLeft') {
+                prevSlide();
+                resetAutoPlay();
+            } else if (e.key === 'ArrowRight') {
+                nextSlide();
+                resetAutoPlay();
+            }
+        }
+    });
+    
+    // Inicializar
+    function initCarousel() {
+        criarIndicadores();
+        updateCarousel();
+        startAutoPlay();
+        pauseOnHover();
+    }
+    
+    // Inicializar quando o DOM estiver pronto
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCarousel);
+    } else {
+        initCarousel();
+    }
+    
+    // Re-inicializar lightbox após carrossel estar pronto
+    setTimeout(() => {
+        if (typeof window.reinitLightbox === 'function') {
+            window.reinitLightbox();
+        }
+    }, 500);
 })();
 
 
