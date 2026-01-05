@@ -16,9 +16,9 @@ define('TEMPORADAS', [
         'tipo' => 'altissima',
         'data_inicio' => null, // Será calculado dinamicamente (amanhã)
         'data_fim' => '01-31', // 31 de janeiro
-        'preco_min' => 700,
-        'preco_max' => 800,
-        'preco_medio' => 750
+        'preco_min' => 630,
+        'preco_max' => 720,
+        'preco_medio' => 675
     ],
     
     // 01/02 – Carnaval (até Quarta de Cinzas)
@@ -27,9 +27,9 @@ define('TEMPORADAS', [
         'tipo' => 'altissima',
         'data_inicio' => '02-01', // 1º de fevereiro
         'data_fim' => null, // Será calculado dinamicamente (Quarta de Cinzas)
-        'preco_min' => 750,
-        'preco_max' => 850,
-        'preco_medio' => 800
+        'preco_min' => 675,
+        'preco_max' => 765,
+        'preco_medio' => 720
     ],
     
     // Pós-Carnaval até 30/03 - Alta
@@ -38,9 +38,9 @@ define('TEMPORADAS', [
         'tipo' => 'alta',
         'data_inicio' => 'pos_carnaval', // Marcador especial para calcular dinamicamente
         'data_fim' => '03-30', // 30 de março
-        'preco_min' => 550,
-        'preco_max' => 650,
-        'preco_medio' => 600
+        'preco_min' => 495,
+        'preco_max' => 585,
+        'preco_medio' => 540
     ],
     
     // Abril – 15/06 - Média/Baixa
@@ -49,9 +49,9 @@ define('TEMPORADAS', [
         'tipo' => 'media_baixa',
         'data_inicio' => '04-01', // 1º de abril
         'data_fim' => '06-15', // 15 de junho
-        'preco_min' => 400,
-        'preco_max' => 500,
-        'preco_medio' => 450
+        'preco_min' => 360,
+        'preco_max' => 450,
+        'preco_medio' => 405
     ],
     
     // 16/06 – 31/07 - Alta (férias julho)
@@ -60,9 +60,9 @@ define('TEMPORADAS', [
         'tipo' => 'alta',
         'data_inicio' => '06-16', // 16 de junho
         'data_fim' => '07-31', // 31 de julho
-        'preco_min' => 550,
-        'preco_max' => 650,
-        'preco_medio' => 600
+        'preco_min' => 495,
+        'preco_max' => 585,
+        'preco_medio' => 540
     ],
     
     // 01/08 – 31/10 - Baixa
@@ -71,9 +71,9 @@ define('TEMPORADAS', [
         'tipo' => 'baixa',
         'data_inicio' => '08-01', // 1º de agosto
         'data_fim' => '10-31', // 31 de outubro
-        'preco_min' => 380,
-        'preco_max' => 480,
-        'preco_medio' => 430
+        'preco_min' => 342,
+        'preco_max' => 432,
+        'preco_medio' => 387
     ],
     
     // 01/11 – 15/12 - Alta (pré-verão)
@@ -82,9 +82,9 @@ define('TEMPORADAS', [
         'tipo' => 'alta',
         'data_inicio' => '11-01', // 1º de novembro
         'data_fim' => '12-15', // 15 de dezembro
-        'preco_min' => 500,
-        'preco_max' => 600,
-        'preco_medio' => 550
+        'preco_min' => 450,
+        'preco_max' => 540,
+        'preco_medio' => 495
     ],
     
     // 16/12 – 25/12 - Alta
@@ -93,9 +93,9 @@ define('TEMPORADAS', [
         'tipo' => 'alta',
         'data_inicio' => '12-16', // 16 de dezembro
         'data_fim' => '12-25', // 25 de dezembro
-        'preco_min' => 600,
-        'preco_max' => 700,
-        'preco_medio' => 650
+        'preco_min' => 540,
+        'preco_max' => 630,
+        'preco_medio' => 585
     ],
     
     // 26/12 – 05/01 (próximo Réveillon) - Altíssima
@@ -104,9 +104,9 @@ define('TEMPORADAS', [
         'tipo' => 'altissima',
         'data_inicio' => '12-26', // 26 de dezembro
         'data_fim' => '01-05', // 5 de janeiro
-        'preco_min' => 750,
-        'preco_max' => 900,
-        'preco_medio' => 825
+        'preco_min' => 675,
+        'preco_max' => 810,
+        'preco_medio' => 742.5
     ]
 ]);
 
@@ -215,9 +215,9 @@ function determinarTemporada($data) {
     return [
         'nome' => 'Temporada Padrão',
         'tipo' => 'padrao',
-        'preco_min' => 450,
-        'preco_max' => 550,
-        'preco_medio' => 500
+        'preco_min' => 405,
+        'preco_max' => 495,
+        'preco_medio' => 450
     ];
 }
 
@@ -246,7 +246,7 @@ function calcularValorEstadia($dataCheckin, $dataCheckout, $numAdultos = 2) {
     $numAdultos = max(1, min(4, (int)$numAdultos));
     
     // Preço por pessoa adicional (acima de 2 pessoas) - reduzido 10%
-    $precoPorPessoaAdicional = 135.00;
+    $precoPorPessoaAdicional = 121.50;
     
     // Calcular quantas pessoas adicionais (acima do casal)
     $pessoasAdicionais = max(0, $numAdultos - 2);
