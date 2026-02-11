@@ -8,10 +8,10 @@ header('Content-Type: application/json; charset=utf-8');
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-// Credenciais (ajuste se necessário)
-$host = 'localhost';
-$user = 'viladajuda';
-$pass = 'arraial2026';
+// Credenciais (CONFIRMADAS)
+$host = 'mysql.viladajuda.com.br';
+$user = 'viladajuda_add1';
+$pass = 'vila2026';
 $db   = 'viladajuda';
 
 $resultado = [
@@ -28,12 +28,13 @@ try {
         $resultado['status'] = 'ERRO';
         $resultado['erro'] = $conn->connect_error;
         $resultado['codigo_erro'] = $conn->connect_errno;
-        $resultado['sugestao'] = 'Verifique as credenciais no painel da KingHost';
+        $resultado['sugestao'] = 'Verifique se o firewall da KingHost está liberando conexões externas.';
     } else {
         $resultado['status'] = 'SUCESSO';
         $resultado['conexao'] = 'MySQL conectado com sucesso!';
         $resultado['banco'] = $db;
         $resultado['host'] = $host;
+        $resultado['info'] = $conn->host_info;
         
         // Tentar listar tabelas
         $tables = $conn->query("SHOW TABLES");
@@ -54,4 +55,3 @@ try {
 
 echo json_encode($resultado, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 ?>
-

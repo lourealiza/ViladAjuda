@@ -40,9 +40,9 @@ NODE_ENV=production
 PORT=3000
 FRONTEND_URL=https://www.viladajuda.com.br
 
-# Database MySQL (mesmas credenciais da KingHost)
-DB_HOST=viladajuda.web213.uni5.net
-DB_USER=viladajuda
+# Database MySQL (CONFIRMADO E TESTADO)
+DB_HOST=mysql.viladajuda.com.br
+DB_USER=viladajuda_add1
 DB_PASSWORD=vila2026
 DB_NAME=viladajuda
 
