@@ -41,6 +41,7 @@ PORT=3000
 FRONTEND_URL=https://www.viladajuda.com.br
 
 # Database MySQL (CONFIRMADO E TESTADO)
+DB_TYPE=mysql
 DB_HOST=mysql.viladajuda.com.br
 DB_USER=viladajuda_add1
 DB_PASSWORD=vila2026
