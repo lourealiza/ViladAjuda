@@ -1,0 +1,22 @@
+// Ultra-minimal test function
+module.exports = (req, res) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+    
+    if (req.path === '/api/auth/login' && req.method === 'POST') {
+        return res.status(200).json({
+            success: true,
+            token: 'test_token_123456789',
+            usuario: {
+                id: 1,
+                email: 'admin@viladajuda.com',
+                nome: 'Administrador'
+            }
+        });
+    }
+    
+    res.status(200).json({
+        ok: true,
+        message: 'API Working',
+        path: req.path
+    });
+};
