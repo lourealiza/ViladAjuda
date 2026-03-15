@@ -64,7 +64,6 @@ jobs:
           password: ${{ secrets.KINGHOST_FTP_PASSWORD }}
           local-dir: ./
           server-dir: ./
-          state-name: .ftp-deploy-sync-state.json
           dangerous-clean-slate: false
           exclude: |
             **/.git*
@@ -80,80 +79,8 @@ jobs:
             **/package.json
             **/package-lock.json
             **/.gitignore
-            **/README.md
             **/.vscode/**
             **/.cursor/**
             **/.idea/**
             **/logs/**
-            **/Copy
-            **/new_*.html
-            **/old_*.html
-            **/public/**
-            **/api/**
-          local-dir: ./
-          dry-run: false
-          log-level: verbose
-      
-      - name: Deploy API to KingHost
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: ${{ secrets.KINGHOST_FTP_HOST }}
-          username: ${{ secrets.KINGHOST_FTP_USER }}
-          password: ${{ secrets.KINGHOST_FTP_PASSWORD }}
-          server-dir: ./api/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.env*
-            **/teste*.php
-            **/phpinfo.php
-            **/hello.php
-            **/info.php
-            **/README*.md
-            **/CONFIGURAR*.txt
-          local-dir: ./api/
-          dangerous-clean-slate: false
-          dry-run: false
-          log-level: verbose
-      
-      - name: Backend Deploy Instructions
-        run: |
-          echo "📋 BACKEND: DEPLOY NO VERCEL (Recomendado)"
-          echo ""
-          echo "A KingHost NÃO suporta Node.js. Use Vercel (GRÁTIS):"
-          echo ""
-          echo "1. Criar conta: https://vercel.com"
-          echo "2. Importar projeto: selecionar pasta 'backend/'"
-          echo "3. Configurar variáveis de ambiente (DB_HOST, DB_USER, etc.)"
-          echo "4. Deploy automático!"
-          echo ""
-          echo "📄 Documentação completa: BACKEND_VERCEL_DEPLOY.md"
-          echo ""
-          echo "🔄 APÓS DEPLOY NO VERCEL:"
-          echo "1. Atualizar js/api.js com URL do Vercel"
-          echo "2. Commit e push das alterações"
-          echo "3. Testar painel admin"
-          echo ""
-          echo "✅ Frontend e API PHP deployados com sucesso via FTP!"
-          echo "⚠️  Backend precisa ser deployado no Vercel"
-      
-      - name: Deployment Summary
-        run: |
-          echo "✅ Deploy concluído com sucesso!"
-          echo "🌐 Site: https://www.viladajuda.com.br/"
-          echo "📡 API: https://www.viladajuda.com.br/api/"
-          echo "📁 Arquivos em: ~/www/"
-          echo "   - Frontend: ~/www/"
-          echo "   - API PHP: ~/www/api/"
-          echo "   - Backend Node.js: ~/www/backend/"
-          echo ""
-          echo "🔍 Verificações pós-deploy:"
-          echo "   curl https://www.viladajuda.com.br/api/"
-          echo "   curl https://www.viladajuda.com.br/"
-          echo ""
-          echo "⚠️  NOTA: Backend deployado via SSH automaticamente"
-          echo "   Se houver problemas, conecte via SSH para verificar:"
-          echo "   ssh viladajuda@www.viladajuda.com.br"
-          echo "   cd ~/www/backend && npm install && pm2 restart viladajuda-api"
 
