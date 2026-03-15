@@ -68,8 +68,8 @@ const limiter = rateLimit({
 
 app.use(limiter);
 
-// Middleware de log
-app.use(logAcesso);
+// Middleware de log - DESABILITADO TEMPORARIAMENTE
+// app.use(logAcesso);
 
 // Rotas
 app.use('/api', routes);
