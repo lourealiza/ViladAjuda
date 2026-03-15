@@ -1,0 +1,86 @@
+name: Deploy to KingHost (via SSH)
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Install sshpass
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sshpass
+      
+      - name: Deploy Frontend Files to KingHost
+        env:
+          SSH_HOST: ${{ secrets.KINGHOST_SSH_HOST }}
+          SSH_USER: ${{ secrets.KINGHOST_SSH_USER }}
+          SSH_PASSWORD: ${{ secrets.KINGHOST_SSH_PASSWORD }}
+        run: |
+          echo "🚀 Iniciando deploy para KingHost..."
+          echo "📡 Host: $SSH_HOST"
+          echo "👤 Usuário: $SSH_USER"
+          echo ""
+          
+          # Criar diretório se não existir
+          sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 \
+            "$SSH_USER@$SSH_HOST" "mkdir -p /public_html/css /public_html/js /public_html/images"
+          
+          # Fazer upload dos arquivos principais
+          echo "📤 Enviando arquivos HTML..."
+          for file in index.html admin.html obrigado.html; do
+            if [ -f "$file" ]; then
+              sshpass -p "$SSH_PASSWORD" scp -o StrictHostKeyChecking=no -o ConnectTimeout=10 \
+                "$file" "$SSH_USER@$SSH_HOST:/public_html/"
+              echo "✅ $file enviado"
+            fi
+          done
+          
+          # Fazer upload de CSS
+          echo "📤 Enviando CSS..."
+          if [ -d "css" ]; then
+            sshpass -p "$SSH_PASSWORD" scp -r -o StrictHostKeyChecking=no -o ConnectTimeout=10 \
+              css/* "$SSH_USER@$SSH_HOST:/public_html/css/"
+            echo "✅ CSS enviado"
+          fi
+          
+          # Fazer upload de JavaScript
+          echo "📤 Enviando JavaScript..."
+          if [ -d "js" ]; then
+            sshpass -p "$SSH_PASSWORD" scp -r -o StrictHostKeyChecking=no -o ConnectTimeout=10 \
+              js/* "$SSH_USER@$SSH_HOST:/public_html/js/"
+            echo "✅ JavaScript enviado"
+          fi
+          
+          # Fazer upload de imagens
+          echo "📤 Enviando imagens..."
+          if [ -d "images" ]; then
+            sshpass -p "$SSH_PASSWORD" scp -r -o StrictHostKeyChecking=no -o ConnectTimeout=10 \
+              images/* "$SSH_USER@$SSH_HOST:/public_html/images/"
+            echo "✅ Imagens enviadas"
+          fi
+          
+          echo ""
+          echo "✅ Deploy concluído com sucesso!"
+          echo "🌐 Acesse: https://$SSH_HOST"
+      
+      - name: Verify Deployment
+        env:
+          SSH_HOST: ${{ secrets.KINGHOST_SSH_HOST }}
+          SSH_USER: ${{ secrets.KINGHOST_SSH_USER }}
+          SSH_PASSWORD: ${{ secrets.KINGHOST_SSH_PASSWORD }}
+        run: |
+          echo "🔍 Verificando deploy..."
+          sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 \
+            "$SSH_USER@$SSH_HOST" "ls -la /public_html/ | head -20"
+          echo ""
+          echo "✅ Verificação completa!"

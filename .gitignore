@@ -21,3 +21,5 @@ npm-debug.log*
 # Pasta de instruções
 instrucoes/
 
+.vercel
+.env*.local
