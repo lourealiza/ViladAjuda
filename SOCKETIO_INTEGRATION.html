@@ -1,0 +1,223 @@
+// Socket.io Client Integration
+// Adicione este script no HTML antes de </body>
+
+<script src="https://cdn.socket.io/4.7.2/socket.io.js"></script>
+<script>
+/**
+ * Integração Socket.io para notificações real-time
+ * Conecta ao backend em produção e recebe notificações em tempo real
+ */
+
+// Configuração de conexão
+const SOCKET_URL = 'https://backend-mjzdnzhdb-lourealizas-projects.vercel.app';
+const socket = io(SOCKET_URL, {
+    transports: ['websocket', 'polling'],
+    reconnection: true,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax: 5000,
+    reconnectionAttempts: 5,
+    auth: {
+        token: localStorage.getItem('authToken') || null
+    }
+});
+
+// Listeners de Conexão
+socket.on('connect', () => {
+    console.log('✅ Conectado ao servidor de notificações (Socket.io)', socket.id);
+    
+    // Registrar usuário se estiver autenticado
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+        socket.emit('registrar-usuario', { userId });
+        console.log('👤 Usuário registrado para notificações:', userId);
+    }
+});
+
+socket.on('disconnect', () => {
+    console.log('❌ Desconectado do servidor de notificações');
+});
+
+socket.on('connect_error', (error) => {
+    console.error('⚠️  Erro de conexão Socket.io:', error);
+});
+
+// Listeners de Notificações
+socket.on('nova-notificacao', (data) => {
+    console.log('🔔 Nova notificação recebida:', data);
+    
+    const notificacao = data.notificacao;
+    const tipo = notificacao.tipo || 'alerta_sistema';
+    
+    // Mostrar notificação visual (browser notification)
+    if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification(getTitleNotificacao(tipo), {
+            body: notificacao.mensagem || notificacao.conteudo,
+            icon: 'images/Logo.png',
+            tag: `notif-${notificacao.id}`,
+            requireInteraction: true
+        });
+    }
+    
+    // Emitir evento customizado para a página
+    window.dispatchEvent(new CustomEvent('novaNotificacao', { detail: notificacao }));
+    
+    // Atualizar contador de notificações
+    atualizarContadorNotificacoes();
+});
+
+socket.on('notificacao-lida', (data) => {
+    console.log('✅ Notificação marcada como lida:', data.notificacaoId);
+});
+
+socket.on('notificacoes-em-lote', (dados) => {
+    console.log('📦 Recebido lote de notificações:', dados.notificacoes.length);
+    dados.notificacoes.forEach(notif => {
+        window.dispatchEvent(new CustomEvent('novaNotificacao', { detail: notif }));
+    });
+});
+
+// Helper: Obter título baseado no tipo de notificação
+function getTitleNotificacao(tipo) {
+    const titles = {
+        'nova_reserva': '📅 Nova Reserva',
+        'confirmacao_pagamento': '💳 Pagamento Confirmado',
+        'checkin_proximo': '🔑 Check-in Próximo',
+        'avaliacao_recebida': '⭐ Avaliação Recebida',
+        'alerta_sistema': '⚠️  Alerta do Sistema',
+        'disponibilidade_liberada': '✅ Disponibilidade Aberta',
+        'lembrete_checkout': '🏠 Lembrete de Check-out'
+    };
+    return titles[tipo] || '🔔 Notificação';
+}
+
+// Função para atualizar contador de notificações
+async function atualizarContadorNotificacoes() {
+    try {
+        const token = localStorage.getItem('authToken');
+        if (!token) return;
+        
+        const response = await fetch(API_VERCEL_BASE_URL + '/notificacoes/pendentes', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            const contador = document.getElementById('notificacao-contador');
+            if (contador) {
+                contador.textContent = data.total || 0;
+                contador.style.display = data.total > 0 ? 'inline' : 'none';
+            }
+        }
+    } catch (error) {
+        console.error('❌ Erro ao atualizar contador:', error);
+    }
+}
+
+// Solicitar permissão de notificação ao usuário
+if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+}
+
+// Função para marcar notificação como lida
+function marcarComolida(notificacaoId) {
+    socket.emit('marcar-como-lida', { notificacaoId });
+}
+
+// Event listener customizado para novas notificações na página
+window.addEventListener('novaNotificacao', (e) => {
+    console.log('📨 Processando notificação na página:', e.detail);
+    // Aqui você pode atualizar a UI da página com a notificação
+});
+
+// Exportar socket para uso global
+window.notificationSocket = socket;
+</script>
+
+<!-- HTML para mostrar notificações na página -->
+<div id="notificacoes-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+    <!-- Notificações aparecerão aqui -->
+</div>
+
+<!-- Contador de notificações no header -->
+<style>
+#notificacao-contador {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #e74c3c;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+</style>
+
+<script>
+// Função para mostrar notificações no HTML da página
+function mostrarNotificacaoViagem(notificacao) {
+    const container = document.getElementById('notificacoes-container');
+    if (!container) return;
+    
+    const div = document.createElement('div');
+    div.className = 'notificacao-toast notificacao-' + (notificacao.tipo || 'info');
+    div.style.cssText = `
+        background: white;
+        border-left: 4px solid #3498db;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        max-width: 400px;
+        animation: slideIn 0.3s ease;
+    `;
+    
+    const tipo = notificacao.tipo || 'alerta';
+    const cores = {
+        'nova_reserva': '#3498db',
+        'confirmacao_pagamento': '#27ae60',
+        'checkin_proximo': '#f39c12',
+        'avaliacao_recebida': '#e74c3c',
+        'alerta_sistema': '#e67e22'
+    };
+    div.style.borderLeftColor = cores[tipo] || '#3498db';
+    
+    div.innerHTML = `
+        <strong>${getTitleNotificacao(tipo)}</strong><br>
+        ${notificacao.mensagem || notificacao.conteudo}
+        <button onclick="this.parentElement.remove()" style="float: right; background: none; border: none; cursor: pointer; font-size: 20px;">×</button>
+    `;
+    
+    container.appendChild(div);
+    
+    // Remover após 5 segundos
+    setTimeout(() => {
+        if (div.parentElement) div.remove();
+    }, 5000);
+}
+
+// Auditar quando nova notificação chegar
+window.addEventListener('novaNotificacao', (e) => {
+    mostrarNotificacaoViagem(e.detail);
+});
+
+// Adicionar animação de entrada
+const style = document.createElement('style');
+style.textContent = `
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+`;
+document.head.appendChild(style);
+</script>
