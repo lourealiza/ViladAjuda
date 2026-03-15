@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const notificacaoController = require('../controllers/notificacaoController');
-const autenticar = require('../middleware/autenticar');
+const { auth: autenticar } = require('../middleware/auth');
 const { body } = require('express-validator');
 
 // Middleware de autenticação obrigatório
@@ -62,20 +62,24 @@ router.delete('/:id', notificacaoController.deletar);
  * Envia uma notificação de teste (admin)
  * Body: { email: "admin@example.com", tipo: "alerta_sistema" }
  */
-router.post('/testar', [
-    body('email').isEmail().withMessage('Email inválido')
-], notificacaoController.testar);
+router.post(
+    '/testar',
+    body('email').isEmail().withMessage('Email inválido'),
+    notificacaoController.testar
+);
 
 /**
  * POST /api/notificacoes
  * Cria e envia uma notificação manual (admin)
  * Body: { titulo, conteudo, tipo, usuario_id?, email?, canais_entrega? }
  */
-router.post('/', [
+router.post(
+    '/',
     body('titulo').notEmpty().withMessage('Título é obrigatório'),
     body('conteudo').notEmpty().withMessage('Conteúdo é obrigatório'),
-    body('tipo').notEmpty().withMessage('Tipo é obrigatório')
-], notificacaoController.criar);
+    body('tipo').notEmpty().withMessage('Tipo é obrigatório'),
+    notificacaoController.criar
+);
 
 /**
  * GET /api/notificacoes/pendentes/processar

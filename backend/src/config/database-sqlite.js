@@ -62,6 +62,42 @@ class Database {
                     if (err) console.error('Erro ao criar tabela chales:', err.message);
                 });
 
+                // Tabela de Temporadas
+                this.db.run(`
+                    CREATE TABLE IF NOT EXISTS temporadas (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        nome VARCHAR(100) NOT NULL,
+                        tipo VARCHAR(20) NOT NULL,
+                        data_inicio DATE NOT NULL,
+                        data_fim DATE NOT NULL,
+                        multiplicador DECIMAL(5, 2) DEFAULT 1.0,
+                        descricao TEXT,
+                        ativo BOOLEAN DEFAULT 1,
+                        criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP
+                    )
+                `, (err) => {
+                    if (err) console.error('Erro ao criar tabela temporadas:', err.message);
+                });
+
+                // Tabela de Preços de Chalés por Temporada
+                this.db.run(`
+                    CREATE TABLE IF NOT EXISTS chale_temporada_precos (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        chale_id INTEGER,
+                        temporada_id INTEGER,
+                        preco_diaria DECIMAL(10, 2) NOT NULL,
+                        descricao TEXT,
+                        criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        UNIQUE(chale_id, temporada_id),
+                        FOREIGN KEY (chale_id) REFERENCES chales(id),
+                        FOREIGN KEY (temporada_id) REFERENCES temporadas(id)
+                    )
+                `, (err) => {
+                    if (err) console.error('Erro ao criar tabela chale_temporada_precos:', err.message);
+                });
+
                 // Tabela de Reservas
                 this.db.run(`
                     CREATE TABLE IF NOT EXISTS reservas (

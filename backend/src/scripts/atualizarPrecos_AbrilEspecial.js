@@ -20,6 +20,11 @@ async function atualizarPrecos() {
     try {
         console.log('🚀 Iniciando atualização de preços para 03-07/04/2026...\n');
 
+        // Conectar ao banco de dados primeiro
+        console.log('🔌 Conectando ao banco de dados...');
+        await database.connect();
+        console.log('✓ Conectado!\n');
+
         // 1. Verificar ou criar temporada especial
         console.log('📅 Verificando temporada especial...');
         const temporadaEspecial = await criarOuAtualizarTemporadaEspecial();
@@ -101,92 +106,79 @@ async function atualizarPrecos() {
  * Cria ou atualiza a temporada especial de abril
  */
 async function criarOuAtualizarTemporadaEspecial() {
-    return new Promise((resolve, reject) => {
+    try {
         // Verificar se já existe
         const sqlBuscar = `
             SELECT * FROM temporadas 
             WHERE data_inicio = ? AND data_fim = ?
-            AND tipo = 'media'
         `;
 
-        database.get(sqlBuscar, [DATA_INICIO, DATA_FIM], async (err, temporada) => {
-            if (err) return reject(err);
+        const temporada = await database.get(sqlBuscar, [DATA_INICIO, DATA_FIM]);
 
-            if (temporada) {
-                // Atualizar existente
-                const sqlAtualizar = `
-                    UPDATE temporadas 
-                    SET nome = ?, descricao = ?, atualizado_em = CURRENT_TIMESTAMP
-                    WHERE id = ?
-                `;
+        if (temporada) {
+            // Atualizar existente
+            const sqlAtualizar = `
+                UPDATE temporadas 
+                SET nome = ?, descricao = ?, atualizado_em = CURRENT_TIMESTAMP
+                WHERE id = ?
+            `;
 
-                database.run(
-                    sqlAtualizar,
-                    [`Especial Abril (03-07)`, DESCRICAO, temporada.id],
-                    function(err) {
-                        if (err) return reject(err);
-                        resolve(temporada);
-                    }
-                );
-            } else {
-                // Criar nova
-                const sqlCriar = `
-                    INSERT INTO temporadas (
-                        nome, tipo, data_inicio, data_fim, 
-                        multiplicador, diaria_minima, descricao, ativo
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, 1)
-                `;
+            await database.run(sqlAtualizar, [`Especial Abril (03-07)`, DESCRICAO, temporada.id]);
+            return temporada;
+        } else {
+            // Criar nova
+            const sqlCriar = `
+                INSERT INTO temporadas (
+                    nome, tipo, data_inicio, data_fim, 
+                    multiplicador, descricao, ativo
+                ) VALUES (?, ?, ?, ?, ?, ?, 1)
+            `;
 
-                database.run(
-                    sqlCriar,
-                    [
-                        'Especial Abril (03-07)',
-                        'media',
-                        DATA_INICIO,
-                        DATA_FIM,
-                        1.00,
-                        1,
-                        DESCRICAO
-                    ],
-                    function(err) {
-                        if (err) return reject(err);
-                        resolve({
-                            id: this.lastID,
-                            nome: 'Especial Abril (03-07)',
-                            tipo: 'media',
-                            data_inicio: DATA_INICIO,
-                            data_fim: DATA_FIM
-                        });
-                    }
-                );
-            }
-        });
-    });
+            const result = await database.run(sqlCriar, [
+                'Especial Abril (03-07)',
+                'media',
+                DATA_INICIO,
+                DATA_FIM,
+                1.00,
+                DESCRICAO
+            ]);
+
+            return {
+                id: result.id,
+                nome: 'Especial Abril (03-07)',
+                tipo: 'media',
+                data_inicio: DATA_INICIO,
+                data_fim: DATA_FIM
+            };
+        }
+    } catch (erro) {
+        throw erro;
+    }
 }
 
 /**
  * Busca chalés ativos
  */
 async function buscarChalesAtivos() {
-    return new Promise((resolve, reject) => {
+    try {
         const sql = `SELECT id, nome FROM chales WHERE ativo = 1 ORDER BY nome`;
-        database.all(sql, [], (err, rows) => {
-            if (err) return reject(err);
-            resolve(rows || []);
-        });
-    });
+        const rows = await database.all(sql, []);
+        return rows || [];
+    } catch (erro) {
+        throw erro;
+    }
 }
 
 /**
  * Verifica os preços após atualização
  */
 async function verificarPrecosAtualizados(temporadaId, chales) {
-    return new Promise((resolve, reject) => {
+    try {
         const placeholders = chales.map(() => '?').join(',');
         const sql = `
             SELECT 
                 c.nome as chale_nome,
-                ctp.preco_base,
+                ctp.preco_diaria,
                 t.nome as temporada_nome,
                 t.data_inicio,
                 t.data_fim
@@ -199,21 +191,20 @@ async function verificarPrecosAtualizados(temporadaId, chales) {
 
         const params = [temporadaId, ...chales.map(c => c.id)];
         
-        database.all(sql, params, (err, rows) => {
-            if (err) return reject(err);
-            
-            if (rows && rows.length > 0) {
-                console.log('');
-                rows.forEach(row => {
-                    console.log(
-                        `  ${row.chale_nome}: R$ ${row.preco_base.toFixed(2)} ` +
-                        `(${row.data_inicio} a ${row.data_fim})`
-                    );
-                });
-            }
-            resolve();
-        });
-    });
+        const rows = await database.all(sql, params);
+        
+        if (rows && rows.length > 0) {
+            console.log('');
+            rows.forEach(row => {
+                console.log(
+                    `  ${row.chale_nome}: R$ ${row.preco_diaria.toFixed(2)} ` +
+                    `(${row.data_inicio} a ${row.data_fim})`
+                );
+            });
+        }
+    } catch (erro) {
+        throw erro;
+    }
 }
 
 // Executar script
