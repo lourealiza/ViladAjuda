@@ -95,6 +95,11 @@ if (process.env.NODE_ENV === 'development') {
 // Rotas
 app.use('/api', routes);
 
+// Health check - não precisa de autenticação
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // Rota 404
 app.use((req, res) => {
     res.status(404).json({ 
