@@ -1,17 +1,18 @@
 <?php
 /**
  * Configuração do Banco de Dados MySQL
- * KingHost - Host externo mysql66-farm2.uni5.net
+ * Usando db4free.net (serviço gratuito online)
+ * Sincronizado com Vercel backend e todos os servidores
  */
 
-// Configurações do banco
-define('DB_HOST', 'mysql66-farm2.uni5.net');  // Host que FUNCIONA! ✅
-define('DB_USER', 'viladajuda_add1');          // Usuário criado
-define('DB_PASS', 'arraial2026');              // Senha
-define('DB_NAME', 'viladajuda');               // Nome do banco
+// Configurações do banco - db4free.net
+define('DB_HOST', 'db4free.net');           // Host externo
+define('DB_USER', 'viladajuda');            // Usuário db4free
+define('DB_PASS', 'ViladAjuda2026!');       // Senha db4free
+define('DB_NAME', 'viladajuda_db');         // Database db4free
 
 // Criar conexão
-$db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+$db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, 3306);
 
 // Verificar conexão
 if ($db->connect_error) {
@@ -20,7 +21,12 @@ if ($db->connect_error) {
         'erro' => 'Erro de conexão com o banco de dados',
         'mensagem' => 'Não foi possível conectar ao banco de dados',
         'detalhes' => $db->connect_error,
-        'codigo' => $db->connect_errno
+        'codigo' => $db->connect_errno,
+        'debug_info' => [
+            'host' => DB_HOST,
+            'user' => DB_USER,
+            'database' => DB_NAME
+        ]
     ], JSON_UNESCAPED_UNICODE));
 }
 
