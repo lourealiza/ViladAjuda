@@ -56,48 +56,35 @@ jobs:
           echo "👤 FTP Usuário: viladajuda"
           echo ""
       
-      - name: Deploy Frontend to KingHost via SFTP
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+      - name: Deploy Frontend to KingHost via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          username: ${{ secrets.KINGHOST_SSH_USER }}
-          server: ${{ secrets.KINGHOST_SSH_HOST }}
-          ssh_private_key: ${{ secrets.KINGHOST_SSH_KEY }}
-          local_path: ./
-          remote_path: /public_html/
-          delete: false
-          sftpArgs: "-o ConnectTimeout=5 -o StrictHostKeyChecking=no"
-            **/.vscode/**
-            **/.cursor/**
-            **/.idea/**
-            **/logs/**
+          server: ${{ secrets.KINGHOST_FTP_HOST }}
+          username: viladajuda
+          password: ${{ secrets.KINGHOST_FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: ./
+          state-name: .ftp-deploy-sync-state.json
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.github/**
+            **/node_modules/**
+            **/backend/**
+            **/backend-deploy/**
+            **/.env*
+            **/*.md
+            **/*.txt
+            **/*.ps1
+            **/*.sh
             **/package.json
             **/package-lock.json
             **/.gitignore
             **/README.md
-            **/DEPLOY*.md
-            **/TESTE*.txt
-            **/ENVIAR*.txt
-            **/CORRECOES*.txt
-            **/AJUSTES*.txt
-            **/FINAL*.txt
-            **/URGENTE*.txt
-            **/VERIFICAR*.txt
-            **/LISTA*.txt
-            **/RESOLVER*.txt
-            **/DESCOBRIR*.txt
-            **/DIAGNOSTICO*.txt
-            **/IMPLEMENTACAO*.txt
-            **/LAYOUT*.txt
-            **/CACHE*.txt
-            **/ICONES*.txt
-            **/CARDS*.txt
-            **/ECO*.txt
-            **/EMAIL*.txt
-            **/AVALIACOES*.txt
-            **/RESERVA*.txt
-            **/USUARIO*.txt
-            **/ARQUIVOS*.txt
-            **/3_*.txt
+            **/.vscode/**
+            **/.cursor/**
+            **/.idea/**
+            **/logs/**
             **/Copy
             **/new_*.html
             **/old_*.html
