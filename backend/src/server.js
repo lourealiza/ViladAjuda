@@ -7,6 +7,7 @@ require('dotenv').config();
 const database = require('./config/database');
 const routes = require('./routes');
 const logAcesso = require('./middleware/logAcesso');
+const analyticsMiddleware = require('./middleware/analytics');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -75,6 +76,9 @@ app.use('/api/', limiter);
 // Body parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Middleware de análise do Vercel Web Analytics
+app.use('/api', analyticsMiddleware);
 
 // Middleware de log de acesso (LGPD)
 if (process.env.ENABLE_ACCESS_LOG !== 'false') {
