@@ -7,7 +7,10 @@ const API_BASE_URL = window.location.hostname === 'www.viladajuda.com.br'
         : `${window.location.protocol}//${window.location.host}/api`);
 
 // URL do Backend Node.js no Vercel (Production)
-const API_VERCEL_BASE_URL = 'https://backend-dfqv0zc7s-lourealizas-projects.vercel.app/api';
+// Tenta Vercel primeiro, depois fallback para localhost se em desenvolvimento
+const API_VERCEL_BASE_URL = window.location.hostname === 'www.viladajuda.com.br' 
+    ? 'https://backend-lourealizas-projects.vercel.app/api'  // Produção Vercel
+    : 'http://localhost:3000/api';  // Localhost para desenvolvimento
 
 /**
  * Função auxiliar para fazer requisições à API
