@@ -5,11 +5,14 @@ class AuthController {
     async login(req, res) {
         try {
             const { email, senha } = req.body;
+            console.log(`[AUTH] Tentativa de login: ${email}`);
 
             // Buscar usuário
             const usuario = await Usuario.buscarPorEmail(email);
+            console.log(`[AUTH] Usuário encontrado: ${usuario ? 'SIM' : 'NÃO'}`);
             
             if (!usuario) {
+                console.log(`[AUTH] Email não encontrado: ${email}`);
                 return res.status(401).json({ 
                     erro: 'Credenciais inválidas',
                     mensagem: 'Email ou senha incorretos'
@@ -18,8 +21,10 @@ class AuthController {
 
             // Validar senha
             const senhaValida = await Usuario.validarSenha(senha, usuario.senha);
+            console.log(`[AUTH] Senha validada: ${senhaValida ? 'SIM' : 'NÃO'}`);
             
             if (!senhaValida) {
+                console.log(`[AUTH] Senha incorreta para: ${email}`);
                 return res.status(401).json({ 
                     erro: 'Credenciais inválidas',
                     mensagem: 'Email ou senha incorretos'
@@ -28,6 +33,7 @@ class AuthController {
 
             // Gerar token
             const token = gerarToken(usuario);
+            console.log(`[AUTH] Login bem-sucedido para: ${email}`);
 
             // Remover senha da resposta
             delete usuario.senha;
@@ -39,7 +45,7 @@ class AuthController {
             });
 
         } catch (erro) {
-            console.error('Erro no login:', erro);
+            console.error('[AUTH] Erro ao processar login:', erro);
             return res.status(500).json({ 
                 erro: 'Erro no servidor',
                 mensagem: 'Erro ao realizar login'
