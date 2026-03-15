@@ -48,7 +48,7 @@ const corsOptions = {
             if (normalizedOrigin.replace('www.', '') === allowed.replace('www.', '')) return true;
             if (normalizedOrigin.replace(/^https?:\/\//, '') === allowed.replace(/^https?:\/\//, '')) return true;
             return false;
-        });
+        }) || origin.includes('.vercel.app');
         
         if (isAllowed) {
             callback(null, true);
