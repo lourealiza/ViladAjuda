@@ -79,10 +79,10 @@ app.use('/api/', limiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Middleware de log de acesso (LGPD)
-if (process.env.ENABLE_ACCESS_LOG !== 'false') {
-    app.use('/api', logAcesso);
-}
+// Middleware de log de acesso (LGPD) - DESABILITADO TEMPORARIAMENTE PARA DEBUG
+// if (process.env.ENABLE_ACCESS_LOG !== 'false') {
+//     app.use('/api', logAcesso);
+// }
 
 // Log de requisições (desenvolvimento)
 if (process.env.NODE_ENV === 'development') {
