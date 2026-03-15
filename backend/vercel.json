@@ -4,12 +4,26 @@
     {
       "src": "api/index.js",
       "use": "@vercel/node",
-      "config": { "zeroConfig": true }
+      "config": {
+        "zeroConfig": true,
+        "includeFiles": "src/**"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "api/index.js"
     }
   ],
   "env": {
     "NODE_ENV": "production",
     "DB_TYPE": "mysql",
-    "FRONTEND_URL": "https://www.viladajuda.com.br"
+    "FRONTEND_URL": "https://www.viladajuda.com.br",
+    "DB_HOST": "mysql.viladajuda.com.br",
+    "DB_USER": "viladajuda",
+    "DB_PASSWORD": "2026dAjudaVila",
+    "DB_NAME": "viladajuda",
+    "DB_PORT": "3306"
   }
 }
