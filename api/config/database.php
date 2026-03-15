@@ -1,15 +1,14 @@
 <?php
 /**
  * Configuração do Banco de Dados MySQL
- * Usando db4free.net (serviço gratuito online)
- * Sincronizado com Vercel backend e todos os servidores
+ * KingHost - MySQL local 
  */
 
-// Configurações do banco - db4free.net
-define('DB_HOST', 'db4free.net');           // Host externo
-define('DB_USER', 'viladajuda');            // Usuário db4free
-define('DB_PASS', 'ViladAjuda2026!');       // Senha db4free
-define('DB_NAME', 'viladajuda_db');         // Database db4free
+// Configurações do banco - MySQL KingHost
+define('DB_HOST', 'mysql.viladajuda.com.br');     // Host MySQL KingHost
+define('DB_USER', 'viladajuda');                  // Usuário MySQL
+define('DB_PASS', '2026dAjudaVila');              // Senha MySQL
+define('DB_NAME', 'viladajuda');                  // Nome do banco
 
 // Criar conexão
 $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, 3306);
@@ -25,7 +24,8 @@ if ($db->connect_error) {
         'debug_info' => [
             'host' => DB_HOST,
             'user' => DB_USER,
-            'database' => DB_NAME
+            'database' => DB_NAME,
+            'sugestao' => 'Verifique as credenciais do MySQL no painel KingHost'
         ]
     ], JSON_UNESCAPED_UNICODE));
 }
