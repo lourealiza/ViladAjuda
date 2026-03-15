@@ -17,63 +17,43 @@ jobs:
       
       - name: Verify Secrets
         env:
-          SSH_HOST: ${{ secrets.KINGHOST_SSH_HOST }}
-          SSH_USER: ${{ secrets.KINGHOST_SSH_USER }}
-          SSH_KEY: ${{ secrets.KINGHOST_SSH_KEY }}
+          FTP_HOST: ${{ secrets.KINGHOST_FTP_HOST }}
+          FTP_PASSWORD: ${{ secrets.KINGHOST_FTP_PASSWORD }}
         run: |
-          echo "🔍 Verificando configuração dos secrets SSH..."
+          echo "🔍 Verificando configuração dos secrets FTP..."
           echo ""
 
-          # Verificar KINGHOST_SSH_HOST
-          if [ -z "$SSH_HOST" ]; then
-            echo "❌ ERRO: KINGHOST_SSH_HOST não está configurado!"
+          # Verificar KINGHOST_FTP_HOST
+          if [ -z "$FTP_HOST" ]; then
+            echo "❌ ERRO: KINGHOST_FTP_HOST não está configurado!"
             echo ""
             echo "📝 Como configurar no GitHub:"
             echo "1. Acesse: https://github.com/${{ github.repository }}/settings/secrets/actions"
             echo "2. Clique em 'New repository secret'"
-            echo "3. Nome: KINGHOST_SSH_HOST"
+            echo "3. Nome: KINGHOST_FTP_HOST"
             echo "4. Valor: viladajuda.com.br"
             echo "5. Clique em 'Add secret'"
             echo ""
             exit 1
           fi
 
-          # Verificar KINGHOST_SSH_USER
-          if [ -z "$SSH_USER" ]; then
-            echo "❌ ERRO: KINGHOST_SSH_USER não está configurado!"
+          # Verificar KINGHOST_FTP_PASSWORD
+          if [ -z "$FTP_PASSWORD" ]; then
+            echo "❌ ERRO: KINGHOST_FTP_PASSWORD não está configurado!"
             echo ""
             echo "📝 Como configurar no GitHub:"
             echo "1. Acesse: https://github.com/${{ github.repository }}/settings/secrets/actions"
             echo "2. Clique em 'New repository secret'"
-            echo "3. Nome: KINGHOST_SSH_USER"
-            echo "4. Valor: viladajuda"
+            echo "3. Nome: KINGHOST_FTP_PASSWORD"
+            echo "4. Valor: 2026dAjudaVila"
             echo "5. Clique em 'Add secret'"
             echo ""
             exit 1
           fi
 
-          # Verificar KINGHOST_SSH_KEY
-          if [ -z "$SSH_KEY" ]; then
-            echo "❌ ERRO: KINGHOST_SSH_KEY não está configurado!"
-            echo ""
-            echo "📝 Como configurar no GitHub:"
-            echo "1. Gere uma chave SSH ou use a existente"
-            echo "2. Acesse: https://github.com/${{ github.repository }}/settings/secrets/actions"
-            echo "3. Clique em 'New repository secret'"
-            echo "4. Nome: KINGHOST_SSH_KEY"
-            echo "5. Valor: Cole o conteúdo da sua chave privada SSH (~/.ssh/id_rsa)"
-            echo "6. Clique em 'Add secret'"
-            echo ""
-            echo "⚠️  Se usar autenticação por senha, configure assim:"
-            echo "1. Modifique o workflow para usar 'wlixcc/SFTP-Deploy-Action'"
-            echo "2. Adicione secret: KINGHOST_SSH_PASSWORD"
-            echo ""
-            exit 1
-          fi
-
-          echo "✅ Secrets SSH configurados!"
-          echo "📡 SSH Host: $SSH_HOST"
-          echo "👤 SSH Usuário: $SSH_USER"
+          echo "✅ Secrets FTP configurados!"
+          echo "📡 FTP Host: $FTP_HOST"
+          echo "👤 FTP Usuário: viladajuda"
           echo ""
       
       - name: Deploy Frontend to KingHost via SFTP
