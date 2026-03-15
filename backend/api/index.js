@@ -11,47 +11,13 @@ const logAcesso = require('../src/middleware/logAcesso');
 
 const app = express();
 
-// Middlewares de segurança
-app.use(helmet());
+console.log('🚀 Backend iniciando...');
 
-// CORS
-const corsOptions = {
-    origin: function (origin, callback) {
-        if (!origin) {
-            return callback(null, true);
-        }
-        
-        if (process.env.NODE_ENV === 'development') {
-            if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
-                return callback(null, true);
-            }
-        }
-        
-        const frontendUrl = process.env.FRONTEND_URL || 'https://www.viladajuda.com.br';
-        const allowedOrigins = frontendUrl.split(',').map(url => url.trim());
-        
-        const normalizedOrigin = origin.replace(/\/$/, '');
-        const normalizedAllowed = allowedOrigins.map(url => url.replace(/\/$/, ''));
-        
-        const isAllowed = normalizedAllowed.some(allowed => {
-            if (normalizedOrigin === allowed) return true;
-            if (normalizedOrigin.replace('www.', '') === allowed.replace('www.', '')) return true;
-            if (normalizedOrigin.replace(/^https?:\/\//, '') === allowed.replace(/^https?:\/\//, '')) return true;
-            return false;
-        });
-        
-        if (isAllowed || process.env.NODE_ENV === 'development') {
-            callback(null, true);
-        } else {
-            callback(new Error('CORS não permitido'));
-        }
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-};
+// Middlewares de segurança - DESABILITADO PARA DEBUG
+// app.use(helmet());
 
-app.use(cors(corsOptions));
+// CORS - SIMPLES
+app.use(cors());
 
 // Body Parser
 app.use(express.json({ limit: '10mb' }));
@@ -68,8 +34,12 @@ const limiter = rateLimit({
 
 app.use(limiter);
 
-// Middleware de log - DESABILITADO TEMPORARIAMENTE
-// app.use(logAcesso);
+console.log('📝 Registrando rotas...');
+
+// Rota de teste simples
+app.get('/test', (req, res) => {
+    res.json({ msg: 'test ok' });
+});
 
 // Rotas
 app.use('/api', routes);
