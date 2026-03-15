@@ -1,0 +1,12 @@
+open viladajuda.com.br
+viladajuda
+2026dAjudaVila
+ls
+cd /home/viladajuda/www
+ls
+cd api
+ls
+cd config
+ls
+put database.php
+quit

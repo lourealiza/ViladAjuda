@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste API KingHost</title>
+</head>
+<body>
+    <h1>Teste API Database</h1>
+    <p>Testando: https://www.viladajuda.com.br/api/teste-debug.php</p>
+    <div id="resultado">Aguardando...</div>
+    <script>
+        fetch('https://www.viladajuda.com.br/api/teste-debug.php?t=' + Date.now())
+            .then(r => r.json())
+            .then(d => {
+                document.getElementById('resultado').innerHTML = 
+                    '<pre>' + JSON.stringify(d, null, 2) + '</pre>';
+                if (d.debug_info && d.debug_info.host) {
+                    document.title = 'Host conectando: ' + d.debug_info.host;
+                }
+            })
+            .catch(e => {
+                document.getElementById('resultado').innerHTML = 
+                    '<pre>Erro: ' + e.message + '</pre>';
+            });
+    </script>
+</body>
+</html>

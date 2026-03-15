@@ -1,0 +1,7 @@
+open viladajuda.com.br
+viladajuda
+2026dAjudaVila
+cd api
+binary
+put api\info-servidor.php
+quit

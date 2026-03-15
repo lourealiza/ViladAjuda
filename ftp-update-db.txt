@@ -1,0 +1,8 @@
+open viladajuda.com.br
+viladajuda
+2026dAjudaVila
+cd api/config
+delete database.php
+put api\config\database.php
+ls
+quit
