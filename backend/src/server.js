@@ -2,11 +2,14 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const { createServer } = require('http');
+const socketIO = require('socket.io');
 require('dotenv').config();
 
 const database = require('./config/database');
 const routes = require('./routes');
 const logAcesso = require('./middleware/logAcesso');
+const notificacaoService = require('./services/notificacaoService');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -129,12 +132,99 @@ if (process.env.VERCEL !== '1' && require.main === module) {
             await database.connect();
             console.log('✓ Banco de dados conectado');
 
-            // Iniciar servidor
-            app.listen(PORT, () => {
+            // Criar servidor HTTP para Socket.io
+            const httpServer = createServer(app);
+
+            // Configurar Socket.io
+            const io = socketIO(httpServer, {
+                cors: {
+                    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+                    credentials: true
+                },
+                transports: ['websocket', 'polling']
+            });
+
+            // Middleware de autenticação para Socket.io
+            io.use((socket, next) => {
+                const token = socket.handshake.auth.token;
+                if (!token) {
+                    return next(new Error('Autenticação requerida'));
+                }
+                // Verificar token (você pode usar jwt.verify aqui)
+                try {
+                    const jwt = require('jsonwebtoken');
+                    const usuario = jwt.verify(token, process.env.JWT_SECRET || 'seu-segredo-aqui');
+                    socket.usuario = usuario;
+                    next();
+                } catch (erro) {
+                    next(new Error('Token inválido'));
+                }
+            });
+
+            // Eventos de Socket.io
+            io.on('connection', (socket) => {
+                console.log(`Usuário conectado: ${socket.usuario?.id} - Socket: ${socket.id}`);
+
+                // Registrar socket do usuário no serviço
+                notificacaoService.registrarSocket(socket.usuario.id, socket);
+
+                // Emitir evento de conexão bem-sucedida
+                socket.emit('conectado', {
+                    mensagem: 'Conectado ao servidor de notificações',
+                    usuario_id: socket.usuario.id
+                });
+
+                // Listener para marcar notificação como lida
+                socket.on('notificacao_lida', async (notificacaoId) => {
+                    try {
+                        const Notificacao = require('./models/Notificacao');
+                        await Notificacao.marcarComoLida(notificacaoId);
+                        socket.emit('notificacao_lida_confirmado', { id: notificacaoId });
+                    } catch (erro) {
+                        console.error('Erro ao marcar notificação como lida:', erro);
+                    }
+                });
+
+                // Desconexão
+                socket.on('disconnect', () => {
+                    console.log(`Usuário desconectado: ${socket.usuario?.id} - Socket: ${socket.id}`);
+                    notificacaoService.removerSocket(socket.usuario.id, socket.id);
+                });
+
+                // Tratamento de erro
+                socket.on('error', (erro) => {
+                    console.error('Erro Socket.io:', erro);
+                });
+            });
+
+            // Fazer io disponível em req para controladores (optional)
+            app.locals.io = io;
+
+            // Iniciar servidor HTTP
+            const server = httpServer.listen(PORT, () => {
                 console.log(`✓ Servidor rodando na porta ${PORT}`);
                 console.log(`✓ Ambiente: ${process.env.NODE_ENV || 'development'}`);
                 console.log(`✓ API disponível em: http://localhost:${PORT}/api`);
+                console.log(`✓ Socket.io disponível em: ws://localhost:${PORT}`);
             });
+
+            // Processador de notificações pendentes (a cada 5 minutos)
+            setInterval(async () => {
+                try {
+                    await notificacaoService.processarFilaPendentes();
+                } catch (erro) {
+                    console.error('Erro ao processar fila de notificações:', erro);
+                }
+            }, 5 * 60 * 1000); // 5 minutos
+
+            // Primeira execução após 30 segundos
+            setTimeout(async () => {
+                try {
+                    await notificacaoService.processarFilaPendentes();
+                } catch (erro) {
+                    console.error('Erro na primeira execução da fila:', erro);
+                }
+            }, 30 * 1000);
 
         } catch (erro) {
             console.error('Erro ao iniciar servidor:', erro);

@@ -16,6 +16,7 @@ const bloqueioRoutes = require('./bloqueioRoutes');
 const adminRoutes = require('./adminRoutes');
 const lgpdRoutes = require('./lgpdRoutes');
 const avaliacaoRoutes = require('./avaliacaoRoutes');
+const notificacaoRoutes = require('./notificacaoRoutes');
 
 // Rota de health check
 router.get('/', (req, res) => {
@@ -59,6 +60,7 @@ router.use('/bloqueios', bloqueioRoutes);
 router.use('/admin', adminRoutes);
 router.use('/lgpd', lgpdRoutes);
 router.use('/avaliacoes', avaliacaoRoutes);
+router.use('/notificacoes', notificacaoRoutes);
 
 module.exports = router;
 
