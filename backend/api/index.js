@@ -1,42 +1,14 @@
-// Ultra-minimal serverless function for Vercel
-module.exports = (req, res) => {
-    // CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    
-    // Handle preflight
-    if (req.method === 'OPTIONS') {
-        res.writeHead(200);
-        res.end();
-        return;
-    }
-    
-    // Get the request path
-    const path = req.url || '/';
-    const method = req.method || 'GET';
-    
-    console.log(`[${new Date().toISOString()}] ${method} ${path}`);
-    
-    // Check for auth/login endpoint
-    if (path.includes('/api/auth/login') && method === 'POST') {
-        return res.status(200).json({
-            success: true,
-            token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwibm9tZSI6IkFkbWluaXN0cmFkb3IiLCJpYXQiOjE1MTYyMzkwMjJ9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
-            usuario: {
-                id: 1,
-                email: 'admin@viladajuda.com',
-                nome: 'Administrador'
-            }
-        });
-    }
-    
-    // Default response
-    res.status(200).json({
-        ok: true,
-        message: 'API Vila d\'Ajuda',
-        version: '2.0.0',
-        path: path,
-        method: method
-    });
-};
+// Vercel Serverless Entry Point - Export Express App
+// This file is the entry point for Vercel's serverless function infrastructure
+// The actual app is defined in src/server.js
+
+require('dotenv').config();
+
+// Set Vercel flag
+process.env.VERCEL = '1';
+
+// Import the Express app
+const app = require('../src/server');
+
+// Export the Express app as the serverless function
+module.exports = app;

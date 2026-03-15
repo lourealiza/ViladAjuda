@@ -5,8 +5,9 @@
       "src": "api/index.js",
       "use": "@vercel/node",
       "config": {
-        "includeFiles": "src/**",
-        "maxDuration": 30
+        "includeFiles": ["src/**", "package.json", ".env*"],
+        "maxDuration": 60,
+        "zeroConfig": true
       }
     }
   ],
@@ -24,6 +25,8 @@
     "DB_USER": "viladajuda",
     "DB_PASSWORD": "2026dAjudaVila",
     "DB_NAME": "viladajuda",
-    "DB_PORT": "3306"
+    "DB_PORT": "3306",
+    "JWT_SECRET": "vila-dajuda-jwt-2026",
+    "ENABLE_ACCESS_LOG": "false"
   }
 }
