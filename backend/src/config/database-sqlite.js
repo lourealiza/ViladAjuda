@@ -62,6 +62,71 @@ class Database {
                     if (err) console.error('Erro ao criar tabela chales:', err.message);
                 });
 
+                // Tabela de Notificações
+                this.db.run(`
+                    CREATE TABLE IF NOT EXISTS notificacoes (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        tipo TEXT NOT NULL,
+                        descricao TEXT,
+                        usuario_id INTEGER,
+                        chale_id INTEGER,
+                        reserva_id INTEGER,
+                        pagamento_id INTEGER,
+                        titulo TEXT NOT NULL,
+                        conteudo TEXT NOT NULL,
+                        canais_entrega TEXT,
+                        status TEXT DEFAULT 'pendente',
+                        dados_extra TEXT,
+                        data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        data_envio DATETIME,
+                        tentativas_envio INTEGER DEFAULT 0,
+                        proximo_envio DATETIME,
+                        lido_em DATETIME,
+                        FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL,
+                        FOREIGN KEY (chale_id) REFERENCES chales(id) ON DELETE SET NULL,
+                        FOREIGN KEY (reserva_id) REFERENCES reservas(id) ON DELETE SET NULL,
+                        FOREIGN KEY (pagamento_id) REFERENCES pagamentos(id) ON DELETE SET NULL
+                    )
+                `, (err) => {
+                    if (err) console.error('Erro ao criar tabela notificacoes:', err.message);
+                });
+
+                // Tabela de Políticas de Cancelamento
+                this.db.run(`
+                    CREATE TABLE IF NOT EXISTS politicas_cancelamento (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        chale_id INTEGER NOT NULL UNIQUE,
+                        tipo TEXT NOT NULL DEFAULT 'nao_reembolsavel',
+                        taxa_adicional_percentual REAL DEFAULT 0,
+                        descricao TEXT,
+                        condicoes_reembolso TEXT,
+                        ativo BOOLEAN DEFAULT 1,
+                        criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        FOREIGN KEY (chale_id) REFERENCES chales(id) ON DELETE CASCADE
+                    )
+                `, (err) => {
+                    if (err) console.error('Erro ao criar tabela politicas_cancelamento:', err.message);
+                });
+
+                // Tabela de Preços Adicionais
+                this.db.run(`
+                    CREATE TABLE IF NOT EXISTS precos_adicionais (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        chale_id INTEGER NOT NULL,
+                        tipo TEXT NOT NULL,
+                        preco_por_noite REAL NOT NULL,
+                        descricao TEXT,
+                        condicoes TEXT,
+                        ativo BOOLEAN DEFAULT 1,
+                        criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        FOREIGN KEY (chale_id) REFERENCES chales(id) ON DELETE CASCADE
+                    )
+                `, (err) => {
+                    if (err) console.error('Erro ao criar tabela precos_adicionais:', err.message);
+                });
+
                 // Tabela de Temporadas
                 this.db.run(`
                     CREATE TABLE IF NOT EXISTS temporadas (
