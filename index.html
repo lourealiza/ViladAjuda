@@ -1,57 +1,66 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17836356824"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
 
-      gtag('config', 'AW-17836356824');
+        gtag('config', 'AW-17836356824');
     </script>
-    
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Chalés em Arraial d'Ajuda - Seu refúgio na natureza com varandas, redes e muito verde. Apenas 3 quadras do centro, chalés completos com quarto, sala, cozinha e varanda espaçosa.">
-    <meta name="keywords" content="chalés Arraial d'Ajuda, hospedagem Bahia, aluguel chalés, Vila d'Ajuda, hospedagem natureza, Arraial d'Ajuda">
+    <meta name="description"
+        content="Chalés em Arraial d'Ajuda - Seu refúgio na natureza com varandas, redes e muito verde. Apenas 3 quadras do centro, chalés completos com quarto, sala, cozinha e varanda espaçosa.">
+    <meta name="keywords"
+        content="chalés Arraial d'Ajuda, hospedagem Bahia, aluguel chalés, Vila d'Ajuda, hospedagem natureza, Arraial d'Ajuda">
     <meta name="author" content="Vila d'Ajuda">
     <meta name="robots" content="index, follow">
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://lourealiza.github.io/ViladAjuda/">
     <meta property="og:title" content="Vila d'Ajuda - Chalés em Arraial d'Ajuda">
-    <meta property="og:description" content="Seu refúgio em Arraial d'Ajuda: natureza, aconchego e praticidade a 3 quadras do centro">
+    <meta property="og:description"
+        content="Seu refúgio em Arraial d'Ajuda: natureza, aconchego e praticidade a 3 quadras do centro">
     <meta property="og:image" content="https://lourealiza.github.io/ViladAjuda/images/Jardim%20-%20Copia.JPG">
-    
+
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://lourealiza.github.io/ViladAjuda/">
     <meta property="twitter:title" content="Vila d'Ajuda - Chalés em Arraial d'Ajuda">
-    <meta property="twitter:description" content="Seu refúgio em Arraial d'Ajuda: natureza, aconchego e praticidade a 3 quadras do centro">
+    <meta property="twitter:description"
+        content="Seu refúgio em Arraial d'Ajuda: natureza, aconchego e praticidade a 3 quadras do centro">
     <meta property="twitter:image" content="https://lourealiza.github.io/ViladAjuda/images/Jardim%20-%20Copia.JPG">
-    
+
     <title>Vila d'Ajuda - Chalés em Arraial d'Ajuda | Seu Refúgio na Natureza</title>
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="images/Logo.png">
     <link rel="apple-touch-icon" href="images/Logo.png">
-    
+
     <!-- Stylesheets -->
     <link rel="stylesheet" href="css/style.css?v=15">
+    <link rel="stylesheet" href="css/ollama-chat.css?v=1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
     <!-- EmailJS -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    
+
     <!-- API Client - Integração com Backend -->
     <script src="js/api.js"></script>
 </head>
+
 <body>
     <!-- Black Friday Banner -->
     <div id="blackFridayBanner" class="black-friday-banner" style="display: none;">
@@ -106,7 +115,8 @@
                 <div class="hero-content">
                     <h2 class="hero-title">Seu refúgio em<br>Arraial d'Ajuda</h2>
                     <p class="hero-subtitle">Natureza, aconchego e praticidade a 3 quadras do centro</p>
-                    <p class="hero-description">Varandas com rede, chalés completos e o canto dos pássaros como trilha sonora</p>
+                    <p class="hero-description">Varandas com rede, chalés completos e o canto dos pássaros como trilha
+                        sonora</p>
                     <a href="/triagem" class="btn-primary">Reservar Agora</a>
                 </div>
             </div>
@@ -123,14 +133,16 @@
                     <div class="form-group form-group-date">
                         <label>Data de Entrada</label>
                         <div class="date-input-wrapper">
-                            <input type="text" name="checkin" id="checkinInput" class="date-input" placeholder="Insira as datas" readonly required>
+                            <input type="text" name="checkin" id="checkinInput" class="date-input"
+                                placeholder="Insira as datas" readonly required>
                             <input type="hidden" name="checkin" id="checkinHidden">
                         </div>
                     </div>
                     <div class="form-group form-group-date">
                         <label>Data de Saída</label>
                         <div class="date-input-wrapper">
-                            <input type="text" name="checkout" id="checkoutInput" class="date-input" placeholder="Insira as datas" readonly required>
+                            <input type="text" name="checkout" id="checkoutInput" class="date-input"
+                                placeholder="Insira as datas" readonly required>
                             <input type="hidden" name="checkout" id="checkoutHidden">
                         </div>
                     </div>
@@ -157,7 +169,7 @@
                         <button type="submit" class="btn-check">Verificar Disponibilidade</button>
                     </div>
                 </form>
-                
+
                 <!-- Preço Estimado -->
                 <div id="precoEstimado" class="preco-estimado" style="display: none;">
                     <div class="preco-estimado-content">
@@ -166,7 +178,7 @@
                         <span class="preco-detalhes" id="precoDetalhes"></span>
                     </div>
                 </div>
-                
+
                 <!-- Calendário Pop-up -->
                 <div id="datepickerPopup" class="datepicker-popup" style="display: none;">
                     <div class="datepicker-popup-content">
@@ -202,9 +214,12 @@
             </div>
             <div class="sobre-content">
                 <div class="sobre-text">
-                    <p>Chalés individuais com quarto, sala, cozinha equipada, banheiro e varanda espaçosa. Wi-Fi, ar-condicionado e muito verde ao redor.</p>
-                    <p>Localizados a apenas 5 minutos do centro e 10 minutos da praia, com fácil acesso a balsa, vans e ônibus para Trancoso e Caraíva.</p>
-                    <p>Uma experiência íntima: apenas 4 chalés em uma vila charmosa. Silêncio e segurança de rua tranquila para estacionar. Hóspedes destacam tranquilidade e o canto dos passarinhos.</p>
+                    <p>Chalés individuais com quarto, sala, cozinha equipada, banheiro e varanda espaçosa. Wi-Fi,
+                        ar-condicionado e muito verde ao redor.</p>
+                    <p>Localizados a apenas 5 minutos do centro e 10 minutos da praia, com fácil acesso a balsa, vans e
+                        ônibus para Trancoso e Caraíva.</p>
+                    <p>Uma experiência íntima: apenas 4 chalés em uma vila charmosa. Silêncio e segurança de rua
+                        tranquila para estacionar. Hóspedes destacam tranquilidade e o canto dos passarinhos.</p>
                     <a href="#chales" class="btn-secondary">Conheça Nossos Chalés</a>
                 </div>
                 <div class="sobre-features">
@@ -251,7 +266,8 @@
                 <div class="avaliacao-loading">Carregando avaliações...</div>
             </div>
             <div class="avaliacoes-link">
-                <a href="https://www.google.com/search?q=vila+d%27ajuda+chal%C3%A9s&sca_esv=5a1ec5f7868eb06c#mpd=~4148871960927257298/customers/reviews" target="_blank" class="btn-secondary">
+                <a href="https://www.google.com/search?q=vila+d%27ajuda+chal%C3%A9s&sca_esv=5a1ec5f7868eb06c#mpd=~4148871960927257298/customers/reviews"
+                    target="_blank" class="btn-secondary">
                     Ver todas as avaliações no Google
                 </a>
             </div>
@@ -311,7 +327,7 @@
                 <h2>Galeria "Antes do Pôr do Sol"</h2>
                 <p class="section-subtitle">Varandas, redes e jardim em meio à natureza</p>
             </div>
-            
+
             <!-- Carrossel de Galeria -->
             <div class="galeria-carousel-container">
                 <div class="galeria-carousel" id="galeriaCarousel">
@@ -346,7 +362,8 @@
                         </div>
                     </div>
                     <div class="galeria-slide" data-lightbox="galeria" data-title="Natureza ao Redor">
-                        <img src="images/48340042_267824703881146_1244187815890124800_n-1024x1024.jpg" alt="Natureza ao Redor" loading="lazy">
+                        <img src="images/48340042_267824703881146_1244187815890124800_n-1024x1024.jpg"
+                            alt="Natureza ao Redor" loading="lazy">
                         <div class="galeria-overlay">
                             <span>🔍 Clique para ampliar</span>
                         </div>
@@ -436,11 +453,11 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Controles do Carrossel -->
                 <button class="galeria-carousel-prev" aria-label="Imagem anterior">‹</button>
                 <button class="galeria-carousel-next" aria-label="Próxima imagem">›</button>
-                
+
                 <!-- Indicadores -->
                 <div class="galeria-carousel-indicators" id="galeriaIndicators"></div>
             </div>
@@ -503,19 +520,17 @@
             </div>
             <div class="localizacao-content">
                 <div class="mapa-container">
-                    <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3826.5!2d-39.1!3d-16.4!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x734c8b8b8b8b8b8b%3A0x8b8b8b8b8b8b8b8b!2sArraial%20d%27Ajuda%2C%20BA!5e0!3m2!1spt-BR!2sbr!4v1234567890123!5m2!1spt-BR!2sbr" 
-                        width="100%" 
-                        height="100%" 
-                        style="border:0; border-radius: 15px;" 
-                        allowfullscreen="" 
-                        loading="lazy" 
-                        referrerpolicy="no-referrer-when-downgrade"
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3826.5!2d-39.1!3d-16.4!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x734c8b8b8b8b8b8b%3A0x8b8b8b8b8b8b8b8b!2sArraial%20d%27Ajuda%2C%20BA!5e0!3m2!1spt-BR!2sbr!4v1234567890123!5m2!1spt-BR!2sbr"
+                        width="100%" height="100%" style="border:0; border-radius: 15px;" allowfullscreen=""
+                        loading="lazy" referrerpolicy="no-referrer-when-downgrade"
                         title="Localização Vila d'Ajuda - Arraial d'Ajuda">
                     </iframe>
                     <div class="mapa-fallback">
                         <img src="images/Mapa.jpg" alt="Mapa de localização - Rua das Mangabeiras, 78" loading="lazy">
-                        <a href="https://www.google.com/maps/search/?api=1&query=Rua+das+Mangabeiras+78+Arraial+d'Ajuda+BA" target="_blank" class="btn-secondary" style="margin-top: 1rem; display: inline-block;">Abrir no Google Maps</a>
+                        <a href="https://www.google.com/maps/search/?api=1&query=Rua+das+Mangabeiras+78+Arraial+d'Ajuda+BA"
+                            target="_blank" class="btn-secondary" style="margin-top: 1rem; display: inline-block;">Abrir
+                            no Google Maps</a>
                     </div>
                 </div>
                 <div class="instrucoes">
@@ -551,7 +566,7 @@
                         <h4>Qual o horário de check-in e check-out?</h4>
                         <span class="faq-toggle">+</span>
                     </div>
-                        <div class="faq-answer">
+                    <div class="faq-answer">
                         <p>O check-in é coordenado pela Renata. Entre em contato para combinar o horário ideal.</p>
                     </div>
                 </div>
@@ -614,14 +629,16 @@
                     <div class="form-group form-group-date">
                         <label>Data de Entrada</label>
                         <div class="date-input-wrapper">
-                            <input type="text" name="checkin" id="checkinInputFinal" class="date-input" placeholder="Insira as datas" readonly required>
+                            <input type="text" name="checkin" id="checkinInputFinal" class="date-input"
+                                placeholder="Insira as datas" readonly required>
                             <input type="hidden" name="checkin" id="checkinHiddenFinal">
                         </div>
                     </div>
                     <div class="form-group form-group-date">
                         <label>Data de Saída</label>
                         <div class="date-input-wrapper">
-                            <input type="text" name="checkout" id="checkoutInputFinal" class="date-input" placeholder="Insira as datas" readonly required>
+                            <input type="text" name="checkout" id="checkoutInputFinal" class="date-input"
+                                placeholder="Insira as datas" readonly required>
                             <input type="hidden" name="checkout" id="checkoutHiddenFinal">
                         </div>
                     </div>
@@ -648,7 +665,7 @@
                         <button type="submit" class="btn-check">Verificar Disponibilidade</button>
                     </div>
                 </form>
-                
+
                 <!-- Preço Estimado -->
                 <div id="precoEstimadoFinal" class="preco-estimado" style="display: none;">
                     <div class="preco-estimado-content">
@@ -657,7 +674,7 @@
                         <span class="preco-detalhes" id="precoDetalhesFinal"></span>
                     </div>
                 </div>
-                
+
                 <!-- Calendário Pop-up -->
                 <div id="datepickerPopupFinal" class="datepicker-popup" style="display: none;">
                     <div class="datepicker-popup-content">
@@ -756,7 +773,7 @@
                         <label>Mensagem</label>
                         <textarea name="mensagem" rows="4"></textarea>
                     </div>
-                    
+
                     <!-- Preço Estimado no Modal -->
                     <div id="precoEstimadoModal" class="preco-estimado" style="display: none;">
                         <div class="preco-estimado-content">
@@ -765,7 +782,7 @@
                             <span class="preco-detalhes" id="precoDetalhesModal"></span>
                         </div>
                     </div>
-                    
+
                     <button type="submit" class="btn-primary">Enviar Reserva</button>
                 </form>
             </div>
@@ -823,17 +840,18 @@
     </div>
 
     <!-- Botão WhatsApp Flutuante -->
-    <a href="https://wa.me/5527988513096" 
-       target="_blank" 
-       rel="noopener noreferrer" 
-       class="whatsapp-button" 
-       aria-label="Fale conosco no WhatsApp">
+    <a href="https://wa.me/5527988513096" target="_blank" rel="noopener noreferrer" class="whatsapp-button"
+        aria-label="Fale conosco no WhatsApp">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" fill="currentColor"/>
+            <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"
+                fill="currentColor" />
         </svg>
         <span class="whatsapp-tooltip">Fale conosco</span>
     </a>
 
     <script src="js/script.js?v=12"></script>
+    <script src="js/ollama-chat.js?v=1"></script>
 </body>
+
 </html>
