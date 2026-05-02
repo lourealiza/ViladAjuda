@@ -52,6 +52,7 @@ require_once __DIR__ . '/controllers/DisponibilidadeController.php';
 require_once __DIR__ . '/controllers/ReservaController.php';
 require_once __DIR__ . '/controllers/AvaliacaoController.php';
 require_once __DIR__ . '/controllers/ConsultaController.php';
+require_once __DIR__ . '/controllers/ConfirmacaoReservaController.php';
 
 // Rotas de Chalés
 if (preg_match('#^/chales/?$#', $path) && $method === 'GET') {
@@ -158,6 +159,13 @@ if ((preg_match('#^/consulta/?$#', $path) || preg_match('#^/consultas/?$#', $pat
     exit();
 }
 
+// Rota da Etapa 2 - confirmaÃ§Ã£o da reserva
+if (preg_match('#^/confirmacao-reserva/?$#', $path) && $method === 'POST') {
+    $controller = new ConfirmacaoReservaController($db);
+    $controller->criar();
+    exit();
+}
+
 // Rota 404
 http_response_code(404);
 echo json_encode([
@@ -165,4 +173,3 @@ echo json_encode([
     'mensagem' => "A rota $method $path não existe"
 ]);
 ?>
-

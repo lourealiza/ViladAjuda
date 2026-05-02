@@ -2423,4 +2423,395 @@ img[loading="lazy"].loaded {
     }
 }
 
+/* Página de Triagem */
+.triagem-page {
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at top left, rgba(168, 209, 140, 0.28), transparent 32%),
+        linear-gradient(180deg, #f7f4ec 0%, #ffffff 100%);
+}
 
+.triagem-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    padding: 1rem 0;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(45, 80, 22, 0.08);
+}
+
+.triagem-topbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.triagem-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.85rem;
+    text-decoration: none;
+    color: var(--verde-primario);
+}
+
+.triagem-brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.triagem-brand-title {
+    font-family: var(--fonte-titulo);
+    font-size: 1.3rem;
+    line-height: 1;
+}
+
+.triagem-brand-subtitle {
+    font-size: 0.82rem;
+    color: var(--texto-medio);
+}
+
+.triagem-main {
+    padding: 3rem 0 5rem;
+}
+
+.triagem-shell {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 540px);
+    gap: 2.5rem;
+    align-items: start;
+}
+
+.triagem-copy {
+    padding-top: 2rem;
+}
+
+.triagem-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(45, 80, 22, 0.1);
+    color: var(--verde-primario);
+    font-size: 0.88rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.triagem-copy h1 {
+    margin-top: 1.25rem;
+    font-family: var(--fonte-titulo);
+    font-size: clamp(2.4rem, 5vw, 4.4rem);
+    line-height: 1.05;
+    color: var(--verde-primario);
+}
+
+.triagem-copy p {
+    margin-top: 1.2rem;
+    max-width: 56ch;
+    font-size: 1.05rem;
+    color: var(--texto-medio);
+}
+
+.triagem-highlights {
+    list-style: none;
+    margin-top: 2rem;
+    display: grid;
+    gap: 0.9rem;
+}
+
+.triagem-highlights li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    padding: 1rem 1.1rem;
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(45, 80, 22, 0.08);
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(45, 80, 22, 0.04);
+}
+
+.triagem-highlight-icon {
+    width: 2.3rem;
+    height: 2.3rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 999px;
+    background: var(--creme);
+    color: var(--verde-primario);
+    font-weight: 700;
+}
+
+.triagem-contact-card {
+    margin-top: 2rem;
+    padding: 1.4rem 1.5rem;
+    background: linear-gradient(135deg, var(--verde-primario) 0%, var(--verde-secundario) 100%);
+    color: var(--branco);
+    border-radius: 24px;
+    box-shadow: 0 18px 40px rgba(45, 80, 22, 0.2);
+}
+
+.triagem-contact-card p,
+.triagem-contact-card a {
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.triagem-card {
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(45, 80, 22, 0.08);
+    border-radius: 28px;
+    box-shadow: 0 20px 50px rgba(45, 80, 22, 0.12);
+    overflow: hidden;
+}
+
+.triagem-card-header {
+    padding: 2rem 2rem 1.2rem;
+}
+
+.triagem-card-header h2 {
+    font-family: var(--fonte-titulo);
+    font-size: 2rem;
+    color: var(--verde-primario);
+}
+
+.triagem-card-header p {
+    margin-top: 0.65rem;
+    color: var(--texto-medio);
+}
+
+.triagem-form {
+    padding: 0 2rem 2rem;
+}
+
+.triagem-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.triagem-grid .form-group {
+    margin: 0;
+}
+
+.triagem-grid .form-group.full {
+    grid-column: 1 / -1;
+}
+
+.triagem-grid .form-group textarea {
+    width: 100%;
+    min-height: 130px;
+    resize: vertical;
+    padding: 0.9rem 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-family: var(--fonte-texto);
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.triagem-grid .form-group textarea:focus {
+    outline: none;
+    border-color: var(--verde-primario);
+    box-shadow: 0 0 0 4px rgba(45, 80, 22, 0.08);
+}
+
+.triagem-grid .form-group input,
+.triagem-grid .form-group select {
+    border-radius: 12px;
+    padding: 0.95rem 1rem;
+}
+
+.triagem-note {
+    margin: 1.25rem 0 1.5rem;
+    font-size: 0.93rem;
+    color: var(--texto-medio);
+}
+
+.triagem-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.triagem-submit {
+    min-width: 220px;
+}
+
+.triagem-status {
+    margin: 0 2rem 1rem;
+    padding: 0.95rem 1rem;
+    border-radius: 14px;
+    font-size: 0.95rem;
+    display: none;
+}
+
+.triagem-status.is-visible {
+    display: block;
+}
+
+.triagem-status.is-info {
+    background: #eef6ff;
+    color: #0d47a1;
+}
+
+.triagem-status.is-error {
+    background: #fff2f0;
+    color: #b42318;
+}
+
+.triagem-status.is-success {
+    background: #eefbf2;
+    color: #1f6b37;
+}
+
+.triagem-success {
+    margin: 0 2rem 2rem;
+    padding: 1.4rem;
+    border-radius: 20px;
+    background: #eefbf2;
+    border: 1px solid rgba(31, 107, 55, 0.16);
+}
+
+.triagem-success h3 {
+    font-family: var(--fonte-titulo);
+    font-size: 1.6rem;
+    color: #1f6b37;
+}
+
+.triagem-success p {
+    margin-top: 0.7rem;
+    color: #2d4f35;
+}
+
+.triagem-success-actions {
+    margin-top: 1.2rem;
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.triagem-footer {
+    padding-top: 3rem;
+}
+
+@media (max-width: 980px) {
+    .triagem-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .triagem-copy {
+        padding-top: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .triagem-main {
+        padding: 2rem 0 4rem;
+    }
+
+    .triagem-topbar-inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .triagem-card-header,
+    .triagem-form,
+    .triagem-status,
+    .triagem-success {
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .triagem-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .triagem-submit,
+    .triagem-actions .btn-secondary,
+    .triagem-success-actions .btn-primary,
+    .triagem-success-actions .btn-secondary {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+}
+
+/* Página de Confirmação de Reserva */
+.confirmacao-page {
+    background:
+        radial-gradient(circle at top right, rgba(196, 165, 116, 0.18), transparent 28%),
+        linear-gradient(180deg, #faf7f1 0%, #ffffff 100%);
+}
+
+.confirmacao-page .triagem-badge {
+    background: rgba(139, 111, 71, 0.12);
+    color: var(--terra);
+}
+
+.confirmacao-page .triagem-contact-card {
+    background: linear-gradient(135deg, var(--terra) 0%, #a98558 100%);
+}
+
+.confirmacao-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.confirmacao-disclaimer,
+.confirmacao-rules {
+    margin-top: 1rem;
+    padding: 1rem 1.1rem;
+    border-radius: 16px;
+    border: 1px solid rgba(139, 111, 71, 0.15);
+    background: #fcf7ef;
+    color: var(--texto-medio);
+    font-size: 0.94rem;
+}
+
+.confirmacao-rules strong,
+.confirmacao-disclaimer strong {
+    color: var(--texto-escuro);
+}
+
+.checkbox-field {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid rgba(45, 80, 22, 0.1);
+    border-radius: 16px;
+    background: #f9fbf7;
+}
+
+.checkbox-field input[type="checkbox"] {
+    margin-top: 0.2rem;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--verde-primario);
+    flex-shrink: 0;
+}
+
+.checkbox-field label {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--texto-escuro);
+}
+
+.confirmacao-meta {
+    margin-top: 1.2rem;
+    font-size: 0.95rem;
+    color: var(--texto-medio);
+}
+
+@media (max-width: 768px) {
+    .confirmacao-grid {
+        grid-template-columns: 1fr;
+    }
+}

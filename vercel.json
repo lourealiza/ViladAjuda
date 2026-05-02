@@ -9,6 +9,22 @@
       "dest": "/admin.html"
     },
     {
+      "src": "/obrigado/?",
+      "dest": "/obrigado.html"
+    },
+    {
+      "src": "/triagem/?",
+      "dest": "/triagem.html"
+    },
+    {
+      "src": "/confirmacao-reserva/?",
+      "dest": "/confirmacao-reserva.html"
+    },
+    {
+      "src": "/consulta/?",
+      "dest": "/triagem.html"
+    },
+    {
       "src": "/index\\.html",
       "dest": "/index.html"
     },

@@ -310,7 +310,12 @@ class ConsultaController {
             'nome_hospede' => $dados['nome_hospede'] ?? '',
             'email_hospede' => $dados['email_hospede'] ?? '',
             'telefone_hospede' => $dados['telefone_hospede'] ?? '',
+            'cidade_hospede' => $dados['cidade_hospede'] ?? '',
             'mensagem' => $dados['mensagem'] ?? '',
+            'numero_hospedes_total' => $dados['numero_hospedes_total'] ?? null,
+            'tem_criancas' => $dados['tem_criancas'] ?? '',
+            'observacao_livre' => $dados['observacao_livre'] ?? '',
+            'origem_formulario' => $dados['origem_formulario'] ?? '',
             'chale_id' => $dados['chale_id'] ?? null
         ];
         
@@ -333,4 +338,3 @@ class ConsultaController {
     }
 }
 ?>
-

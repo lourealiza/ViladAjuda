@@ -1,11 +1,13 @@
 # Habilitar rewrite
 RewriteEngine On
 
+# Redirecionar /triagem e /consulta para a página do formulário curto
+RewriteRule ^triagem/?$ triagem.html [L]
+RewriteRule ^consulta/?$ triagem.html [L]
+RewriteRule ^confirmacao-reserva/?$ confirmacao-reserva.html [L]
+
 # Redirecionar /obrigado para obrigado.html
 RewriteRule ^obrigado/?$ obrigado.html [L]
-
-# Redirecionar /consulta para index.html (modal será aberto via JavaScript)
-RewriteRule ^consulta/?$ index.html [L]
 
 # CORS Headers (se necessário)
 <IfModule mod_headers.c>
@@ -13,4 +15,3 @@ RewriteRule ^consulta/?$ index.html [L]
     Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
     Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
 </IfModule>
-

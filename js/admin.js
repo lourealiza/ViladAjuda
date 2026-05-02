@@ -187,6 +187,7 @@ function mostrarReservasRecentes(reservas) {
                 <h4>${reserva.nome_hospede}</h4>
                 <p>📧 ${reserva.email_hospede}</p>
                 <p>📞 ${reserva.telefone_hospede}</p>
+                ${reserva.cidade_hospede ? `<p>📍 ${reserva.cidade_hospede}</p>` : ''}
                 <p>📅 ${API.formatarData(reserva.data_checkin)} - ${API.formatarData(reserva.data_checkout)}</p>
                 <p>👥 ${reserva.num_adultos ?? 0} adulto(s)${(reserva.num_criancas && reserva.num_criancas > 0) ? `, ${reserva.num_criancas} criança(s)` : ''}</p>
                 <span class="reserva-status ${reserva.status}">${reserva.status}</span>
@@ -260,11 +261,12 @@ function mostrarReservas(reservas) {
                 <h4>${reserva.nome_hospede}</h4>
                 <p>📧 ${reserva.email_hospede}</p>
                 <p>📞 ${reserva.telefone_hospede}</p>
+                ${reserva.cidade_hospede ? `<p>📍 ${reserva.cidade_hospede}</p>` : ''}
                 <p>📅 ${API.formatarData(reserva.data_checkin)} - ${API.formatarData(reserva.data_checkout)}</p>
                 <p>👥 ${reserva.num_adultos ?? 0} adulto(s)${(reserva.num_criancas && reserva.num_criancas > 0) ? `, ${reserva.num_criancas} criança(s)` : ''}</p>
                 ${reserva.chale_id ? `<p>🏠 Chalé ID: ${reserva.chale_id}</p>` : ''}
                 ${reserva.valor_total ? `<p>💰 ${API.formatarValor(reserva.valor_total)}</p>` : ''}
-                ${reserva.mensagem ? `<p>💬 ${reserva.mensagem}</p>` : ''}
+                ${reserva.mensagem ? `<p>💬 ${reserva.mensagem.replace(/\n/g, '<br>')}</p>` : ''}
                 <span class="reserva-status ${reserva.status}">${reserva.status}</span>
             </div>
             <div class="reserva-actions">
@@ -667,4 +669,3 @@ window.deletarReserva = deletarReserva;
 window.aprovarReserva = aprovarReserva;
 window.editarChale = editarChale;
 window.deletarChale = deletarChale;
-

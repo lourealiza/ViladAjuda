@@ -18,7 +18,7 @@ const API_VERCEL_BASE_URL = window.location.hostname === 'www.viladajuda.com.br'
  */
 async function fetchAPI(endpoint, options = {}) {
     // Rotas que devem usar API PHP diretamente (não tentar Vercel)
-    const rotasPHP = ['/reservas/disponiveis', '/reservas/calcular-preco', '/consulta', '/consultas', '/disponibilidade'];
+    const rotasPHP = ['/reservas/disponiveis', '/reservas/calcular-preco', '/consulta', '/consultas', '/confirmacao-reserva', '/disponibilidade'];
     
     // Rotas que devem usar API Vercel (Node.js) - apenas se API_VERCEL_BASE_URL estiver configurado
     const rotasVercel = ['/auth', '/admin', '/hospedes', '/conteudos', '/tracking', '/bloqueios', '/lgpd'];
@@ -274,6 +274,16 @@ async function enviarConsultaDisponibilidade(dados) {
     });
 }
 
+/**
+ * Envia a etapa de confirmação da reserva
+ */
+async function enviarConfirmacaoReserva(dados) {
+    return fetchAPI('/confirmacao-reserva', {
+        method: 'POST',
+        body: JSON.stringify(dados)
+    });
+}
+
 // ==================== AUTENTICAÇÃO (para área admin futura) ====================
 
 /**
@@ -376,6 +386,7 @@ window.API = {
     
     // Consultas
     enviarConsultaDisponibilidade,
+    enviarConfirmacaoReserva,
     
     // Avaliações
     buscarAvaliacoesHomepage,
@@ -394,4 +405,3 @@ window.API = {
 
 console.log('✅ API Client carregado com sucesso!');
 console.log('📡 Backend URL:', API_BASE_URL);
-

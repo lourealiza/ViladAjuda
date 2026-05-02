@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17836356824"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'AW-17836356824');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Formulário de confirmação da reserva da Vila d'Ajuda para hóspedes que já avançaram no atendimento.">
+    <meta name="robots" content="noindex, nofollow">
+
+    <title>Confirmação da Reserva | Vila d'Ajuda</title>
+
+    <link rel="icon" type="image/png" href="images/Logo.png">
+    <link rel="apple-touch-icon" href="images/Logo.png">
+    <link rel="stylesheet" href="css/style.css?v=17">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="js/api.js"></script>
+</head>
+<body class="triagem-page confirmacao-page">
+    <header class="triagem-topbar">
+        <div class="container triagem-topbar-inner">
+            <a href="/" class="triagem-brand" aria-label="Voltar para a página inicial da Vila d'Ajuda">
+                <img src="images/Logo.png" alt="Logo Vila d'Ajuda" class="logo-img">
+                <span class="triagem-brand-text">
+                    <span class="triagem-brand-title">Vila d'Ajuda</span>
+                    <span class="triagem-brand-subtitle">Confirmação da reserva</span>
+                </span>
+            </a>
+            <a href="/" class="btn-secondary">Voltar ao site</a>
+        </div>
+    </header>
+
+    <main class="triagem-main">
+        <section>
+            <div class="container triagem-shell">
+                <div class="triagem-copy">
+                    <span class="triagem-badge">Etapa 2</span>
+                    <h1>Confirme os dados finais da sua hospedagem.</h1>
+                    <p>
+                        Esta etapa deve ser preenchida apenas quando a reserva já estiver avançada
+                        com a equipe da Vila d'Ajuda. Ela funciona bem inclusive para hóspedes que
+                        chegaram direto pelo WhatsApp.
+                    </p>
+
+                    <ul class="triagem-highlights">
+                        <li>
+                            <span class="triagem-highlight-icon">1</span>
+                            <div>
+                                <strong>Link para atendimento direto</strong>
+                                <p>Vocês podem enviar esta página por WhatsApp quando a pessoa já estiver pronta para confirmar.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="triagem-highlight-icon">2</span>
+                            <div>
+                                <strong>Sem depender da Etapa 1</strong>
+                                <p>Quem começou a conversa fora do site também consegue concluir por aqui.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="triagem-highlight-icon">3</span>
+                            <div>
+                                <strong>Coleta só o fechamento</strong>
+                                <p>Nome completo, CPF, pagamento, dados complementares e ciência das regras.</p>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="triagem-contact-card">
+                        <strong>Antes de enviar</strong>
+                        <p>Se alguma regra de hospedagem ainda não foi passada, fale com a equipe antes de concluir esta etapa.</p>
+                        <p>Atendimento direto pelo <a href="https://wa.me/5527988513096" target="_blank" rel="noopener noreferrer">WhatsApp</a>.</p>
+                    </div>
+                </div>
+
+                <div class="triagem-card">
+                    <div class="triagem-card-header">
+                        <h2>Confirmação da reserva</h2>
+                        <p>Preencha os dados finais somente se a equipe já sinalizou o avanço da sua reserva.</p>
+                    </div>
+
+                    <div id="confirmacaoStatus" class="triagem-status" role="status" aria-live="polite"></div>
+
+                    <form id="formConfirmacaoReserva" class="triagem-form">
+                        <div class="triagem-grid confirmacao-grid">
+                            <div class="form-group full">
+                                <label for="confirmacaoNomeCompleto">Nome completo</label>
+                                <input id="confirmacaoNomeCompleto" name="nome_completo" type="text" autocomplete="name" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirmacaoCpf">CPF</label>
+                                <input id="confirmacaoCpf" name="cpf" type="text" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirmacaoPlaca">Placa do carro, se fizer sentido</label>
+                                <input id="confirmacaoPlaca" name="placa_carro" type="text" autocomplete="off" placeholder="ABC1D23">
+                            </div>
+
+                            <div class="form-group full">
+                                <label for="confirmacaoPagamento">Dados de pagamento</label>
+                                <textarea id="confirmacaoPagamento" name="dados_pagamento" placeholder="Ex.: PIX enviado, valor pago, titular, comprovante ou observações combinadas com a equipe." required></textarea>
+                            </div>
+
+                            <div class="form-group full">
+                                <label for="confirmacaoEndereco">Endereço, se necessário</label>
+                                <textarea id="confirmacaoEndereco" name="endereco" placeholder="Preencha apenas se a equipe tiver solicitado."></textarea>
+                            </div>
+
+                            <div class="form-group full">
+                                <div class="confirmacao-disclaimer">
+                                    <strong>Atenção:</strong> não informe número completo de cartão, CVV, senha ou qualquer dado sensível que não tenha sido solicitado pela equipe.
+                                </div>
+                            </div>
+
+                            <div class="form-group full">
+                                <div class="confirmacao-rules">
+                                    <strong>Termo de ciência</strong><br>
+                                    Ao marcar abaixo, você declara que recebeu e está ciente das regras da hospedagem informadas pela equipe da Vila d'Ajuda.
+                                </div>
+                            </div>
+
+                            <div class="form-group full">
+                                <div class="checkbox-field">
+                                    <input id="confirmacaoAceite" name="aceite_regras" type="checkbox" required>
+                                    <label for="confirmacaoAceite">Li e estou ciente das regras da hospedagem.</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="confirmacao-meta">
+                            Se você iniciou o atendimento pelo WhatsApp, basta enviar este formulário e avisar a equipe que a confirmação já foi preenchida.
+                        </p>
+
+                        <div class="triagem-actions">
+                            <button type="submit" class="btn-primary triagem-submit">Enviar confirmação</button>
+                            <a href="https://wa.me/5527988513096" target="_blank" rel="noopener noreferrer" class="btn-secondary">Voltar ao WhatsApp</a>
+                        </div>
+                    </form>
+
+                    <div id="confirmacaoSuccess" class="triagem-success" hidden>
+                        <h3>Confirmação recebida.</h3>
+                        <p>
+                            A equipe da Vila d'Ajuda recebeu os dados finais da reserva.
+                            Se o atendimento estiver acontecendo pelo WhatsApp, envie uma mensagem avisando que este formulário já foi concluído.
+                        </p>
+                        <div class="triagem-success-actions">
+                            <a href="https://wa.me/5527988513096" target="_blank" rel="noopener noreferrer" class="btn-primary">Abrir WhatsApp</a>
+                            <a href="/" class="btn-secondary">Voltar ao site</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer triagem-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Vila d'Ajuda</h3>
+                    <p>Seu refúgio em Arraial d'Ajuda</p>
+                    <p>Natureza, aconchego e praticidade</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Contato</h4>
+                    <p>Rua das Mangabeiras, 78</p>
+                    <p>Arraial d'Ajuda - BA</p>
+                    <p>Check-in: Renata</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Atendimento</h4>
+                    <ul>
+                        <li><a href="https://wa.me/5527988513096" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
+                        <li><a href="/triagem">Etapa 1</a></li>
+                        <li><a href="/confirmacao-reserva">Etapa 2</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Vila d'Ajuda. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/5527988513096"
+       target="_blank"
+       rel="noopener noreferrer"
+       class="whatsapp-button"
+       aria-label="Fale conosco no WhatsApp">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" fill="currentColor"/>
+        </svg>
+        <span class="whatsapp-tooltip">Fale conosco</span>
+    </a>
+
+    <script src="js/confirmacao-reserva.js?v=1"></script>
+</body>
+</html>

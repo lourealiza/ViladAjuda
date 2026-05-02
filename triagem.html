@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17836356824"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'AW-17836356824');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Envie sua triagem inicial de hospedagem para a Vila d'Ajuda e receba retorno da nossa equipe com os próximos passos.">
+    <meta name="robots" content="index, follow">
+
+    <title>Triagem de Hospedagem | Vila d'Ajuda</title>
+
+    <link rel="icon" type="image/png" href="images/Logo.png">
+    <link rel="apple-touch-icon" href="images/Logo.png">
+    <link rel="stylesheet" href="css/style.css?v=16">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="js/api.js"></script>
+</head>
+<body class="triagem-page">
+    <header class="triagem-topbar">
+        <div class="container triagem-topbar-inner">
+            <a href="/" class="triagem-brand" aria-label="Voltar para a página inicial da Vila d'Ajuda">
+                <img src="images/Logo.png" alt="Logo Vila d'Ajuda" class="logo-img">
+                <span class="triagem-brand-text">
+                    <span class="triagem-brand-title">Vila d'Ajuda</span>
+                    <span class="triagem-brand-subtitle">Triagem inicial de hospedagem</span>
+                </span>
+            </a>
+            <a href="/" class="btn-secondary">Voltar ao site</a>
+        </div>
+    </header>
+
+    <main class="triagem-main">
+        <section>
+            <div class="container triagem-shell">
+                <div class="triagem-copy">
+                    <span class="triagem-badge">Etapa 1</span>
+                    <h1>Conte um pouco sobre a sua viagem.</h1>
+                    <p>
+                        Este formulário curto ajuda nossa equipe a fazer a triagem inicial e retornar
+                        mais rápido com disponibilidade, encaixe e próximos passos.
+                    </p>
+
+                    <ul class="triagem-highlights">
+                        <li>
+                            <span class="triagem-highlight-icon">1</span>
+                            <div>
+                                <strong>Leva menos de 2 minutos</strong>
+                                <p>Pedimos só os dados essenciais para avaliar a solicitação.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="triagem-highlight-icon">2</span>
+                            <div>
+                                <strong>Retorno pelo WhatsApp ou e-mail</strong>
+                                <p>Assim que a triagem entra, a equipe assume o contato direto.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="triagem-highlight-icon">3</span>
+                            <div>
+                                <strong>Sem misturar com o modal do site</strong>
+                                <p>Essa página é dedicada à pré-reserva e fica no domínio da Vila d'Ajuda.</p>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="triagem-contact-card">
+                        <strong>Contato direto</strong>
+                        <p>Rua das Mangabeiras, 78, Arraial d'Ajuda - BA</p>
+                        <p>Se preferir, fale com a equipe pelo <a href="https://wa.me/5527988513096" target="_blank" rel="noopener noreferrer">WhatsApp</a>.</p>
+                    </div>
+                </div>
+
+                <div class="triagem-card">
+                    <div class="triagem-card-header">
+                        <h2>Formulário curto</h2>
+                        <p>Preencha os dados abaixo para a triagem inicial.</p>
+                    </div>
+
+                    <div id="triagemStatus" class="triagem-status" role="status" aria-live="polite"></div>
+
+                    <form id="formTriagem" class="triagem-form">
+                        <div class="triagem-grid">
+                            <div class="form-group full">
+                                <label for="triagemNome">Nome</label>
+                                <input id="triagemNome" name="nome" type="text" autocomplete="name" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="triagemWhatsapp">WhatsApp</label>
+                                <input id="triagemWhatsapp" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="triagemEmail">E-mail</label>
+                                <input id="triagemEmail" name="email" type="email" autocomplete="email" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="triagemCheckin">Data de entrada</label>
+                                <input id="triagemCheckin" name="checkin" type="date" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="triagemCheckout">Data de saída</label>
+                                <input id="triagemCheckout" name="checkout" type="date" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="triagemHospedes">Número de hóspedes</label>
+                                <input id="triagemHospedes" name="hospedes" type="number" min="1" max="12" step="1" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="triagemCriancas">Crianças?</label>
+                                <select id="triagemCriancas" name="criancas" required>
+                                    <option value="Não" selected>Não</option>
+                                    <option value="Sim">Sim</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group full">
+                                <label for="triagemOrigem">Cidade/estado de origem</label>
+                                <input id="triagemOrigem" name="origem" type="text" autocomplete="address-level2" placeholder="Ex.: Belo Horizonte/MG" required>
+                            </div>
+
+                            <div class="form-group full">
+                                <label for="triagemObservacao">Observação livre</label>
+                                <textarea id="triagemObservacao" name="observacao" placeholder="Se quiser, conte o motivo da viagem, flexibilidade de datas ou qualquer detalhe importante."></textarea>
+                            </div>
+                        </div>
+
+                        <p class="triagem-note">
+                            Ao enviar, sua solicitação entra na triagem inicial. A confirmação da hospedagem
+                            acontece no contato seguinte com a equipe.
+                        </p>
+
+                        <div class="triagem-actions">
+                            <button type="submit" class="btn-primary triagem-submit">Enviar triagem</button>
+                            <a href="https://wa.me/5527988513096" target="_blank" rel="noopener noreferrer" class="btn-secondary">Falar no WhatsApp</a>
+                        </div>
+                    </form>
+
+                    <div id="triagemSuccess" class="triagem-success" hidden>
+                        <h3>Triagem recebida.</h3>
+                        <p>
+                            Nossa equipe vai revisar os dados e retornar pelo WhatsApp ou e-mail informado
+                            para seguir com a hospedagem.
+                        </p>
+                        <div class="triagem-success-actions">
+                            <a href="/" class="btn-primary">Voltar ao site</a>
+                            <a href="https://wa.me/5527988513096" target="_blank" rel="noopener noreferrer" class="btn-secondary">Abrir WhatsApp</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer triagem-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Vila d'Ajuda</h3>
+                    <p>Seu refúgio em Arraial d'Ajuda</p>
+                    <p>Natureza, aconchego e praticidade</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Contato</h4>
+                    <p>Rua das Mangabeiras, 78</p>
+                    <p>Arraial d'Ajuda - BA</p>
+                    <p>Check-in: Renata</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="/#sobre">Sobre</a></li>
+                        <li><a href="/#chales">Chalés</a></li>
+                        <li><a href="/#galeria">Galeria</a></li>
+                        <li><a href="/#localizacao">Localização</a></li>
+                        <li><a href="/#faq">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Vila d'Ajuda. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/5527988513096"
+       target="_blank"
+       rel="noopener noreferrer"
+       class="whatsapp-button"
+       aria-label="Fale conosco no WhatsApp">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" fill="currentColor"/>
+        </svg>
+        <span class="whatsapp-tooltip">Fale conosco</span>
+    </a>
+
+    <script src="js/triagem.js?v=1"></script>
+</body>
+</html>

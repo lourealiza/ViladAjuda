@@ -43,34 +43,188 @@ define('TEMPORADAS', [
         'preco_medio' => 540
     ],
     
-    // Abril – 15/06 - Média/Baixa
+    // 01/04 – 02/04 - Baixa/Média
     [
-        'nome' => 'Média/Baixa Temporada',
+        'nome' => 'Antes da Semana Santa',
         'tipo' => 'media_baixa',
-        'data_inicio' => '04-01', // 1º de abril
-        'data_fim' => '06-15', // 15 de junho
+        'data_inicio' => '04-01',
+        'data_fim' => '04-02',
         'preco_min' => 360,
         'preco_max' => 450,
         'preco_medio' => 405
     ],
     
-    // 16/06 – 31/07 - Alta (férias julho)
+    // Semana Santa 2026 (03/04 → 07/04)
     [
-        'nome' => 'Férias de Julho',
+        'nome' => 'Semana Santa 2026',
         'tipo' => 'alta',
-        'data_inicio' => '06-16', // 16 de junho
-        'data_fim' => '07-31', // 31 de julho
-        'preco_min' => 495,
-        'preco_max' => 585,
-        'preco_medio' => 540
+        'data_inicio' => '04-03',
+        'data_fim' => '04-07',
+        'preco_min' => 421,
+        'preco_max' => 562,
+        'preco_medio' => 484
     ],
     
-    // 01/08 – 31/10 - Baixa
+    // 08/04 – 16/04 - Média/Baixa
+    [
+        'nome' => 'Após Semana Santa',
+        'tipo' => 'media_baixa',
+        'data_inicio' => '04-08',
+        'data_fim' => '04-16',
+        'preco_min' => 360,
+        'preco_max' => 450,
+        'preco_medio' => 405
+    ],
+    
+    // Tiradentes 2026 (17/04 → 21/04)
+    [
+        'nome' => 'Tiradentes 2026',
+        'tipo' => 'media',
+        'data_inicio' => '04-17',
+        'data_fim' => '04-21',
+        'preco_min' => 328,
+        'preco_max' => 437,
+        'preco_medio' => 376
+    ],
+    
+    // 22/04 – 30/04 - Média/Baixa
+    [
+        'nome' => 'Após Tiradentes',
+        'tipo' => 'media_baixa',
+        'data_inicio' => '04-22',
+        'data_fim' => '04-30',
+        'preco_min' => 360,
+        'preco_max' => 450,
+        'preco_medio' => 405
+    ],
+    
+    // Dia do Trabalhador 2026 (01/05 → 04/05)
+    [
+        'nome' => 'Dia do Trabalhador 2026',
+        'tipo' => 'media',
+        'data_inicio' => '05-01',
+        'data_fim' => '05-04',
+        'preco_min' => 316,
+        'preco_max' => 421,
+        'preco_medio' => 363
+    ],
+    
+    // 05/05 – 03/06 - Média/Baixa
+    [
+        'nome' => 'Meia Temporada Maio',
+        'tipo' => 'media_baixa',
+        'data_inicio' => '05-05',
+        'data_fim' => '06-03',
+        'preco_min' => 360,
+        'preco_max' => 450,
+        'preco_medio' => 405
+    ],
+    
+    // Corpus Christi 2026 (04/06 → 07/06)
+    [
+        'nome' => 'Corpus Christi 2026',
+        'tipo' => 'media',
+        'data_inicio' => '06-04',
+        'data_fim' => '06-07',
+        'preco_min' => 316,
+        'preco_max' => 421,
+        'preco_medio' => 363
+    ],
+    
+    // 08/06 – 22/06 - Baixa/Média
+    [
+        'nome' => 'Meia Temporada Junho I',
+        'tipo' => 'media_baixa',
+        'data_inicio' => '06-08',
+        'data_fim' => '06-22',
+        'preco_min' => 360,
+        'preco_max' => 450,
+        'preco_medio' => 405
+    ],
+    
+    // São João 2026 (23/06 → 26/06)
+    [
+        'nome' => 'São João 2026',
+        'tipo' => 'media',
+        'data_inicio' => '06-23',
+        'data_fim' => '06-26',
+        'preco_min' => 292,
+        'preco_max' => 390,
+        'preco_medio' => 336
+    ],
+    
+    // 27/06 → 30/06 - Meia Temporada
+    [
+        'nome' => 'Preparação Férias Julho',
+        'tipo' => 'media_baixa',
+        'data_inicio' => '06-27',
+        'data_fim' => '06-30',
+        'preco_min' => 360,
+        'preco_max' => 450,
+        'preco_medio' => 405
+    ],
+    
+    // Independência da Bahia 2026 (01/07 → 04/07)
+    [
+        'nome' => 'Independência da Bahia 2026',
+        'tipo' => 'media',
+        'data_inicio' => '07-01',
+        'data_fim' => '07-04',
+        'preco_min' => 339,
+        'preco_max' => 452,
+        'preco_medio' => 389
+    ],
+    
+    // 05/07 – 12/07 - Meia Temporada
+    [
+        'nome' => 'Antes Férias de Julho',
+        'tipo' => 'media_baixa',
+        'data_inicio' => '07-05',
+        'data_fim' => '07-12',
+        'preco_min' => 360,
+        'preco_max' => 450,
+        'preco_medio' => 405
+    ],
+    
+    // Julho 2026 (férias) (13/07 → 20/07)
+    [
+        'nome' => 'Férias de Julho 2026',
+        'tipo' => 'alta',
+        'data_inicio' => '07-13',
+        'data_fim' => '07-20',
+        'preco_min' => 316,
+        'preco_max' => 404,
+        'preco_medio' => 357
+    ],
+    
+    // 21/07 – 09/08 - Meia Temporada/Baixa
+    [
+        'nome' => 'Meia Temporada Julho-Agosto',
+        'tipo' => 'media_baixa',
+        'data_inicio' => '07-21',
+        'data_fim' => '08-09',
+        'preco_min' => 360,
+        'preco_max' => 450,
+        'preco_medio' => 405
+    ],
+    
+    // Agosto 2026 (baixa) (10/08 → 17/08)
+    [
+        'nome' => 'Agosto 2026 (Baixa Temporada)',
+        'tipo' => 'baixa',
+        'data_inicio' => '08-10',
+        'data_fim' => '08-17',
+        'preco_min' => 234,
+        'preco_max' => 299,
+        'preco_medio' => 264
+    ],
+    
+    // 18/08 – 31/10 - Baixa
     [
         'nome' => 'Baixa Temporada',
         'tipo' => 'baixa',
-        'data_inicio' => '08-01', // 1º de agosto
-        'data_fim' => '10-31', // 31 de outubro
+        'data_inicio' => '08-18',
+        'data_fim' => '10-31',
         'preco_min' => 342,
         'preco_max' => 432,
         'preco_medio' => 387

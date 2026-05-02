@@ -21,7 +21,12 @@ function gerarEmailConsultaDisponibilidade($dados) {
     $nomeHospede = $dados['nome_hospede'] ?? '';
     $emailHospede = $dados['email_hospede'] ?? '';
     $telefoneHospede = $dados['telefone_hospede'] ?? '';
+    $cidadeHospede = $dados['cidade_hospede'] ?? '';
     $mensagem = $dados['mensagem'] ?? '';
+    $numeroHospedesTotal = $dados['numero_hospedes_total'] ?? null;
+    $temCriancas = $dados['tem_criancas'] ?? '';
+    $observacaoLivre = $dados['observacao_livre'] ?? '';
+    $origemFormulario = $dados['origem_formulario'] ?? '';
     $chaleId = $dados['chale_id'] ?? null;
     
     // Calcular noites
@@ -88,6 +93,28 @@ HTML;
                                         </td>
                                     </tr>
 HTML;
+
+        if ($cidadeHospede) {
+            $cidadeHospedeEscapada = htmlspecialchars($cidadeHospede);
+            $html .= <<<HTML
+                                    <tr>
+                                        <td style="padding: 8px 0; color: #2c2c2c;">
+                                            <strong>Cidade/estado de origem:</strong> $cidadeHospedeEscapada
+                                        </td>
+                                    </tr>
+HTML;
+        }
+
+        if ($origemFormulario) {
+            $origemFormularioEscapada = htmlspecialchars($origemFormulario);
+            $html .= <<<HTML
+                                    <tr>
+                                        <td style="padding: 8px 0; color: #2c2c2c;">
+                                            <strong>Origem do formulario:</strong> $origemFormularioEscapada
+                                        </td>
+                                    </tr>
+HTML;
+        }
         
         if ($chaleId) {
             $html .= <<<HTML
@@ -99,8 +126,18 @@ HTML;
 HTML;
         }
         
-        if ($mensagem) {
-            $mensagemEscapada = htmlspecialchars($mensagem);
+        if ($observacaoLivre) {
+            $observacaoLivreEscapada = htmlspecialchars($observacaoLivre);
+            $html .= <<<HTML
+                                    <tr>
+                                        <td style="padding: 8px 0; color: #2c2c2c;">
+                                            <strong>Observacao livre:</strong><br>
+                                            <div style="margin-top: 5px; padding: 10px; background-color: #ffffff; border-radius: 5px; font-style: italic;">$observacaoLivreEscapada</div>
+                                        </td>
+                                    </tr>
+HTML;
+        } elseif ($mensagem) {
+            $mensagemEscapada = nl2br(htmlspecialchars($mensagem));
             $html .= <<<HTML
                                     <tr>
                                         <td style="padding: 8px 0; color: #2c2c2c;">
@@ -147,12 +184,21 @@ HTML;
                                 <table width="100%" cellpadding="0" cellspacing="0">
                                     <tr>
                                         <td style="padding: 8px 0; color: #2c2c2c;">
-                                            <strong>Adultos:</strong> $numAdultos
+                                            <strong>Numero de hospedes:</strong> {$numeroHospedesTotal ?: $numAdultos}
                                         </td>
                                     </tr>
 HTML;
     
-    if ($numCriancas > 0) {
+    if ($temCriancas !== '') {
+        $temCriancasEscapado = htmlspecialchars($temCriancas);
+        $html .= <<<HTML
+                                    <tr>
+                                        <td style="padding: 8px 0; color: #2c2c2c;">
+                                            <strong>Criancas:</strong> $temCriancasEscapado
+                                        </td>
+                                    </tr>
+HTML;
+    } elseif ($numCriancas > 0) {
         $html .= <<<HTML
                                     <tr>
                                         <td style="padding: 8px 0; color: #2c2c2c;">
@@ -307,4 +353,3 @@ HTML;
     return $html;
 }
 ?>
-
