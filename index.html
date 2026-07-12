@@ -29,7 +29,7 @@
     <meta property="og:title" content="Vila d'Ajuda - Chalés em Arraial d'Ajuda">
     <meta property="og:description"
         content="Seu refúgio em Arraial d'Ajuda: natureza, aconchego e praticidade a 3 quadras do centro">
-    <meta property="og:image" content="https://lourealiza.github.io/ViladAjuda/images/Jardim%20-%20Copia.JPG">
+    <meta property="og:image" content="https://lourealiza.github.io/ViladAjuda/images/redesign/hero-patio-varanda.png">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
@@ -37,22 +37,20 @@
     <meta property="twitter:title" content="Vila d'Ajuda - Chalés em Arraial d'Ajuda">
     <meta property="twitter:description"
         content="Seu refúgio em Arraial d'Ajuda: natureza, aconchego e praticidade a 3 quadras do centro">
-    <meta property="twitter:image" content="https://lourealiza.github.io/ViladAjuda/images/Jardim%20-%20Copia.JPG">
+    <meta property="twitter:image" content="https://lourealiza.github.io/ViladAjuda/images/redesign/hero-patio-varanda.png">
 
     <title>Vila d'Ajuda - Chalés em Arraial d'Ajuda | Seu Refúgio na Natureza</title>
 
     <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="images/redesign/logo-emblem.svg">
     <link rel="icon" type="image/png" href="images/Logo.png">
     <link rel="apple-touch-icon" href="images/Logo.png">
 
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/style.css?v=15">
+    <!-- Stylesheets (2026 "Jardim Botânico" redesign) -->
+    <link rel="stylesheet" href="css/redesign.css?v=1">
     <link rel="stylesheet" href="css/ollama-chat.css?v=1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap"
-        rel="stylesheet">
 
     <!-- EmailJS -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
@@ -68,7 +66,7 @@
             <div class="black-friday-content">
                 <div class="black-friday-text">
                     <div class="black-friday-left">
-                        <span class="black-friday-label">⚡ BLACK FRIDAY ⚡</span>
+                        <span class="black-friday-label">BLACK FRIDAY</span>
                         <span class="black-friday-periodo">Apenas de 21 à 28 de Novembro</span>
                     </div>
                     <div class="black-friday-text-main">
@@ -76,7 +74,7 @@
                         <span class="black-friday-message">Reserve agora e garanta seu desconto especial!</span>
                     </div>
                 </div>
-                <a href="/triagem" class="btn-black-friday">Reservar com Desconto</a>
+                <a href="#reserva" class="btn-black-friday">Reservar com Desconto</a>
             </div>
         </div>
     </div>
@@ -86,52 +84,73 @@
         <nav class="navbar">
             <div class="container">
                 <div class="nav-wrapper">
-                    <div class="logo">
-                        <img src="images/Logo.png" alt="Vila d'Ajuda Logo" class="logo-img">
-                    </div>
+                    <a href="#home" class="logo" aria-label="Vila d'Ajuda — início">
+                        <span class="brand-lockup">
+                            <svg class="brand-emblem" viewBox="0 0 120 120" aria-hidden="true">
+                                <circle cx="60" cy="50" r="16" fill="var(--terracota)"></circle>
+                                <g fill="none" stroke="var(--verde-primario)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M50 96 Q40 74 31 57"></path>
+                                    <path d="M31 57 Q17 51 8 55"></path>
+                                    <path d="M31 57 Q19 58 11 66"></path>
+                                    <path d="M31 57 Q23 44 21 33"></path>
+                                    <path d="M31 57 Q36 45 45 41"></path>
+                                    <path d="M70 96 Q80 74 89 57"></path>
+                                    <path d="M89 57 Q103 51 112 55"></path>
+                                    <path d="M89 57 Q101 58 109 66"></path>
+                                    <path d="M89 57 Q97 44 99 33"></path>
+                                    <path d="M89 57 Q84 45 75 41"></path>
+                                </g>
+                                <path d="M23 97h74" fill="none" stroke="var(--limao)" stroke-width="2.6" stroke-linecap="round"></path>
+                            </svg>
+                            <span class="brand-wordmark">
+                                <span class="brand-name">Vila d'Ajuda</span>
+                                <span class="brand-sub">ARRAIAL D'AJUDA · BAHIA</span>
+                            </span>
+                        </span>
+                    </a>
                     <button class="menu-toggle" aria-label="Menu">
                         <span></span>
                         <span></span>
                         <span></span>
                     </button>
                     <ul class="nav-menu">
-                        <li><a href="#home">Início</a></li>
-                        <li><a href="#sobre">Sobre</a></li>
                         <li><a href="#chales">Chalés</a></li>
                         <li><a href="#galeria">Galeria</a></li>
+                        <li><a href="#avaliacoes">Avaliações</a></li>
                         <li><a href="#localizacao">Localização</a></li>
                         <li><a href="#faq">FAQ</a></li>
-                        <li><a href="/triagem" class="btn-reserva">Reservar</a></li>
+                        <li><a href="#reserva" class="btn-reserva">Reservar</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
 
-    <!-- Hero Section -->
+    <!-- ===================== HERO · Editorial (v1) ===================== -->
     <section id="home" class="hero">
-        <div class="hero-slider">
-            <div class="hero-slide active" style="background-image: url('images/hero-patio-varanda.png');">
-                <div class="hero-content">
-                    <h2 class="hero-title">Seu refúgio em<br>Arraial d'Ajuda</h2>
-                    <p class="hero-subtitle">Natureza, aconchego e praticidade a 3 quadras do centro</p>
-                    <p class="hero-description">Varandas com rede, chalés completos e o canto dos pássaros como trilha
-                        sonora</p>
-                    <a href="/triagem" class="btn-primary">Reservar Agora</a>
+        <div class="hero-overlay"></div>
+        <div class="hero-inner">
+            <div class="hero-content">
+                <div class="hero-eyebrow">Arraial d'Ajuda · Bahia</div>
+                <h1 class="hero-title">Seu refúgio em<br>Arraial d'Ajuda</h1>
+                <p class="hero-subtitle">Natureza, aconchego e praticidade a 3 quadras do centro.</p>
+                <p class="hero-description">Varandas com rede, chalés completos e o canto dos pássaros como trilha sonora.</p>
+                <div class="hero-actions">
+                    <a href="#reserva" class="btn btn--primary btn--lg">Reservar agora</a>
+                    <a href="#chales" class="btn btn--ghost-light btn--lg">Ver chalés</a>
                 </div>
             </div>
         </div>
-        <div class="hero-overlay"></div>
     </section>
 
-    <!-- Reserva Rápida -->
+    <!-- ===================== Verificar disponibilidade ===================== -->
     <section class="reserva-rapida">
         <div class="container">
             <div class="reserva-box">
-                <h3>Verificar Disponibilidade</h3>
+                <h3>Verificar disponibilidade</h3>
                 <form class="form-reserva" id="formReserva">
                     <div class="form-group form-group-date">
-                        <label>Data de Entrada</label>
+                        <label>Entrada</label>
                         <div class="date-input-wrapper">
                             <input type="text" name="checkin" id="checkinInput" class="date-input"
                                 placeholder="Insira as datas" readonly required>
@@ -139,7 +158,7 @@
                         </div>
                     </div>
                     <div class="form-group form-group-date">
-                        <label>Data de Saída</label>
+                        <label>Saída</label>
                         <div class="date-input-wrapper">
                             <input type="text" name="checkout" id="checkoutInput" class="date-input"
                                 placeholder="Insira as datas" readonly required>
@@ -155,7 +174,7 @@
                             <option value="4">4</option>
                         </select>
                     </div>
-                    <div class="form-group form-group-with-button">
+                    <div class="form-group">
                         <label>Crianças</label>
                         <select name="criancas">
                             <option value="0">0</option>
@@ -166,14 +185,14 @@
                     </div>
                     <div class="form-group form-group-button">
                         <label>&nbsp;</label>
-                        <button type="submit" class="btn-check">Verificar Disponibilidade</button>
+                        <button type="submit" class="btn-check">Verificar</button>
                     </div>
                 </form>
 
                 <!-- Preço Estimado -->
                 <div id="precoEstimado" class="preco-estimado" style="display: none;">
                     <div class="preco-estimado-content">
-                        <span class="preco-label">💰 Preço Estimado:</span>
+                        <span class="preco-label">Preço estimado</span>
                         <span class="preco-valor" id="precoValor">-</span>
                         <span class="preco-detalhes" id="precoDetalhes"></span>
                     </div>
@@ -205,41 +224,49 @@
         </div>
     </section>
 
-    <!-- Sobre -->
+    <!-- ===================== Sobre a vila ===================== -->
     <section id="sobre" class="sobre">
         <div class="container">
             <div class="section-header">
-                <h2>Sobre a Vila d'Ajuda</h2>
-                <p class="section-subtitle">Experiência íntima em meio à natureza</p>
+                <div class="section-eyebrow">Sobre a vila</div>
+                <h2>Experiência íntima em meio à natureza</h2>
             </div>
             <div class="sobre-content">
                 <div class="sobre-text">
                     <p>Chalés individuais com quarto, sala, cozinha equipada, banheiro e varanda espaçosa. Wi-Fi,
                         ar-condicionado e muito verde ao redor.</p>
-                    <p>Localizados a apenas 5 minutos do centro e 10 minutos da praia, com fácil acesso a balsa, vans e
-                        ônibus para Trancoso e Caraíva.</p>
-                    <p>Uma experiência íntima: apenas 4 chalés em uma vila charmosa. Silêncio e segurança de rua
-                        tranquila para estacionar. Hóspedes destacam tranquilidade e o canto dos passarinhos.</p>
-                    <a href="#chales" class="btn-secondary">Conheça Nossos Chalés</a>
+                    <p>A 5 minutos do centro e 10 da praia, com fácil acesso a balsa, vans e ônibus para Trancoso e
+                        Caraíva.</p>
+                    <p>Apenas 4 chalés em uma vila charmosa — silêncio e a segurança de uma rua tranquila para
+                        estacionar.</p>
+                    <a href="#chales" class="btn btn--secondary">Conheça nossos chalés</a>
                 </div>
                 <div class="sobre-features">
                     <div class="feature-item">
-                        <div class="feature-icon">🌿</div>
-                        <h4>Natureza ao Redor</h4>
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20c0-9 7-16 16-16 0 9-7 16-16 16Z"></path><path d="M4 20C8 14 12 11 18 9"></path></svg>
+                        </div>
+                        <h4>Natureza ao redor</h4>
                         <p>Muito verde e pássaros</p>
                     </div>
                     <div class="feature-item">
-                        <div class="feature-icon">🏠</div>
-                        <h4>Chalés Completos</h4>
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"></path><path d="M5 10v10h14V10"></path><path d="M10 20v-6h4v6"></path></svg>
+                        </div>
+                        <h4>Chalés completos</h4>
                         <p>Quarto, sala, cozinha e varanda</p>
                     </div>
                     <div class="feature-item">
-                        <div class="feature-icon">📍</div>
-                        <h4>Localização Privilegiada</h4>
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12Z"></path><circle cx="12" cy="10" r="2.6"></circle></svg>
+                        </div>
+                        <h4>Localização privilegiada</h4>
                         <p>3 quadras do centro</p>
                     </div>
                     <div class="feature-item">
-                        <div class="feature-icon">🔒</div>
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3Z"></path><path d="M9 12l2 2 4-4"></path></svg>
+                        </div>
                         <h4>Segurança</h4>
                         <p>Rua tranquila e segura</p>
                     </div>
@@ -248,317 +275,235 @@
         </div>
     </section>
 
-    <!-- Avaliações Google -->
+    <!-- ===================== Nossos chalés ===================== -->
+    <section id="chales" class="chales">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-eyebrow">Hospedagem</div>
+                <h2>Nossos chalés</h2>
+                <p class="section-subtitle">Conforto e natureza em harmonia</p>
+            </div>
+            <div class="chales-grid">
+                <article class="chale-card">
+                    <div class="chale-image">
+                        <img src="images/redesign/chale-alvorada.png" alt="Alvorada Tropical - Vila d'Ajuda" loading="lazy">
+                    </div>
+                    <div class="chale-info">
+                        <h3>Alvorada Tropical</h3>
+                        <p>Chalé completo com varanda espaçosa, rede e vista para o jardim. Perfeito para casais.</p>
+                        <ul class="chale-amenities">
+                            <li><span class="amenity-check"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"></path></svg></span> Quarto com ar-condicionado</li>
+                            <li><span class="amenity-check"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"></path></svg></span> Sala de estar</li>
+                            <li><span class="amenity-check"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"></path></svg></span> Cozinha equipada</li>
+                            <li><span class="amenity-check"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"></path></svg></span> Varanda com rede</li>
+                            <li><span class="amenity-check"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"></path></svg></span> Wi-Fi gratuito</li>
+                        </ul>
+                        <div class="btn-chale-wrap"><a href="#reserva" class="btn-chale">Reservar</a></div>
+                    </div>
+                </article>
+                <article class="chale-card">
+                    <div class="chale-image">
+                        <img src="images/redesign/chale-vila-canto.jpg" alt="Vila do Canto - Vila d'Ajuda" loading="lazy">
+                    </div>
+                    <div class="chale-info">
+                        <h3>Vila do Canto</h3>
+                        <p>Chalé aconchegante cercado de verde, com varanda privativa e muito silêncio.</p>
+                        <ul class="chale-amenities">
+                            <li><span class="amenity-check"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"></path></svg></span> Quarto com ar-condicionado</li>
+                            <li><span class="amenity-check"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"></path></svg></span> Sala de estar</li>
+                            <li><span class="amenity-check"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"></path></svg></span> Cozinha equipada</li>
+                            <li><span class="amenity-check"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"></path></svg></span> Varanda com rede</li>
+                            <li><span class="amenity-check"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"></path></svg></span> Wi-Fi gratuito</li>
+                        </ul>
+                        <div class="btn-chale-wrap"><a href="#reserva" class="btn-chale">Reservar</a></div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== Galeria ===================== -->
+    <section id="galeria" class="galeria">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-eyebrow">Galeria</div>
+                <h2>Conheça a vila</h2>
+                <p class="section-subtitle">Toque nas fotos para ampliar</p>
+            </div>
+
+            <div class="galeria-carousel-container">
+                <div class="galeria-carousel" id="galeriaCarousel">
+                    <div class="galeria-slide" data-lightbox="galeria" data-title="Interior do chalé">
+                        <img src="images/redesign/interior.jpg" alt="Interior do chalé" loading="lazy">
+                        <div class="galeria-overlay"><span>Clique para ampliar</span></div>
+                    </div>
+                    <div class="galeria-slide" data-lightbox="galeria" data-title="Cozinha e sala">
+                        <img src="images/redesign/cozinha-sala.png" alt="Cozinha e sala" loading="lazy">
+                        <div class="galeria-overlay"><span>Clique para ampliar</span></div>
+                    </div>
+                    <div class="galeria-slide" data-lightbox="galeria" data-title="Banheiro">
+                        <img src="images/redesign/banheiro.jpg" alt="Banheiro completo" loading="lazy">
+                        <div class="galeria-overlay"><span>Clique para ampliar</span></div>
+                    </div>
+                    <div class="galeria-slide" data-lightbox="galeria" data-title="Quintal">
+                        <img src="images/redesign/quintal.png" alt="Quintal espaçoso" loading="lazy">
+                        <div class="galeria-overlay"><span>Clique para ampliar</span></div>
+                    </div>
+                    <div class="galeria-slide" data-lightbox="galeria" data-title="Jardim">
+                        <img src="images/redesign/jardim.jpg" alt="Jardim da vila" loading="lazy">
+                        <div class="galeria-overlay"><span>Clique para ampliar</span></div>
+                    </div>
+                    <div class="galeria-slide" data-lightbox="galeria" data-title="Natureza ao redor">
+                        <img src="images/redesign/natureza.jpg" alt="Natureza ao redor" loading="lazy">
+                        <div class="galeria-overlay"><span>Clique para ampliar</span></div>
+                    </div>
+                    <div class="galeria-slide" data-lightbox="galeria" data-title="Ambiente externo">
+                        <img src="images/redesign/externo.jpg" alt="Ambiente externo" loading="lazy">
+                        <div class="galeria-overlay"><span>Clique para ampliar</span></div>
+                    </div>
+                </div>
+
+                <button class="galeria-carousel-prev" aria-label="Imagem anterior">‹</button>
+                <button class="galeria-carousel-next" aria-label="Próxima imagem">›</button>
+
+                <div class="galeria-carousel-indicators" id="galeriaIndicators"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== Avaliações ===================== -->
     <section id="avaliacoes" class="avaliacoes">
         <div class="container">
             <div class="section-header">
+                <div class="section-eyebrow">Avaliações</div>
                 <h2>O que nossos hóspedes dizem</h2>
                 <p class="section-subtitle">Avaliações reais do Google Business</p>
             </div>
             <div class="avaliacoes-stats" id="avaliacoesStats">
-                <div class="stats-item">
-                    <div class="stats-rating" id="mediaRating">-</div>
-                    <div class="stats-total" id="totalAvaliacoes">- avaliações</div>
+                <div class="stats-rating" id="mediaRating">-</div>
+                <div class="estrelas" aria-hidden="true">
+                    <span class="estrela preenchida">★</span>
+                    <span class="estrela preenchida">★</span>
+                    <span class="estrela preenchida">★</span>
+                    <span class="estrela preenchida">★</span>
+                    <span class="estrela preenchida">★</span>
                 </div>
+                <div class="stats-total" id="totalAvaliacoes">- avaliações</div>
             </div>
             <div class="avaliacoes-grid" id="avaliacoesGrid">
-                <!-- Avaliações serão carregadas dinamicamente -->
                 <div class="avaliacao-loading">Carregando avaliações...</div>
             </div>
             <div class="avaliacoes-link">
                 <a href="https://www.google.com/search?q=vila+d%27ajuda+chal%C3%A9s&sca_esv=5a1ec5f7868eb06c#mpd=~4148871960927257298/customers/reviews"
-                    target="_blank" class="btn-secondary">
+                    target="_blank" rel="noopener" class="btn btn--ghost">
                     Ver todas as avaliações no Google
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- Chalés -->
-    <section id="chales" class="chales">
-        <div class="container">
-            <div class="section-header">
-                <h2>Nossos Chalés</h2>
-                <p class="section-subtitle">Conforto e natureza em harmonia</p>
-            </div>
-            <div class="chales-grid">
-                <div class="chale-card">
-                    <div class="chale-image">
-                        <img src="images/Chales 1(3).png" alt="Alvorada Tropical - Vila d'Ajuda" loading="lazy">
-                    </div>
-                    <div class="chale-info">
-                        <h3>Alvorada Tropical</h3>
-                        <p>Chalé completo com varanda espaçosa, rede e vista para o jardim. Perfeito para casais.</p>
-                        <ul class="chale-amenities">
-                            <li>✓ Quarto com ar-condicionado</li>
-                            <li>✓ Sala de estar</li>
-                            <li>✓ Cozinha equipada</li>
-                            <li>✓ Varanda com rede</li>
-                            <li>✓ Wi-Fi gratuito</li>
-                        </ul>
-                        <a href="/triagem" class="btn-chale">Reservar</a>
-                    </div>
-                </div>
-                <div class="chale-card">
-                    <div class="chale-image">
-                        <img src="images/33175620-1024x1024.jpg" alt="Vila do Canto - Vila d'Ajuda" loading="lazy">
-                    </div>
-                    <div class="chale-info">
-                        <h3>Vila do Canto</h3>
-                        <p>Chalé completo com varanda espaçosa, rede e vista para o jardim. Perfeito para casais.</p>
-                        <ul class="chale-amenities">
-                            <li>✓ Quarto com ar-condicionado</li>
-                            <li>✓ Sala de estar</li>
-                            <li>✓ Cozinha equipada</li>
-                            <li>✓ Varanda com rede</li>
-                            <li>✓ Wi-Fi gratuito</li>
-                        </ul>
-                        <a href="/triagem" class="btn-chale">Reservar</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Galeria -->
-    <section id="galeria" class="galeria">
-        <div class="container">
-            <div class="section-header">
-                <h2>Galeria "Antes do Pôr do Sol"</h2>
-                <p class="section-subtitle">Varandas, redes e jardim em meio à natureza</p>
-            </div>
-
-            <!-- Carrossel de Galeria -->
-            <div class="galeria-carousel-container">
-                <div class="galeria-carousel" id="galeriaCarousel">
-                    <div class="galeria-slide" data-lightbox="galeria" data-title="Jardim Natural">
-                        <img src="images/Jardim - Copia.JPG" alt="Jardim da Vila d'Ajuda" loading="lazy">
-                        <div class="galeria-overlay">
-                            <span>🔍 Clique para ampliar</span>
-                        </div>
-                    </div>
-                    <div class="galeria-slide" data-lightbox="galeria" data-title="Quintal Espaçoso">
-                        <img src="images/Quintal - Copia.png" alt="Quintal da Vila d'Ajuda" loading="lazy">
-                        <div class="galeria-overlay">
-                            <span>🔍 Clique para ampliar</span>
-                        </div>
-                    </div>
-                    <div class="galeria-slide" data-lightbox="galeria" data-title="Interior Aconchegante">
-                        <img src="images/Cozinha americana e sala.png" alt="Cozinha e Sala" loading="lazy">
-                        <div class="galeria-overlay">
-                            <span>🔍 Clique para ampliar</span>
-                        </div>
-                    </div>
-                    <div class="galeria-slide" data-lightbox="galeria" data-title="Banheiro Completo">
-                        <img src="images/Banheiro - Copia.jpg" alt="Banheiro" loading="lazy">
-                        <div class="galeria-overlay">
-                            <span>🔍 Clique para ampliar</span>
-                        </div>
-                    </div>
-                    <div class="galeria-slide" data-lightbox="galeria" data-title="Vista dos Chalés">
-                        <img src="images/33175620-1024x1024.jpg" alt="Vista dos Chalés" loading="lazy">
-                        <div class="galeria-overlay">
-                            <span>🔍 Clique para ampliar</span>
-                        </div>
-                    </div>
-                    <div class="galeria-slide" data-lightbox="galeria" data-title="Natureza ao Redor">
-                        <img src="images/48340042_267824703881146_1244187815890124800_n-1024x1024.jpg"
-                            alt="Natureza ao Redor" loading="lazy">
-                        <div class="galeria-overlay">
-                            <span>🔍 Clique para ampliar</span>
-                        </div>
-                    </div>
-                    <div class="galeria-slide" data-lightbox="galeria" data-title="Ambiente Externo">
-                        <img src="images/IMG-20230705-WA0415.jpg" alt="Ambiente Externo" loading="lazy">
-                        <div class="galeria-overlay">
-                            <span>🔍 Clique para ampliar</span>
-                        </div>
-                    </div>
-                    <div class="galeria-slide" data-lightbox="galeria" data-title="Espaços Internos">
-                        <img src="images/IMG-20230907-WA0063.jpg" alt="Espaços Internos" loading="lazy">
-                        <div class="galeria-overlay">
-                            <span>🔍 Clique para ampliar</span>
-                        </div>
-                    </div>
-                    <div class="galeria-slide" data-lightbox="galeria" data-title="Detalhes dos Chalés">
-                        <img src="images/IMG-20230907-WA0069.jpg" alt="Detalhes dos Chalés" loading="lazy">
-                        <div class="galeria-overlay">
-                            <span>🔍 Clique para ampliar</span>
-                        </div>
-                    </div>
-                    <div class="galeria-slide" data-lightbox="galeria" data-title="Varanda e Jardim">
-                        <img src="images/IMG_20230814_141853_677.webp" alt="Varanda e Jardim" loading="lazy">
-                        <div class="galeria-overlay">
-                            <span>🔍 Clique para ampliar</span>
-                        </div>
-                    </div>
-                    <div class="galeria-slide" data-lightbox="galeria" data-title="Ambiente Natural">
-                        <img src="images/IMG_20230814_141853_846.webp" alt="Ambiente Natural" loading="lazy">
-                        <div class="galeria-overlay">
-                            <span>🔍 Clique para ampliar</span>
-                        </div>
-                    </div>
-                    <div class="galeria-slide" data-lightbox="galeria" data-title="Espaços Externos">
-                        <img src="images/2.jpg" alt="Espaços Externos" loading="lazy">
-                        <div class="galeria-overlay">
-                            <span>🔍 Clique para ampliar</span>
-                        </div>
-                    </div>
-                    <div class="galeria-slide" data-lightbox="galeria" data-title="Detalhes Arquitetônicos">
-                        <img src="images/3-2.jpg" alt="Detalhes Arquitetônicos" loading="lazy">
-                        <div class="galeria-overlay">
-                            <span>🔍 Clique para ampliar</span>
-                        </div>
-                    </div>
-                    <div class="galeria-slide" data-lightbox="galeria" data-title="Ambiente Aconchegante">
-                        <img src="images/4-2.jpg" alt="Ambiente Aconchegante" loading="lazy">
-                        <div class="galeria-overlay">
-                            <span>🔍 Clique para ampliar</span>
-                        </div>
-                    </div>
-                    <div class="galeria-slide" data-lightbox="galeria" data-title="Espaços Verdes">
-                        <img src="images/6.jpg" alt="Espaços Verdes" loading="lazy">
-                        <div class="galeria-overlay">
-                            <span>🔍 Clique para ampliar</span>
-                        </div>
-                    </div>
-                    <div class="galeria-slide" data-lightbox="galeria" data-title="Interiores">
-                        <img src="images/7.jpg" alt="Interiores" loading="lazy">
-                        <div class="galeria-overlay">
-                            <span>🔍 Clique para ampliar</span>
-                        </div>
-                    </div>
-                    <div class="galeria-slide" data-lightbox="galeria" data-title="Exteriores">
-                        <img src="images/8.jpg" alt="Exteriores" loading="lazy">
-                        <div class="galeria-overlay">
-                            <span>🔍 Clique para ampliar</span>
-                        </div>
-                    </div>
-                    <div class="galeria-slide" data-lightbox="galeria" data-title="Ambiente Natural">
-                        <img src="images/9.jpg" alt="Ambiente Natural" loading="lazy">
-                        <div class="galeria-overlay">
-                            <span>🔍 Clique para ampliar</span>
-                        </div>
-                    </div>
-                    <div class="galeria-slide" data-lightbox="galeria" data-title="Espaços Comuns">
-                        <img src="images/10.jpg" alt="Espaços Comuns" loading="lazy">
-                        <div class="galeria-overlay">
-                            <span>🔍 Clique para ampliar</span>
-                        </div>
-                    </div>
-                    <div class="galeria-slide" data-lightbox="galeria" data-title="Detalhes">
-                        <img src="images/11.jpg" alt="Detalhes" loading="lazy">
-                        <div class="galeria-overlay">
-                            <span>🔍 Clique para ampliar</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Controles do Carrossel -->
-                <button class="galeria-carousel-prev" aria-label="Imagem anterior">‹</button>
-                <button class="galeria-carousel-next" aria-label="Próxima imagem">›</button>
-
-                <!-- Indicadores -->
-                <div class="galeria-carousel-indicators" id="galeriaIndicators"></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- O que tem por perto -->
+    <!-- ===================== O que tem por perto ===================== -->
     <section class="proximidades">
         <div class="container">
             <div class="section-header">
+                <div class="section-eyebrow">Localização</div>
                 <h2>O que tem por perto</h2>
                 <p class="section-subtitle">Tudo que você precisa está próximo</p>
             </div>
             <div class="proximidades-grid">
                 <div class="proximidade-item">
-                    <div class="proximidade-icon">🏖️</div>
+                    <div class="proximidade-icon"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 0 1 9 9H3a9 9 0 0 1 9-9Z"></path><path d="M12 3v0M12 12v7a2 2 0 0 0 4 0"></path></svg></div>
                     <h4>Praias</h4>
                     <p>10 minutos das principais praias de Arraial d'Ajuda</p>
                 </div>
                 <div class="proximidade-item">
-                    <div class="proximidade-icon">🛍️</div>
+                    <div class="proximidade-icon"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.3"></circle><circle cx="18" cy="20" r="1.3"></circle><path d="M2 3h3l2.4 12.2a1.5 1.5 0 0 0 1.5 1.3h8.2a1.5 1.5 0 0 0 1.5-1.2L21 7H6"></path></svg></div>
                     <h4>Centro</h4>
                     <p>3 quadras do centro comercial</p>
                 </div>
                 <div class="proximidade-item">
-                    <div class="proximidade-icon">🚢</div>
+                    <div class="proximidade-icon"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15h18l-2 5H5l-2-5Z"></path><path d="M6 15V7l6-3 6 3v8"></path><path d="M12 4v11"></path></svg></div>
                     <h4>Balsa</h4>
                     <p>Fácil acesso para Porto Seguro</p>
                 </div>
                 <div class="proximidade-item">
-                    <div class="proximidade-icon">🍽️</div>
+                    <div class="proximidade-icon"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3v8M4 3v4a2 2 0 0 0 4 0V3M6 11v10"></path><path d="M17 3c-2 0-3 2-3 5s1 4 3 4v9"></path></svg></div>
                     <h4>Restaurantes</h4>
                     <p>Pescadores e Mucugê por perto</p>
                 </div>
                 <div class="proximidade-item">
-                    <div class="proximidade-icon">🛒</div>
-                    <h4>Supermercado</h4>
-                    <p>Mercados e farmácias próximos</p>
-                </div>
-                <div class="proximidade-item">
-                    <div class="proximidade-icon">🏊</div>
+                    <div class="proximidade-icon"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4a2 2 0 0 1 4 0v12M14 4a2 2 0 0 1 4 0v12"></path><path d="M2 16c2.5 0 2.5 2 5 2s2.5-2 5-2 2.5 2 5 2 2.5-2 5-2"></path><path d="M6 9h4M14 9h4"></path></svg></div>
                     <h4>Eco Parque</h4>
                     <p>Parque aquático próximo</p>
                 </div>
                 <div class="proximidade-item">
-                    <div class="proximidade-icon">🚌</div>
+                    <div class="proximidade-icon"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="13" rx="2"></rect><path d="M4 11h16M8 4v7M16 4v7"></path><path d="M7 20v-3M17 20v-3"></path></svg></div>
                     <h4>Transporte</h4>
                     <p>Vans e ônibus para Trancoso e Caraíva</p>
+                </div>
+                <div class="proximidade-item">
+                    <div class="proximidade-icon"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="4"></circle><path d="M11 11l8 8M16 16l2-2M18 18l2-2"></path></svg></div>
+                    <h4>Check-in</h4>
+                    <p>Coordenado pessoalmente pela Renata</p>
+                </div>
+                <div class="proximidade-item">
+                    <div class="proximidade-icon"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3Z"></path><path d="M9 12l2 2 4-4"></path></svg></div>
+                    <h4>Segurança</h4>
+                    <p>Rua tranquila para estacionar</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Localização -->
+    <!-- ===================== Localização ===================== -->
     <section id="localizacao" class="localizacao">
         <div class="container">
             <div class="section-header">
-                <h2>Como Chegar</h2>
-                <p class="section-subtitle">Rua das Mangabeiras, 78 - Arraial d'Ajuda</p>
+                <div class="section-eyebrow">Como chegar</div>
+                <h2>Rua das Mangabeiras, 78</h2>
+                <p class="section-subtitle">Arraial d'Ajuda — BA</p>
             </div>
             <div class="localizacao-content">
                 <div class="mapa-container">
                     <iframe
                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3826.5!2d-39.1!3d-16.4!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x734c8b8b8b8b8b8b%3A0x8b8b8b8b8b8b8b8b!2sArraial%20d%27Ajuda%2C%20BA!5e0!3m2!1spt-BR!2sbr!4v1234567890123!5m2!1spt-BR!2sbr"
-                        width="100%" height="100%" style="border:0; border-radius: 15px;" allowfullscreen=""
-                        loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-                        title="Localização Vila d'Ajuda - Arraial d'Ajuda">
+                        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade" title="Localização Vila d'Ajuda - Arraial d'Ajuda">
                     </iframe>
                     <div class="mapa-fallback">
-                        <img src="images/Mapa.jpg" alt="Mapa de localização - Rua das Mangabeiras, 78" loading="lazy">
+                        <img src="images/redesign/mapa-vila-dajuda.jpeg" alt="Mapa de localização - Rua das Mangabeiras, 78" loading="lazy">
                         <a href="https://www.google.com/maps/search/?api=1&query=Rua+das+Mangabeiras+78+Arraial+d'Ajuda+BA"
-                            target="_blank" class="btn-secondary" style="margin-top: 1rem; display: inline-block;">Abrir
-                            no Google Maps</a>
+                            target="_blank" rel="noopener" class="btn btn--secondary" style="margin-top: 1rem;">Abrir no Google Maps</a>
                     </div>
                 </div>
                 <div class="instrucoes">
-                    <h3>Instruções de Chegada</h3>
+                    <h3>Instruções de chegada</h3>
                     <ol>
                         <li>Do aeroporto/rodoviária: pegue a balsa para Arraial d'Ajuda</li>
-                        <li>Após descer da balsa, siga até o ponto "Pousada Morada do Sol"</li>
+                        <li>Após descer da balsa, siga até a "Pousada Morada do Sol"</li>
                         <li>Vire na Rua das Mangabeiras</li>
-                        <li>Número 78 - Vila d'Ajuda</li>
+                        <li>Número 78 — Vila d'Ajuda</li>
                     </ol>
-                    <p class="aviso"><strong>Check-in coordenado pela Renata</strong></p>
+                    <p class="aviso">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="4"></circle><path d="M11 11l8 8M16 16l2-2M18 18l2-2"></path></svg>
+                        Check-in coordenado pela Renata
+                    </p>
                     <p style="margin-top: 1rem;">
-                        <strong>Endereço completo:</strong><br>
+                        <strong>Endereço:</strong><br>
                         Rua das Mangabeiras, 78<br>
-                        Arraial d'Ajuda - BA<br>
-                        CEP: 45816-000
+                        Arraial d'Ajuda — BA · CEP 45816-000
                     </p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- FAQ -->
+    <!-- ===================== FAQ ===================== -->
     <section id="faq" class="faq">
         <div class="container">
             <div class="section-header">
-                <h2>Perguntas Frequentes</h2>
-                <p class="section-subtitle">Tire suas dúvidas</p>
+                <div class="section-eyebrow">Dúvidas</div>
+                <h2>Perguntas frequentes</h2>
             </div>
             <div class="faq-list">
                 <div class="faq-item">
@@ -590,7 +535,7 @@
                 </div>
                 <div class="faq-item">
                     <div class="faq-question">
-                        <h4>Os chalés são acessíveis para pessoas com mobilidade reduzida?</h4>
+                        <h4>Os chalés são acessíveis para mobilidade reduzida?</h4>
                         <span class="faq-toggle">+</span>
                     </div>
                     <div class="faq-answer">
@@ -610,104 +555,78 @@
         </div>
     </section>
 
-    <!-- Reserva (mantida para compatibilidade com links #reserva) -->
-    <section id="reserva" class="reserva" style="display: none;">
+    <!-- ===================== CTA band ===================== -->
+    <section class="cta-band">
         <div class="container">
-            <div class="section-header">
-                <h2>Reserve seu Chalé</h2>
-                <p class="section-subtitle">Poucas unidades — datas de alta temporada esgotam rápido</p>
+            <div class="cta-eyebrow">Poucas unidades</div>
+            <h2>Datas de alta temporada esgotam rápido</h2>
+            <div class="cta-actions">
+                <a href="#reserva" class="btn btn--primary btn--lg">Reservar agora</a>
+                <a href="#galeria" class="btn btn--ghost-light btn--lg">Ver a vila</a>
             </div>
         </div>
     </section>
 
-    <!-- Reserva Rápida (Final da Página) -->
-    <section class="reserva-rapida">
+    <!-- ===================== Footer ===================== -->
+    <footer class="footer">
         <div class="container">
-            <div class="reserva-box">
-                <h3>Verificar Disponibilidade</h3>
-                <form class="form-reserva" id="formReservaFinal">
-                    <div class="form-group form-group-date">
-                        <label>Data de Entrada</label>
-                        <div class="date-input-wrapper">
-                            <input type="text" name="checkin" id="checkinInputFinal" class="date-input"
-                                placeholder="Insira as datas" readonly required>
-                            <input type="hidden" name="checkin" id="checkinHiddenFinal">
-                        </div>
-                    </div>
-                    <div class="form-group form-group-date">
-                        <label>Data de Saída</label>
-                        <div class="date-input-wrapper">
-                            <input type="text" name="checkout" id="checkoutInputFinal" class="date-input"
-                                placeholder="Insira as datas" readonly required>
-                            <input type="hidden" name="checkout" id="checkoutHiddenFinal">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Adultos</label>
-                        <select name="adultos" required>
-                            <option value="1">1</option>
-                            <option value="2" selected>2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                        </select>
-                    </div>
-                    <div class="form-group form-group-with-button">
-                        <label>Crianças</label>
-                        <select name="criancas">
-                            <option value="0">0</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                        </select>
-                    </div>
-                    <div class="form-group form-group-button">
-                        <label>&nbsp;</label>
-                        <button type="submit" class="btn-check">Verificar Disponibilidade</button>
-                    </div>
-                </form>
-
-                <!-- Preço Estimado -->
-                <div id="precoEstimadoFinal" class="preco-estimado" style="display: none;">
-                    <div class="preco-estimado-content">
-                        <span class="preco-label">💰 Preço Estimado:</span>
-                        <span class="preco-valor" id="precoValorFinal">-</span>
-                        <span class="preco-detalhes" id="precoDetalhesFinal"></span>
-                    </div>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <span class="brand-lockup">
+                        <svg class="brand-emblem" viewBox="0 0 120 120" aria-hidden="true" style="width:56px;height:56px;">
+                            <circle cx="60" cy="50" r="16" fill="var(--terracota)"></circle>
+                            <g fill="none" stroke="var(--marfim)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M50 96 Q40 74 31 57"></path>
+                                <path d="M31 57 Q17 51 8 55"></path>
+                                <path d="M31 57 Q19 58 11 66"></path>
+                                <path d="M31 57 Q23 44 21 33"></path>
+                                <path d="M31 57 Q36 45 45 41"></path>
+                                <path d="M70 96 Q80 74 89 57"></path>
+                                <path d="M89 57 Q103 51 112 55"></path>
+                                <path d="M89 57 Q101 58 109 66"></path>
+                                <path d="M89 57 Q97 44 99 33"></path>
+                                <path d="M89 57 Q84 45 75 41"></path>
+                            </g>
+                            <path d="M23 97h74" fill="none" stroke="var(--limao)" stroke-width="2.6" stroke-linecap="round"></path>
+                        </svg>
+                        <span class="brand-wordmark">
+                            <span class="brand-name" style="color:var(--marfim);">Vila d'Ajuda</span>
+                            <span class="brand-sub" style="color:var(--limao);">ARRAIAL D'AJUDA · BAHIA</span>
+                        </span>
+                    </span>
+                    <p>Seu refúgio em Arraial d'Ajuda — natureza, aconchego e praticidade.</p>
                 </div>
-
-                <!-- Calendário Pop-up -->
-                <div id="datepickerPopupFinal" class="datepicker-popup" style="display: none;">
-                    <div class="datepicker-popup-content">
-                        <div id="calendarioContainerFinal" class="calendario-container">
-                            <div class="calendario-loading">Carregando calendário...</div>
-                        </div>
-                        <div class="calendario-legend">
-                            <div class="legend-item">
-                                <span class="legend-dot disponivel"></span>
-                                <span>Disponível</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="legend-dot reservado"></span>
-                                <span>Reservado</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="legend-dot hoje"></span>
-                                <span>Hoje</span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="footer-section">
+                    <h4>Contato</h4>
+                    <ul>
+                        <li>Rua das Mangabeiras, 78</li>
+                        <li>Arraial d'Ajuda — BA</li>
+                        <li>Check-in: Renata</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Navegação</h4>
+                    <ul>
+                        <li><a href="#chales">Chalés</a></li>
+                        <li><a href="#galeria">Galeria</a></li>
+                        <li><a href="#localizacao">Localização</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                    </ul>
                 </div>
             </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Vila d'Ajuda. Todos os direitos reservados.</p>
+            </div>
         </div>
-    </section>
+    </footer>
 
-    <!-- Modal de Reserva -->
+    <!-- ===================== Modal de Reserva ===================== -->
     <div id="modalReserva" class="modal-reserva" style="display: none;">
         <div class="modal-reserva-overlay"></div>
         <div class="modal-reserva-content">
             <button class="modal-reserva-close" aria-label="Fechar modal">&times;</button>
             <div class="modal-reserva-header">
-                <h2>Reserve seu Chalé</h2>
+                <h2>Reserve seu chalé</h2>
                 <p class="section-subtitle">Poucas unidades — datas de alta temporada esgotam rápido</p>
             </div>
             <div class="modal-reserva-body">
@@ -718,40 +637,39 @@
                     <input type="hidden" name="utm_campaign" id="utmCampaign">
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Nome Completo *</label>
+                            <label>Nome completo <span style="color:var(--terracota)">*</span></label>
                             <input type="text" name="nome" required>
                         </div>
                         <div class="form-group">
-                            <label>E-mail *</label>
+                            <label>E-mail <span style="color:var(--terracota)">*</span></label>
                             <input type="email" name="email" required>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Telefone *</label>
+                            <label>Telefone <span style="color:var(--terracota)">*</span></label>
                             <input type="tel" name="telefone" required>
                         </div>
                         <div class="form-group">
-                            <label>Chalé Preferido</label>
+                            <label>Chalé preferido</label>
                             <select name="chale">
                                 <option value="">Qualquer chalé</option>
-                                <!-- Chalés serão carregados dinamicamente com preço baseado na temporada -->
                             </select>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Data de Entrada *</label>
+                            <label>Data de entrada <span style="color:var(--terracota)">*</span></label>
                             <input type="date" name="checkin" required>
                         </div>
                         <div class="form-group">
-                            <label>Data de Saída *</label>
+                            <label>Data de saída <span style="color:var(--terracota)">*</span></label>
                             <input type="date" name="checkout" required>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Adultos *</label>
+                            <label>Adultos <span style="color:var(--terracota)">*</span></label>
                             <select name="adultos" required>
                                 <option value="1">1</option>
                                 <option value="2" selected>2</option>
@@ -771,57 +689,25 @@
                     </div>
                     <div class="form-group">
                         <label>Mensagem</label>
-                        <textarea name="mensagem" rows="4"></textarea>
+                        <textarea name="mensagem" rows="3" placeholder="Conte pra gente sobre a sua viagem…"></textarea>
                     </div>
 
                     <!-- Preço Estimado no Modal -->
                     <div id="precoEstimadoModal" class="preco-estimado" style="display: none;">
                         <div class="preco-estimado-content">
-                            <span class="preco-label">💰 Preço Estimado:</span>
+                            <span class="preco-label">Preço estimado</span>
                             <span class="preco-valor" id="precoValorModal">-</span>
                             <span class="preco-detalhes" id="precoDetalhesModal"></span>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn-primary">Enviar Reserva</button>
+                    <button type="submit" class="btn-primary">Enviar reserva</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>Vila d'Ajuda</h3>
-                    <p>Seu refúgio em Arraial d'Ajuda</p>
-                    <p>Natureza, aconchego e praticidade</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Contato</h4>
-                    <p>Rua das Mangabeiras, 78</p>
-                    <p>Arraial d'Ajuda - BA</p>
-                    <p>Check-in: Renata</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Links</h4>
-                    <ul>
-                        <li><a href="#sobre">Sobre</a></li>
-                        <li><a href="#chales">Chalés</a></li>
-                        <li><a href="#galeria">Galeria</a></li>
-                        <li><a href="#localizacao">Localização</a></li>
-                        <li><a href="#faq">FAQ</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 Vila d'Ajuda. Todos os direitos reservados.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Lightbox para Galeria -->
+    <!-- ===================== Lightbox ===================== -->
     <div id="lightbox" class="lightbox" style="display: none;">
         <div class="lightbox-content">
             <span class="lightbox-close">&times;</span>
@@ -850,7 +736,7 @@
         <span class="whatsapp-tooltip">Fale conosco</span>
     </a>
 
-    <script src="js/script.js?v=12"></script>
+    <script src="js/script.js?v=13"></script>
     <script src="js/ollama-chat.js?v=1"></script>
 </body>
 

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Vila d&#39;Ajuda">
+  <circle cx="60" cy="50" r="16" fill="#D96C3B"></circle>
+  <g fill="none" stroke="#0B3D2E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    
+    <path d="M50 96 Q40 74 31 57"></path>
+    <path d="M31 57 Q17 51 8 55"></path>
+    <path d="M31 57 Q19 58 11 66"></path>
+    <path d="M31 57 Q23 44 21 33"></path>
+    <path d="M31 57 Q36 45 45 41"></path>
+    
+    <path d="M70 96 Q80 74 89 57"></path>
+    <path d="M89 57 Q103 51 112 55"></path>
+    <path d="M89 57 Q101 58 109 66"></path>
+    <path d="M89 57 Q97 44 99 33"></path>
+    <path d="M89 57 Q84 45 75 41"></path>
+  </g>
+  <path d="M23 97h74" fill="none" stroke="#7CB518" stroke-width="2.6" stroke-linecap="round"></path>
+</svg>
