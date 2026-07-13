@@ -65,17 +65,25 @@ jobs:
           local-dir: ./
           server-dir: ./
           dangerous-clean-slate: false
+          # timeout por operação da action (o 421 real vem do idle de 60s do
+          # servidor durante criação de pastas — resolvido cortando dirs não-web abaixo)
+          timeout: 120000
           exclude: |
             **/.git*
             **/.github/**
+            **/.agent/**
+            **/.claude/**
             **/node_modules/**
             **/backend/**
             **/backend-deploy/**
+            **/deploy_kinghost/**
             **/.env*
             **/*.md
             **/*.txt
             **/*.ps1
             **/*.sh
+            **/*.sqlite
+            **/*.sqlite3
             **/package.json
             **/package-lock.json
             **/.gitignore
