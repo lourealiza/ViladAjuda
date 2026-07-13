@@ -10,11 +10,40 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
+    # Lista única de exclusões (reaproveitada por todas as tentativas de FTP).
+    # Só sobem os arquivos reais do site; dirs não-web (.agent com ~86 subpastas,
+    # .claude, deploy_kinghost) ficam de fora para não estourar o idle de 60s do
+    # servidor durante a criação de pastas (erro 421 No transfer timeout).
+    env:
+      FTP_EXCLUDE: |
+        **/.git*
+        **/.github/**
+        **/.agent/**
+        **/.claude/**
+        **/node_modules/**
+        **/backend/**
+        **/backend-deploy/**
+        **/deploy_kinghost/**
+        **/.env*
+        **/*.md
+        **/*.txt
+        **/*.ps1
+        **/*.sh
+        **/*.sqlite
+        **/*.sqlite3
+        **/package.json
+        **/package-lock.json
+        **/.gitignore
+        **/.vscode/**
+        **/.cursor/**
+        **/.idea/**
+        **/logs/**
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Verify Secrets
         env:
           FTP_HOST: ${{ secrets.KINGHOST_FTP_HOST }}
@@ -55,8 +84,16 @@ jobs:
           echo "📡 FTP Host: $FTP_HOST"
           echo "👤 FTP Usuário: viladajuda"
           echo ""
-      
-      - name: Deploy Frontend to KingHost via FTP
+
+      # ------------------------------------------------------------------
+      # Deploy FTP com retry (a conexão FTP da KingHost é intermitente:
+      # às vezes dá ETIMEDOUT na porta 21). 3 tentativas com espera crescente;
+      # cada tentativa só roda se a anterior falhou. O sync-state do servidor
+      # faz o retry retomar de onde parou (idempotente).
+      # ------------------------------------------------------------------
+      - name: Deploy FTP — tentativa 1
+        id: ftp1
+        continue-on-error: true
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.KINGHOST_FTP_HOST }}
@@ -65,30 +102,60 @@ jobs:
           local-dir: ./
           server-dir: ./
           dangerous-clean-slate: false
-          # timeout por operação da action (o 421 real vem do idle de 60s do
-          # servidor durante criação de pastas — resolvido cortando dirs não-web abaixo)
           timeout: 120000
-          exclude: |
-            **/.git*
-            **/.github/**
-            **/.agent/**
-            **/.claude/**
-            **/node_modules/**
-            **/backend/**
-            **/backend-deploy/**
-            **/deploy_kinghost/**
-            **/.env*
-            **/*.md
-            **/*.txt
-            **/*.ps1
-            **/*.sh
-            **/*.sqlite
-            **/*.sqlite3
-            **/package.json
-            **/package-lock.json
-            **/.gitignore
-            **/.vscode/**
-            **/.cursor/**
-            **/.idea/**
-            **/logs/**
+          exclude: ${{ env.FTP_EXCLUDE }}
 
+      - name: Aguardar antes da tentativa 2
+        if: steps.ftp1.outcome == 'failure'
+        run: |
+          echo "⚠️ Tentativa 1 falhou. Aguardando 30s antes de retentar..."
+          sleep 30
+
+      - name: Deploy FTP — tentativa 2
+        id: ftp2
+        if: steps.ftp1.outcome == 'failure'
+        continue-on-error: true
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.KINGHOST_FTP_HOST }}
+          username: viladajuda
+          password: ${{ secrets.KINGHOST_FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: ./
+          dangerous-clean-slate: false
+          timeout: 120000
+          exclude: ${{ env.FTP_EXCLUDE }}
+
+      - name: Aguardar antes da tentativa 3
+        if: steps.ftp1.outcome == 'failure' && steps.ftp2.outcome == 'failure'
+        run: |
+          echo "⚠️ Tentativa 2 falhou. Aguardando 60s antes da última tentativa..."
+          sleep 60
+
+      - name: Deploy FTP — tentativa 3
+        id: ftp3
+        if: steps.ftp1.outcome == 'failure' && steps.ftp2.outcome == 'failure'
+        continue-on-error: true
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.KINGHOST_FTP_HOST }}
+          username: viladajuda
+          password: ${{ secrets.KINGHOST_FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: ./
+          dangerous-clean-slate: false
+          timeout: 120000
+          exclude: ${{ env.FTP_EXCLUDE }}
+
+      - name: Confirmar resultado do deploy
+        run: |
+          if [ "${{ steps.ftp1.outcome }}" = "success" ] || \
+             [ "${{ steps.ftp2.outcome }}" = "success" ] || \
+             [ "${{ steps.ftp3.outcome }}" = "success" ]; then
+            echo "✅ Deploy FTP concluído com sucesso."
+          else
+            echo "❌ Todas as 3 tentativas de deploy FTP falharam."
+            echo "Provável instabilidade de conexão da KingHost (porta 21)."
+            echo "Reexecute o workflow: gh workflow run deploy-kinghost.yml --ref master"
+            exit 1
+          fi
